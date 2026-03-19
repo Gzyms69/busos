@@ -1,0 +1,181 @@
+URBAN GRAVITY ENGINE 7.0 - MASTER AGGREGATED AUDIT
+Standard: Strict English | Transit-Focused Hierachy | No Noise
+=========================================================================================================
+
+CITY: WARSZAWA
+Service Category (EN)               | Tier                 | Cnt   | Avg Value      
+---------------------------------------------------------------------------------------------------------
+international_airport               | T0_MEGA_HUB          |     2 |     36216732211
+national_rail_hub                   | T0_MEGA_HUB          |     9 |      6135997421
+regional_rail_hub                   | T1_NATIONAL_MAGNET   |    76 |      1166984821
+hospital_clinical                   | T1_NATIONAL_MAGNET   |    76 |       240551764
+exhibition_centre                   | T1_NATIONAL_MAGNET   |     3 |       172898750
+university_campus                   | T1_NATIONAL_MAGNET   |   237 |       147195253
+national_stadium                    | T1_NATIONAL_MAGNET   |    41 |        24993553
+shopping_mall                       | T2_STRATEGIC_HUB     |   180 |        19532773
+education_high_school               | T2_STRATEGIC_HUB     |  1444 |        16421556
+student_dormitory                   | T2_STRATEGIC_HUB     |    17 |        13826216
+government_central                  | T2_STRATEGIC_HUB     |   136 |        13021822
+supermarket                         | T2_STRATEGIC_HUB     |  1002 |        11218439
+local_airfield                      | T3_LOCAL_CORE        |    23 |         2549418
+social_support_mops                 | T3_LOCAL_CORE        |   312 |         1385199
+education_preschool                 | T3_LOCAL_CORE        |  1624 |         1329771
+sports_centre                       | T3_LOCAL_CORE        |   436 |          960055
+culture_theatre                     | T3_LOCAL_CORE        |   523 |          862182
+health_clinic                       | T3_LOCAL_CORE        |  1990 |          787963
+place_of_worship                    | T4_DAILY_SERVICE     |   824 |          116561
+post_office                         | T4_DAILY_SERVICE     |   410 |           79621
+bank                                | T4_DAILY_SERVICE     |   579 |           78058
+convenience_store                   | T4_DAILY_SERVICE     |  3101 |           75096
+pharmacy                            | T4_DAILY_SERVICE     |  1065 |           74551
+park_recreation                     | T4_DAILY_SERVICE     | 24955 |            9570
+business_office                     | T5_SPEC_GASTRO       |  1385 |            8634
+gastronomy                          | T5_SPEC_GASTRO       |  5629 |            7328
+personal_services                   | T5_SPEC_GASTRO       |  3598 |            7170
+micro_playground                    | T6_MICRO_INFRA       |  4654 |             110
+micro_atm                           | T6_MICRO_INFRA       |  1488 |              72
+micro_parcel_locker                 | T6_MICRO_INFRA       |  3976 |              70
+
+=========================================================================================================
+
+CITY: KRAKOW
+Service Category (EN)               | Tier                 | Cnt   | Avg Value      
+---------------------------------------------------------------------------------------------------------
+international_airport               | T0_MEGA_HUB          |     1 |     32433605529
+national_rail_hub                   | T0_MEGA_HUB          |     1 |      5886842669
+regional_rail_hub                   | T1_NATIONAL_MAGNET   |    18 |      1100964675
+exhibition_centre                   | T1_NATIONAL_MAGNET   |     1 |       246035938
+hospital_clinical                   | T1_NATIONAL_MAGNET   |    32 |       212109457
+university_campus                   | T1_NATIONAL_MAGNET   |   146 |       124573808
+national_stadium                    | T1_NATIONAL_MAGNET   |    31 |        22021473
+student_dormitory                   | T2_STRATEGIC_HUB     |     1 |        19877268
+shopping_mall                       | T2_STRATEGIC_HUB     |    62 |        16895185
+education_high_school               | T2_STRATEGIC_HUB     |   589 |        15851515
+supermarket                         | T2_STRATEGIC_HUB     |   396 |        10428695
+government_central                  | T2_STRATEGIC_HUB     |    41 |        10056888
+local_airfield                      | T3_LOCAL_CORE        |     4 |         2819159
+education_preschool                 | T3_LOCAL_CORE        |   518 |         1090816
+social_support_mops                 | T3_LOCAL_CORE        |    88 |         1078934
+sports_centre                       | T3_LOCAL_CORE        |   235 |          872673
+culture_theatre                     | T3_LOCAL_CORE        |   201 |          815723
+health_clinic                       | T3_LOCAL_CORE        |   751 |          765450
+hotel_accommodation                 | T4_DAILY_SERVICE     |     1 |          113064
+place_of_worship                    | T4_DAILY_SERVICE     |   543 |          105039
+post_office                         | T4_DAILY_SERVICE     |   193 |           74711
+bank                                | T4_DAILY_SERVICE     |   202 |           73328
+convenience_store                   | T4_DAILY_SERVICE     |  1345 |           69481
+pharmacy                            | T4_DAILY_SERVICE     |   431 |           68918
+park_recreation                     | T4_DAILY_SERVICE     |  5427 |            9200
+business_office                     | T5_SPEC_GASTRO       |   333 |            7666
+gastronomy                          | T5_SPEC_GASTRO       |  2444 |            6803
+personal_services                   | T5_SPEC_GASTRO       |  1183 |            6750
+micro_playground                    | T6_MICRO_INFRA       |  1787 |             100
+micro_atm                           | T6_MICRO_INFRA       |   639 |              67
+micro_parcel_locker                 | T6_MICRO_INFRA       |  1680 |              66
+
+=========================================================================================================
+
+CITY: LODZ
+Service Category (EN)               | Tier                 | Cnt   | Avg Value      
+---------------------------------------------------------------------------------------------------------
+international_airport               | T0_MEGA_HUB          |     1 |     30056764984
+national_rail_hub                   | T0_MEGA_HUB          |     4 |      5503083388
+regional_rail_hub                   | T1_NATIONAL_MAGNET   |     8 |      1082680742
+hospital_clinical                   | T1_NATIONAL_MAGNET   |    36 |       213342367
+university_campus                   | T1_NATIONAL_MAGNET   |    92 |       179711679
+national_stadium                    | T1_NATIONAL_MAGNET   |    12 |        20563524
+shopping_mall                       | T2_STRATEGIC_HUB     |    74 |        16526217
+education_high_school               | T2_STRATEGIC_HUB     |   362 |        16071696
+student_dormitory                   | T2_STRATEGIC_HUB     |     1 |        13988488
+supermarket                         | T2_STRATEGIC_HUB     |   301 |        11734462
+government_central                  | T2_STRATEGIC_HUB     |    48 |        10705977
+local_airfield                      | T3_LOCAL_CORE        |     3 |         2009354
+social_support_mops                 | T3_LOCAL_CORE        |    73 |         1437788
+education_preschool                 | T3_LOCAL_CORE        |   316 |         1322527
+sports_centre                       | T3_LOCAL_CORE        |    90 |          961288
+culture_theatre                     | T3_LOCAL_CORE        |   143 |          853881
+health_clinic                       | T3_LOCAL_CORE        |   436 |          768032
+place_of_worship                    | T4_DAILY_SERVICE     |   224 |          111950
+post_office                         | T4_DAILY_SERVICE     |   100 |           75567
+bank                                | T4_DAILY_SERVICE     |   180 |           72301
+convenience_store                   | T4_DAILY_SERVICE     |   866 |           69456
+pharmacy                            | T4_DAILY_SERVICE     |   375 |           66306
+park_recreation                     | T4_DAILY_SERVICE     |  2311 |           10718
+business_office                     | T5_SPEC_GASTRO       |   158 |            7908
+gastronomy                          | T5_SPEC_GASTRO       |   926 |            6980
+personal_services                   | T5_SPEC_GASTRO       |   510 |            6754
+micro_playground                    | T6_MICRO_INFRA       |  1388 |              98
+micro_atm                           | T6_MICRO_INFRA       |   337 |              66
+micro_parcel_locker                 | T6_MICRO_INFRA       |   914 |              64
+
+=========================================================================================================
+
+CITY: TROJMIASTO
+Service Category (EN)               | Tier                 | Cnt   | Avg Value      
+---------------------------------------------------------------------------------------------------------
+international_airport               | T0_MEGA_HUB          |     1 |     30858048505
+national_rail_hub                   | T0_MEGA_HUB          |     2 |      5723776409
+regional_rail_hub                   | T1_NATIONAL_MAGNET   |    19 |      1085619999
+hospital_clinical                   | T1_NATIONAL_MAGNET   |    22 |       236302518
+university_campus                   | T1_NATIONAL_MAGNET   |    64 |       156730808
+national_stadium                    | T1_NATIONAL_MAGNET   |    18 |        21783197
+education_high_school               | T2_STRATEGIC_HUB     |   428 |        16607131
+shopping_mall                       | T2_STRATEGIC_HUB     |   110 |        15610576
+government_central                  | T2_STRATEGIC_HUB     |    45 |        11833922
+suburban_rail_stop                  | T3_LOCAL_CORE        |     2 |        11447553
+supermarket                         | T2_STRATEGIC_HUB     |   376 |        10703381
+local_airfield                      | T3_LOCAL_CORE        |     5 |         2851870
+education_preschool                 | T3_LOCAL_CORE        |   368 |         1207293
+social_support_mops                 | T3_LOCAL_CORE        |    93 |         1196302
+sports_centre                       | T3_LOCAL_CORE        |    84 |          987340
+culture_theatre                     | T3_LOCAL_CORE        |   140 |          879154
+health_clinic                       | T3_LOCAL_CORE        |   719 |          733425
+place_of_worship                    | T4_DAILY_SERVICE     |   323 |          112673
+post_office                         | T4_DAILY_SERVICE     |   183 |           72320
+bank                                | T4_DAILY_SERVICE     |   249 |           69979
+convenience_store                   | T4_DAILY_SERVICE     |  1281 |           67893
+pharmacy                            | T4_DAILY_SERVICE     |   377 |           67689
+park_recreation                     | T4_DAILY_SERVICE     |  1695 |           10954
+business_office                     | T5_SPEC_GASTRO       |   409 |            7867
+gastronomy                          | T5_SPEC_GASTRO       |  2071 |            6731
+personal_services                   | T5_SPEC_GASTRO       |  1195 |            6575
+micro_playground                    | T6_MICRO_INFRA       |  2381 |              93
+micro_atm                           | T6_MICRO_INFRA       |   536 |              67
+micro_parcel_locker                 | T6_MICRO_INFRA       |  1485 |              65
+
+=========================================================================================================
+
+CITY: BIALYSTOK
+Service Category (EN)               | Tier                 | Cnt   | Avg Value      
+---------------------------------------------------------------------------------------------------------
+national_rail_hub                   | T0_MEGA_HUB          |     1 |      5241465880
+regional_rail_hub                   | T1_NATIONAL_MAGNET   |     9 |       994761541
+hospital_clinical                   | T1_NATIONAL_MAGNET   |    12 |       187263203
+university_campus                   | T1_NATIONAL_MAGNET   |    34 |       119638294
+national_stadium                    | T1_NATIONAL_MAGNET   |     8 |        17452675
+education_high_school               | T2_STRATEGIC_HUB     |   159 |        15876723
+shopping_mall                       | T2_STRATEGIC_HUB     |    41 |        15202106
+student_dormitory                   | T2_STRATEGIC_HUB     |     9 |        13659127
+government_central                  | T2_STRATEGIC_HUB     |    21 |        11040435
+supermarket                         | T2_STRATEGIC_HUB     |   171 |         9800747
+local_airfield                      | T3_LOCAL_CORE        |     3 |         2303998
+education_preschool                 | T3_LOCAL_CORE        |   177 |         1056061
+social_support_mops                 | T3_LOCAL_CORE        |    48 |         1046775
+sports_centre                       | T3_LOCAL_CORE        |    25 |          959077
+culture_theatre                     | T3_LOCAL_CORE        |    49 |          814364
+health_clinic                       | T3_LOCAL_CORE        |   223 |          718028
+place_of_worship                    | T4_DAILY_SERVICE     |   248 |           90763
+bank                                | T4_DAILY_SERVICE     |    82 |           68135
+post_office                         | T4_DAILY_SERVICE     |    66 |           67342
+convenience_store                   | T4_DAILY_SERVICE     |   414 |           66537
+pharmacy                            | T4_DAILY_SERVICE     |   160 |           62211
+park_recreation                     | T4_DAILY_SERVICE     |   155 |           15302
+business_office                     | T5_SPEC_GASTRO       |   172 |            8537
+gastronomy                          | T5_SPEC_GASTRO       |   373 |            6530
+personal_services                   | T5_SPEC_GASTRO       |   231 |            6196
+micro_playground                    | T6_MICRO_INFRA       |   674 |              82
+micro_atm                           | T6_MICRO_INFRA       |   140 |              62
+micro_parcel_locker                 | T6_MICRO_INFRA       |   451 |              60
+
+=========================================================================================================
+

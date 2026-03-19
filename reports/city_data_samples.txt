@@ -1,0 +1,1976 @@
+NATIONAL DATA ATLAS: 5-STOP SAMPLE PER CITY
+All metrics in EPSG:2180 (Poland 1992 Standard)
+------------------------------------------------------------
+
+CITY: BIALYSTOK
+==================================================
+
+[SAMPLE 1] STOP: 1000-lecia PP/Bitwy Białostockiej (497) (497)
+  Coords (2180): 777904.93, 594838.40
+  Population (250m cell): 1
+  Nearest Transactions (RCN):
+    - 224m away: 9062 PLN/m2 (Total: 425000 PLN, Area: 46.9 m2)
+    - 255m away: 11905 PLN/m2 (Total: 380000 PLN, Area: 31.92 m2)
+    - 255m away: 3605 PLN/m2 (Total: 73000 PLN, Area: 20.25 m2)
+  Nearest Infrastructure (OSM):
+    - 13m away: POI ID N/A (Tags: ...)
+    - 15m away: POI ID N/A (Tags: ...)
+    - 28m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 2] STOP: 1000-lecia PP/Gen. Maczka (500) (500)
+  Coords (2180): 777439.22, 596080.03
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 215m away: 43206 PLN/m2 (Total: 690000 PLN, Area: 15.97 m2)
+    - 215m away: 12042 PLN/m2 (Total: 690000 PLN, Area: 57.3 m2)
+    - 238m away: 10155 PLN/m2 (Total: 720000 PLN, Area: 70.9 m2)
+  Nearest Infrastructure (OSM):
+    - 3m away: POI ID N/A (Tags: ...)
+    - 10m away: POI ID N/A (Tags: ...)
+    - 41m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 3] STOP: 1000-lecia PP/Kombatantów (498) (498)
+  Coords (2180): 777694.44, 595388.37
+  Population (250m cell): 190
+  Nearest Transactions (RCN):
+    - 71m away: 109 PLN/m2 (Total: 650000 PLN, Area: 5953.4 m2)
+    - 71m away: 10550 PLN/m2 (Total: 710000 PLN, Area: 67.3 m2)
+    - 71m away: 119 PLN/m2 (Total: 710000 PLN, Area: 5953.4 m2)
+  Nearest Infrastructure (OSM):
+    - 5m away: POI ID N/A (Tags: ...)
+    - 9m away: POI ID N/A (Tags: ...)
+    - 27m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 4] STOP: 1000-lecia PP/pl. Ks. Sopoćki (502) (502)
+  Coords (2180): 777892.75, 594736.56
+  Population (250m cell): 1
+  Nearest Transactions (RCN):
+    - 236m away: 7231 PLN/m2 (Total: 350000 PLN, Area: 48.4 m2)
+    - 259m away: 9611 PLN/m2 (Total: 780000 PLN, Area: 81.16 m2)
+    - 288m away: 9062 PLN/m2 (Total: 425000 PLN, Area: 46.9 m2)
+  Nearest Infrastructure (OSM):
+    - 4m away: POI ID N/A (Tags: ...)
+    - 8m away: POI ID N/A (Tags: ...)
+    - 23m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 5] STOP: 1000-lecia PP/Sokólska (501) (501)
+  Coords (2180): 777712.36, 595292.18
+  Population (250m cell): 190
+  Nearest Transactions (RCN):
+    - 139m away: 10118 PLN/m2 (Total: 730000 PLN, Area: 72.15 m2)
+    - 139m away: 10550 PLN/m2 (Total: 710000 PLN, Area: 67.3 m2)
+    - 139m away: 108 PLN/m2 (Total: 645000 PLN, Area: 5953.4 m2)
+  Nearest Infrastructure (OSM):
+    - 3m away: POI ID N/A (Tags: ...)
+    - 11m away: POI ID N/A (Tags: ...)
+    - 23m away: POI ID N/A (Tags: ...)
+--------------------
+
+CITY: BYDGOSZCZ
+==================================================
+
+[SAMPLE 1] STOP: Podkowa (1002)
+  Coords (2180): 434127.87, 590555.75
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 1308m away: 7954 PLN/m2 (Total: 650000 PLN, Area: 81.72 m2)
+    - 1374m away: 8696 PLN/m2 (Total: 380000 PLN, Area: 43.7 m2)
+    - 1612m away: 103 PLN/m2 (Total: 35000 PLN, Area: 338.31 m2)
+  Nearest Infrastructure (OSM):
+    - 2m away: POI ID N/A (Tags: ...)
+    - 3m away: POI ID N/A (Tags: ...)
+    - 21m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 2] STOP: Jeździecka - Dżokejowa (1003)
+  Coords (2180): 434443.97, 590558.35
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 1003m away: 7954 PLN/m2 (Total: 650000 PLN, Area: 81.72 m2)
+    - 1070m away: 8696 PLN/m2 (Total: 380000 PLN, Area: 43.7 m2)
+    - 1310m away: 95 PLN/m2 (Total: 32000 PLN, Area: 338.31 m2)
+  Nearest Infrastructure (OSM):
+    - 27m away: POI ID N/A (Tags: ...)
+    - 34m away: POI ID N/A (Tags: ...)
+    - 35m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 3] STOP: Jeździecka - Dżokejowa (1004)
+  Coords (2180): 434466.23, 590552.63
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 984m away: 7954 PLN/m2 (Total: 650000 PLN, Area: 81.72 m2)
+    - 1051m away: 8696 PLN/m2 (Total: 380000 PLN, Area: 43.7 m2)
+    - 1291m away: 103 PLN/m2 (Total: 35000 PLN, Area: 338.31 m2)
+  Nearest Infrastructure (OSM):
+    - 13m away: POI ID N/A (Tags: ...)
+    - 17m away: POI ID N/A (Tags: ...)
+    - 23m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 4] STOP: Jeździecka - Hipiczna (1005)
+  Coords (2180): 435374.08, 590486.92
+  Population (250m cell): 13
+  Nearest Transactions (RCN):
+    - 384m away: 7954 PLN/m2 (Total: 650000 PLN, Area: 81.72 m2)
+    - 417m away: 8696 PLN/m2 (Total: 380000 PLN, Area: 43.7 m2)
+    - 540m away: 10333 PLN/m2 (Total: 630000 PLN, Area: 60.97 m2)
+  Nearest Infrastructure (OSM):
+    - 4m away: POI ID N/A (Tags: ...)
+    - 11m away: POI ID N/A (Tags: ...)
+    - 12m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 5] STOP: Jeździecka - Hipiczna (1006)
+  Coords (2180): 435373.66, 590476.38
+  Population (250m cell): 13
+  Nearest Transactions (RCN):
+    - 394m away: 7954 PLN/m2 (Total: 650000 PLN, Area: 81.72 m2)
+    - 428m away: 8696 PLN/m2 (Total: 380000 PLN, Area: 43.7 m2)
+    - 545m away: 10333 PLN/m2 (Total: 630000 PLN, Area: 60.97 m2)
+  Nearest Infrastructure (OSM):
+    - 6m away: POI ID N/A (Tags: ...)
+    - 10m away: POI ID N/A (Tags: ...)
+    - 11m away: POI ID N/A (Tags: ...)
+--------------------
+
+CITY: CZESTOCHOWA
+==================================================
+
+[SAMPLE 1] STOP: Jesienna (1)
+  Coords (2180): 509960.15, 322596.77
+  Population (250m cell): 9
+  Nearest Transactions (RCN):
+    - 55m away: 6804 PLN/m2 (Total: 330000 PLN, Area: 48.5 m2)
+    - 98m away: 5505 PLN/m2 (Total: 327000 PLN, Area: 59.4 m2)
+    - 143m away: 5058 PLN/m2 (Total: 305000 PLN, Area: 60.3 m2)
+  Nearest Infrastructure (OSM):
+    - 17m away: POI ID N/A (Tags: ...)
+    - 18m away: POI ID N/A (Tags: ...)
+    - 19m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 2] STOP: Jesienna - Szkoła (2)
+  Coords (2180): 510288.07, 322537.38
+  Population (250m cell): 443
+  Nearest Transactions (RCN):
+    - 134m away: 4639 PLN/m2 (Total: 225000 PLN, Area: 48.5 m2)
+    - 187m away: 4523 PLN/m2 (Total: 294000 PLN, Area: 65.0 m2)
+    - 233m away: 6035 PLN/m2 (Total: 290000 PLN, Area: 48.05 m2)
+  Nearest Infrastructure (OSM):
+    - 14m away: POI ID N/A (Tags: ...)
+    - 15m away: POI ID N/A (Tags: ...)
+    - 17m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 3] STOP: Bohaterów Katynia (3)
+  Coords (2180): 510692.44, 322672.70
+  Population (250m cell): 258
+  Nearest Transactions (RCN):
+    - 164m away: 5245 PLN/m2 (Total: 310000 PLN, Area: 59.1 m2)
+    - 216m away: 5968 PLN/m2 (Total: 420000 PLN, Area: 70.38 m2)
+    - 216m away: 5745 PLN/m2 (Total: 239000 PLN, Area: 41.6 m2)
+  Nearest Infrastructure (OSM):
+    - 2m away: POI ID N/A (Tags: ...)
+    - 3m away: POI ID N/A (Tags: ...)
+    - 8m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 4] STOP: Stadion Raków (4)
+  Coords (2180): 511093.73, 323249.38
+  Population (250m cell): 801
+  Nearest Transactions (RCN):
+    - 58m away: 7816 PLN/m2 (Total: 380000 PLN, Area: 48.62 m2)
+    - 58m away: 22105 PLN/m2 (Total: 420000 PLN, Area: 19.0 m2)
+    - 58m away: 8638 PLN/m2 (Total: 420000 PLN, Area: 48.62 m2)
+  Nearest Infrastructure (OSM):
+    - 8m away: POI ID N/A (Tags: ...)
+    - 18m away: POI ID N/A (Tags: ...)
+    - 47m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 5] STOP: Stary Raków (5)
+  Coords (2180): 511048.18, 323789.55
+  Population (250m cell): 104
+  Nearest Transactions (RCN):
+    - 61m away: 2589 PLN/m2 (Total: 117065 PLN, Area: 45.21 m2)
+    - 61m away: 3930 PLN/m2 (Total: 182000 PLN, Area: 46.31 m2)
+    - 116m away: 4123 PLN/m2 (Total: 270000 PLN, Area: 65.48 m2)
+  Nearest Infrastructure (OSM):
+    - 23m away: POI ID N/A (Tags: ...)
+    - 43m away: POI ID N/A (Tags: ...)
+    - 46m away: POI ID N/A (Tags: ...)
+--------------------
+
+CITY: ELBLAG
+==================================================
+
+[SAMPLE 1] STOP: Nowakowo I (1)
+  Coords (2180): 524209.08, 705670.41
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 3259m away: 7629 PLN/m2 (Total: 280000 PLN, Area: 36.7 m2)
+    - 3324m away: 5660 PLN/m2 (Total: 270000 PLN, Area: 47.7 m2)
+    - 3324m away: 6080 PLN/m2 (Total: 290000 PLN, Area: 47.7 m2)
+  Nearest Infrastructure (OSM):
+    - 4m away: POI ID N/A (Tags: ...)
+    - 7m away: POI ID N/A (Tags: ...)
+    - 41m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 2] STOP: Nowakowo (2)
+  Coords (2180): 524719.13, 705746.54
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 3081m away: 7629 PLN/m2 (Total: 280000 PLN, Area: 36.7 m2)
+    - 3190m away: 6080 PLN/m2 (Total: 290000 PLN, Area: 47.7 m2)
+    - 3190m away: 5660 PLN/m2 (Total: 270000 PLN, Area: 47.7 m2)
+  Nearest Infrastructure (OSM):
+    - 5m away: POI ID N/A (Tags: ...)
+    - 6m away: POI ID N/A (Tags: ...)
+    - 24m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 3] STOP: Nowakowo I (3)
+  Coords (2180): 524211.71, 705665.98
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 3254m away: 7629 PLN/m2 (Total: 280000 PLN, Area: 36.7 m2)
+    - 3319m away: 5660 PLN/m2 (Total: 270000 PLN, Area: 47.7 m2)
+    - 3319m away: 6080 PLN/m2 (Total: 290000 PLN, Area: 47.7 m2)
+  Nearest Infrastructure (OSM):
+    - 2m away: POI ID N/A (Tags: ...)
+    - 7m away: POI ID N/A (Tags: ...)
+    - 36m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 4] STOP: Nowakowo (4)
+  Coords (2180): 524713.27, 705746.51
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 3083m away: 7629 PLN/m2 (Total: 280000 PLN, Area: 36.7 m2)
+    - 3191m away: 6080 PLN/m2 (Total: 290000 PLN, Area: 47.7 m2)
+    - 3191m away: 5660 PLN/m2 (Total: 270000 PLN, Area: 47.7 m2)
+  Nearest Infrastructure (OSM):
+    - 4m away: POI ID N/A (Tags: ...)
+    - 5m away: POI ID N/A (Tags: ...)
+    - 20m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 5] STOP: Nowodworska (9)
+  Coords (2180): 524745.80, 700047.10
+  Population (250m cell): 90
+  Nearest Transactions (RCN):
+    - 55m away: 4414 PLN/m2 (Total: 290000 PLN, Area: 65.7 m2)
+    - 239m away: 2465 PLN/m2 (Total: 260000 PLN, Area: 105.47 m2)
+    - 337m away: 7413 PLN/m2 (Total: 599000 PLN, Area: 80.8 m2)
+  Nearest Infrastructure (OSM):
+    - 7m away: POI ID N/A (Tags: ...)
+    - 86m away: POI ID N/A (Tags: ...)
+    - 98m away: POI ID N/A (Tags: ...)
+--------------------
+
+CITY: ELK
+==================================================
+
+[SAMPLE 1] STOP: Zakłady Mięsne (1)
+  Coords (2180): 723376.54, 668722.33
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 1864m away: 4536 PLN/m2 (Total: 225000 PLN, Area: 49.6 m2)
+    - 2172m away: 7215 PLN/m2 (Total: 342000 PLN, Area: 47.4 m2)
+    - 2183m away: 5438 PLN/m2 (Total: 350000 PLN, Area: 64.36 m2)
+  Nearest Infrastructure (OSM):
+    - 4m away: POI ID N/A (Tags: ...)
+    - 5m away: POI ID N/A (Tags: ...)
+    - 7m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 2] STOP: Kilińskiego — Koszykowa (10)
+  Coords (2180): 721128.68, 666049.67
+  Population (250m cell): 56
+  Nearest Transactions (RCN):
+    - 107m away: 4156 PLN/m2 (Total: 255000 PLN, Area: 61.35 m2)
+    - 129m away: 10051 PLN/m2 (Total: 335000 PLN, Area: 33.33 m2)
+    - 164m away: 6478 PLN/m2 (Total: 377000 PLN, Area: 58.2 m2)
+  Nearest Infrastructure (OSM):
+    - 2m away: POI ID N/A (Tags: ...)
+    - 4m away: POI ID N/A (Tags: ...)
+    - 10m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 3] STOP: Siedliska (100)
+  Coords (2180): 717914.41, 668976.20
+  Population (250m cell): 9
+  Nearest Transactions (RCN):
+    - 829m away: 4815 PLN/m2 (Total: 186200 PLN, Area: 38.67 m2)
+    - 1441m away: 7324 PLN/m2 (Total: 490000 PLN, Area: 66.9 m2)
+    - 1441m away: 7143 PLN/m2 (Total: 455000 PLN, Area: 63.7 m2)
+  Nearest Infrastructure (OSM):
+    - 2m away: POI ID N/A (Tags: ...)
+    - 4m away: POI ID N/A (Tags: ...)
+    - 14m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 4] STOP: Siedliska Ⅱ (101)
+  Coords (2180): 718220.83, 668936.60
+  Population (250m cell): 46
+  Nearest Transactions (RCN):
+    - 642m away: 4815 PLN/m2 (Total: 186200 PLN, Area: 38.67 m2)
+    - 1153m away: 7143 PLN/m2 (Total: 455000 PLN, Area: 63.7 m2)
+    - 1158m away: 7324 PLN/m2 (Total: 490000 PLN, Area: 66.9 m2)
+  Nearest Infrastructure (OSM):
+    - 3m away: POI ID N/A (Tags: ...)
+    - 9m away: POI ID N/A (Tags: ...)
+    - 19m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 5] STOP: 11. Listopada — Rondo (102)
+  Coords (2180): 719045.27, 668285.67
+  Population (250m cell): 35
+  Nearest Transactions (RCN):
+    - 133m away: 7324 PLN/m2 (Total: 490000 PLN, Area: 66.9 m2)
+    - 138m away: 3977 PLN/m2 (Total: 70000 PLN, Area: 17.6 m2)
+    - 138m away: 7923 PLN/m2 (Total: 370000 PLN, Area: 46.7 m2)
+  Nearest Infrastructure (OSM):
+    - 2m away: POI ID N/A (Tags: ...)
+    - 10m away: POI ID N/A (Tags: ...)
+    - 10m away: POI ID N/A (Tags: ...)
+--------------------
+
+CITY: GIZYCKO
+==================================================
+
+[SAMPLE 1] STOP: aleja  1 Maja Cmentarz (174)
+  Coords (2180): 681894.86, 690645.85
+  Population (250m cell): 150
+  Nearest Transactions (RCN):
+    - 3317m away: 5103 PLN/m2 (Total: 310000 PLN, Area: 60.75 m2)
+    - 3397m away: 3333 PLN/m2 (Total: 150000 PLN, Area: 45.0 m2)
+    - 3902m away: 7802 PLN/m2 (Total: 575000 PLN, Area: 73.7 m2)
+  Nearest Infrastructure (OSM):
+    - 5m away: POI ID N/A (Tags: ...)
+    - 28m away: POI ID N/A (Tags: ...)
+    - 45m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 2] STOP: aleja  1 Maja Cmentarz (182)
+  Coords (2180): 681751.72, 690476.19
+  Population (250m cell): 150
+  Nearest Transactions (RCN):
+    - 3102m away: 5103 PLN/m2 (Total: 310000 PLN, Area: 60.75 m2)
+    - 3182m away: 3333 PLN/m2 (Total: 150000 PLN, Area: 45.0 m2)
+    - 3691m away: 7802 PLN/m2 (Total: 575000 PLN, Area: 73.7 m2)
+  Nearest Infrastructure (OSM):
+    - 3m away: POI ID N/A (Tags: ...)
+    - 40m away: POI ID N/A (Tags: ...)
+    - 54m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 3] STOP: Al. 1-go Maja (10)
+  Coords (2180): 681350.01, 689719.57
+  Population (250m cell): 474
+  Nearest Transactions (RCN):
+    - 2371m away: 5103 PLN/m2 (Total: 310000 PLN, Area: 60.75 m2)
+    - 2452m away: 3333 PLN/m2 (Total: 150000 PLN, Area: 45.0 m2)
+    - 2985m away: 7802 PLN/m2 (Total: 575000 PLN, Area: 73.7 m2)
+  Nearest Infrastructure (OSM):
+    - 18m away: POI ID N/A (Tags: ...)
+    - 21m away: POI ID N/A (Tags: ...)
+    - 21m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 4] STOP: Al. 1-go Maja (11)
+  Coords (2180): 681376.20, 689735.41
+  Population (250m cell): 474
+  Nearest Transactions (RCN):
+    - 2402m away: 5103 PLN/m2 (Total: 310000 PLN, Area: 60.75 m2)
+    - 2483m away: 3333 PLN/m2 (Total: 150000 PLN, Area: 45.0 m2)
+    - 3015m away: 7802 PLN/m2 (Total: 575000 PLN, Area: 73.7 m2)
+  Nearest Infrastructure (OSM):
+    - 3m away: POI ID N/A (Tags: ...)
+    - 10m away: POI ID N/A (Tags: ...)
+    - 10m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 5] STOP: Sympatyczna 1 (15)
+  Coords (2180): 680831.31, 691499.04
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 3238m away: 5103 PLN/m2 (Total: 310000 PLN, Area: 60.75 m2)
+    - 3304m away: 3333 PLN/m2 (Total: 150000 PLN, Area: 45.0 m2)
+    - 3697m away: 7802 PLN/m2 (Total: 575000 PLN, Area: 73.7 m2)
+  Nearest Infrastructure (OSM):
+    - 1m away: POI ID N/A (Tags: ...)
+    - 64m away: POI ID N/A (Tags: ...)
+    - 76m away: POI ID N/A (Tags: ...)
+--------------------
+
+CITY: GORZOW
+==================================================
+
+[SAMPLE 1] STOP: AWF (5)
+  Coords (2180): 245493.00, 547278.48
+  Population (250m cell): 53
+  Nearest Transactions (RCN):
+    - 99m away: 6180 PLN/m2 (Total: 365000 PLN, Area: 59.06 m2)
+    - 134m away: 1899 PLN/m2 (Total: 60000 PLN, Area: 31.6 m2)
+    - 134m away: 2041 PLN/m2 (Total: 50000 PLN, Area: 24.5 m2)
+  Nearest Infrastructure (OSM):
+    - 4m away: POI ID N/A (Tags: ...)
+    - 7m away: POI ID N/A (Tags: ...)
+    - 12m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 2] STOP: Katedra (181)
+  Coords (2180): 246114.79, 547188.80
+  Population (250m cell): 612
+  Nearest Transactions (RCN):
+    - 23m away: 6061 PLN/m2 (Total: 290000 PLN, Area: 47.85 m2)
+    - 41m away: 5691 PLN/m2 (Total: 299000 PLN, Area: 52.54 m2)
+    - 48m away: 4248 PLN/m2 (Total: 220000 PLN, Area: 51.79 m2)
+  Nearest Infrastructure (OSM):
+    - 11m away: POI ID N/A (Tags: ...)
+    - 12m away: POI ID N/A (Tags: ...)
+    - 14m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 3] STOP: Wał Okrężny (215)
+  Coords (2180): 246397.99, 546899.57
+  Population (250m cell): 774
+  Nearest Transactions (RCN):
+    - 266m away: 6551 PLN/m2 (Total: 245000 PLN, Area: 37.4 m2)
+    - 268m away: 5867 PLN/m2 (Total: 230000 PLN, Area: 39.2 m2)
+    - 268m away: 4673 PLN/m2 (Total: 250000 PLN, Area: 53.5 m2)
+  Nearest Infrastructure (OSM):
+    - 5m away: POI ID N/A (Tags: ...)
+    - 6m away: POI ID N/A (Tags: ...)
+    - 11m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 4] STOP: Zielona (216)
+  Coords (2180): 246611.35, 546797.91
+  Population (250m cell): 119
+  Nearest Transactions (RCN):
+    - 228m away: 2641 PLN/m2 (Total: 124000 PLN, Area: 46.96 m2)
+    - 385m away: 7748 PLN/m2 (Total: 266000 PLN, Area: 34.33 m2)
+    - 429m away: 3956 PLN/m2 (Total: 170000 PLN, Area: 42.97 m2)
+  Nearest Infrastructure (OSM):
+    - 4m away: POI ID N/A (Tags: ...)
+    - 4m away: POI ID N/A (Tags: ...)
+    - 17m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 5] STOP: Woskowa (217)
+  Coords (2180): 246662.41, 546582.78
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 38m away: 2641 PLN/m2 (Total: 124000 PLN, Area: 46.96 m2)
+    - 323m away: 3956 PLN/m2 (Total: 170000 PLN, Area: 42.97 m2)
+    - 341m away: 3586 PLN/m2 (Total: 180000 PLN, Area: 50.19 m2)
+  Nearest Infrastructure (OSM):
+    - 6m away: POI ID N/A (Tags: ...)
+    - 7m away: POI ID N/A (Tags: ...)
+    - 11m away: POI ID N/A (Tags: ...)
+--------------------
+
+CITY: GZM
+==================================================
+
+[SAMPLE 1] STOP: Chlebowa Pętla (47)
+  Coords (2180): 470203.74, 230018.61
+  Population (250m cell): 52
+  Nearest Transactions (RCN):
+    - 343m away: 3727 PLN/m2 (Total: 60000 PLN, Area: 16.1 m2)
+    - 343m away: 3727 PLN/m2 (Total: 60000 PLN, Area: 16.1 m2)
+    - 343m away: 3727 PLN/m2 (Total: 60000 PLN, Area: 16.1 m2)
+  Nearest Infrastructure (OSM):
+    - 10m away: POI ID N/A (Tags: ...)
+    - 39m away: POI ID N/A (Tags: ...)
+    - 40m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 2] STOP: 11 Listopada Szkoła (49)
+  Coords (2180): 469982.10, 231437.04
+  Population (250m cell): 26
+  Nearest Transactions (RCN):
+    - 270m away: 5417 PLN/m2 (Total: 260000 PLN, Area: 48.0 m2)
+    - 274m away: 2339 PLN/m2 (Total: 40000 PLN, Area: 17.1 m2)
+    - 306m away: 4312 PLN/m2 (Total: 210000 PLN, Area: 48.7 m2)
+  Nearest Infrastructure (OSM):
+    - 5m away: POI ID N/A (Tags: ...)
+    - 6m away: POI ID N/A (Tags: ...)
+    - 39m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 3] STOP: 11 Listopada Szkoła (51)
+  Coords (2180): 470071.24, 231473.22
+  Population (250m cell): 26
+  Nearest Transactions (RCN):
+    - 262m away: 4847 PLN/m2 (Total: 187096 PLN, Area: 38.6 m2)
+    - 262m away: 4312 PLN/m2 (Total: 210000 PLN, Area: 48.7 m2)
+    - 262m away: 6936 PLN/m2 (Total: 120000 PLN, Area: 17.3 m2)
+  Nearest Infrastructure (OSM):
+    - 5m away: POI ID N/A (Tags: ...)
+    - 6m away: POI ID N/A (Tags: ...)
+    - 53m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 4] STOP: Urząd Skarbowy (53)
+  Coords (2180): 469631.09, 231513.49
+  Population (250m cell): 148
+  Nearest Transactions (RCN):
+    - 36m away: 6334 PLN/m2 (Total: 240000 PLN, Area: 37.89 m2)
+    - 83m away: 3769 PLN/m2 (Total: 143000 PLN, Area: 37.94 m2)
+    - 84m away: 4013 PLN/m2 (Total: 215000 PLN, Area: 53.58 m2)
+  Nearest Infrastructure (OSM):
+    - 1m away: POI ID N/A (Tags: ...)
+    - 10m away: POI ID N/A (Tags: ...)
+    - 30m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 5] STOP: Zdrojowa (55)
+  Coords (2180): 469484.53, 231596.57
+  Population (250m cell): 115
+  Nearest Transactions (RCN):
+    - 152m away: 4013 PLN/m2 (Total: 215000 PLN, Area: 53.58 m2)
+    - 153m away: 6334 PLN/m2 (Total: 240000 PLN, Area: 37.89 m2)
+    - 199m away: 3769 PLN/m2 (Total: 143000 PLN, Area: 37.94 m2)
+  Nearest Infrastructure (OSM):
+    - 3m away: POI ID N/A (Tags: ...)
+    - 24m away: POI ID N/A (Tags: ...)
+    - 30m away: POI ID N/A (Tags: ...)
+--------------------
+
+CITY: KIELCE
+==================================================
+
+[SAMPLE 1] STOP: 1 Maja os. Herby (1)
+  Coords (2180): 613321.01, 337044.06
+  Population (250m cell): 229
+  Nearest Transactions (RCN):
+    - 84m away: 860 PLN/m2 (Total: 50000 PLN, Area: 58.11 m2)
+    - 93m away: 8459 PLN/m2 (Total: 414655 PLN, Area: 49.02 m2)
+    - 93m away: 11691 PLN/m2 (Total: 699000 PLN, Area: 59.79 m2)
+  Nearest Infrastructure (OSM):
+    - 13m away: POI ID N/A (Tags: ...)
+    - 14m away: POI ID N/A (Tags: ...)
+    - 14m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 2] STOP: Gawronki (4)
+  Coords (2180): 618286.37, 318883.40
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 4819m away: 7829 PLN/m2 (Total: 365000 PLN, Area: 46.62 m2)
+    - 11604m away: 12270 PLN/m2 (Total: 726500 PLN, Area: 59.21 m2)
+    - 11693m away: 5263 PLN/m2 (Total: 660000 PLN, Area: 125.41 m2)
+  Nearest Infrastructure (OSM):
+    - 10m away: POI ID N/A (Tags: ...)
+    - 42m away: POI ID N/A (Tags: ...)
+    - 53m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 3] STOP: Wapiennikowa os. Kochanowskiego (5)
+  Coords (2180): 614770.49, 333013.29
+  Population (250m cell): 108
+  Nearest Transactions (RCN):
+    - 110m away: 5488 PLN/m2 (Total: 270000 PLN, Area: 49.2 m2)
+    - 139m away: 8133 PLN/m2 (Total: 610000 PLN, Area: 75.0 m2)
+    - 142m away: 8764 PLN/m2 (Total: 460000 PLN, Area: 52.49 m2)
+  Nearest Infrastructure (OSM):
+    - 10m away: POI ID N/A (Tags: ...)
+    - 11m away: POI ID N/A (Tags: ...)
+    - 11m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 4] STOP: Tysiąclecia PP (6)
+  Coords (2180): 615481.86, 335816.06
+  Population (250m cell): 320
+  Nearest Transactions (RCN):
+    - 144m away: 9407 PLN/m2 (Total: 685000 PLN, Area: 72.82 m2)
+    - 144m away: 9298 PLN/m2 (Total: 515000 PLN, Area: 55.39 m2)
+    - 144m away: 9906 PLN/m2 (Total: 549000 PLN, Area: 55.42 m2)
+  Nearest Infrastructure (OSM):
+    - 5m away: POI ID N/A (Tags: ...)
+    - 9m away: POI ID N/A (Tags: ...)
+    - 10m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 5] STOP: Tysiąclecia PP (7)
+  Coords (2180): 615335.10, 335866.18
+  Population (250m cell): 578
+  Nearest Transactions (RCN):
+    - 157m away: 15264 PLN/m2 (Total: 390000 PLN, Area: 25.55 m2)
+    - 157m away: 13662 PLN/m2 (Total: 360000 PLN, Area: 26.35 m2)
+    - 157m away: 15102 PLN/m2 (Total: 505000 PLN, Area: 33.44 m2)
+  Nearest Infrastructure (OSM):
+    - 8m away: POI ID N/A (Tags: ...)
+    - 22m away: POI ID N/A (Tags: ...)
+    - 23m away: POI ID N/A (Tags: ...)
+--------------------
+
+CITY: KRAKOW
+==================================================
+
+[SAMPLE 1] STOP: Stella-Sawickiego (12)
+  Coords (2180): 571780.89, 245629.05
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 101m away: 14286 PLN/m2 (Total: 930000 PLN, Area: 65.1 m2)
+    - 142m away: 6696 PLN/m2 (Total: 90000 PLN, Area: 13.44 m2)
+    - 283m away: 14365 PLN/m2 (Total: 1495080 PLN, Area: 104.08 m2)
+  Nearest Infrastructure (OSM):
+    - 4m away: POI ID N/A (Tags: ...)
+    - 4m away: POI ID N/A (Tags: ...)
+    - 9m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 2] STOP: Stella-Sawickiego (13)
+  Coords (2180): 571797.56, 245772.68
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 241m away: 14286 PLN/m2 (Total: 930000 PLN, Area: 65.1 m2)
+    - 259m away: 12502 PLN/m2 (Total: 813000 PLN, Area: 65.03 m2)
+    - 259m away: 11912 PLN/m2 (Total: 765000 PLN, Area: 64.22 m2)
+  Nearest Infrastructure (OSM):
+    - 6m away: POI ID N/A (Tags: ...)
+    - 7m away: POI ID N/A (Tags: ...)
+    - 9m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 3] STOP: Stella-Sawickiego (14)
+  Coords (2180): 571787.93, 245957.09
+  Population (250m cell): 855
+  Nearest Transactions (RCN):
+    - 204m away: 12063 PLN/m2 (Total: 760000 PLN, Area: 63.0 m2)
+    - 204m away: 9524 PLN/m2 (Total: 600000 PLN, Area: 63.0 m2)
+    - 219m away: 1494 PLN/m2 (Total: 75000 PLN, Area: 50.2 m2)
+  Nearest Infrastructure (OSM):
+    - 5m away: POI ID N/A (Tags: ...)
+    - 7m away: POI ID N/A (Tags: ...)
+    - 50m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 4] STOP: Czyżyny (17)
+  Coords (2180): 572337.97, 245702.15
+  Population (250m cell): 1438
+  Nearest Transactions (RCN):
+    - 156m away: 19373 PLN/m2 (Total: 655000 PLN, Area: 33.81 m2)
+    - 156m away: 17868 PLN/m2 (Total: 828000 PLN, Area: 46.34 m2)
+    - 156m away: 626 PLN/m2 (Total: 655000 PLN, Area: 1047.07 m2)
+  Nearest Infrastructure (OSM):
+    - 7m away: POI ID N/A (Tags: ...)
+    - 7m away: POI ID N/A (Tags: ...)
+    - 7m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 5] STOP: Rondo Czyżyńskie (23)
+  Coords (2180): 572714.76, 245668.35
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 124m away: 14649 PLN/m2 (Total: 415000 PLN, Area: 28.33 m2)
+    - 124m away: 1407 PLN/m2 (Total: 40000 PLN, Area: 28.43 m2)
+    - 178m away: 12056 PLN/m2 (Total: 900000 PLN, Area: 74.65 m2)
+  Nearest Infrastructure (OSM):
+    - 7m away: POI ID N/A (Tags: ...)
+    - 7m away: POI ID N/A (Tags: ...)
+    - 10m away: POI ID N/A (Tags: ...)
+--------------------
+
+CITY: KUTNO
+==================================================
+
+[SAMPLE 1] STOP: Dworzec PKP (1)
+  Coords (2180): 523926.11, 484599.75
+  Population (250m cell): 264
+  Nearest Transactions (RCN):
+    - 233m away: 2996 PLN/m2 (Total: 270000 PLN, Area: 90.13 m2)
+    - 233m away: 695 PLN/m2 (Total: 37000 PLN, Area: 53.25 m2)
+    - 240m away: 7338 PLN/m2 (Total: 350000 PLN, Area: 47.7 m2)
+  Nearest Infrastructure (OSM):
+    - 10m away: POI ID N/A (Tags: ...)
+    - 17m away: POI ID N/A (Tags: ...)
+    - 17m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 2] STOP: Sienkiewicza / Wspólna Praca (3)
+  Coords (2180): 524268.60, 485076.23
+  Population (250m cell): 30
+  Nearest Transactions (RCN):
+    - 73m away: 4462 PLN/m2 (Total: 175000 PLN, Area: 39.22 m2)
+    - 159m away: 2208 PLN/m2 (Total: 200000 PLN, Area: 90.6 m2)
+    - 196m away: 6431 PLN/m2 (Total: 169000 PLN, Area: 26.28 m2)
+  Nearest Infrastructure (OSM):
+    - 8m away: POI ID N/A (Tags: ...)
+    - 16m away: POI ID N/A (Tags: ...)
+    - 20m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 3] STOP: Narutowicza / Rondo (4)
+  Coords (2180): 524212.99, 485278.33
+  Population (250m cell): 118
+  Nearest Transactions (RCN):
+    - 73m away: 6431 PLN/m2 (Total: 169000 PLN, Area: 26.28 m2)
+    - 85m away: 7143 PLN/m2 (Total: 300000 PLN, Area: 42.0 m2)
+    - 85m away: 7738 PLN/m2 (Total: 325000 PLN, Area: 42.0 m2)
+  Nearest Infrastructure (OSM):
+    - 7m away: POI ID N/A (Tags: ...)
+    - 28m away: POI ID N/A (Tags: ...)
+    - 33m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 4] STOP: Skłodowskiej / MZK (5)
+  Coords (2180): 524103.18, 485675.88
+  Population (250m cell): 40
+  Nearest Transactions (RCN):
+    - 192m away: 6696 PLN/m2 (Total: 222300 PLN, Area: 33.2 m2)
+    - 261m away: 6164 PLN/m2 (Total: 294000 PLN, Area: 47.7 m2)
+    - 303m away: 6037 PLN/m2 (Total: 230000 PLN, Area: 38.1 m2)
+  Nearest Infrastructure (OSM):
+    - 10m away: POI ID N/A (Tags: ...)
+    - 23m away: POI ID N/A (Tags: ...)
+    - 27m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 5] STOP: Skłodowskiej / MZK (6)
+  Coords (2180): 524096.46, 485653.61
+  Population (250m cell): 40
+  Nearest Transactions (RCN):
+    - 204m away: 6696 PLN/m2 (Total: 222300 PLN, Area: 33.2 m2)
+    - 284m away: 6164 PLN/m2 (Total: 294000 PLN, Area: 47.7 m2)
+    - 292m away: 6037 PLN/m2 (Total: 230000 PLN, Area: 38.1 m2)
+  Nearest Infrastructure (OSM):
+    - 4m away: POI ID N/A (Tags: ...)
+    - 15m away: POI ID N/A (Tags: ...)
+    - 18m away: POI ID N/A (Tags: ...)
+--------------------
+
+CITY: LEGNICA
+==================================================
+
+[SAMPLE 1] STOP: Artyleryjska - Pancerna (1693)
+  Coords (2180): 300656.49, 374460.77
+  Population (250m cell): 334
+  Nearest Transactions (RCN):
+    - 74m away: 10570 PLN/m2 (Total: 480000 PLN, Area: 45.41 m2)
+    - 74m away: 342 PLN/m2 (Total: 480000 PLN, Area: 1402.01 m2)
+    - 102m away: 6005 PLN/m2 (Total: 520000 PLN, Area: 86.6 m2)
+  Nearest Infrastructure (OSM):
+    - 21m away: POI ID N/A (Tags: ...)
+    - 25m away: POI ID N/A (Tags: ...)
+    - 27m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 2] STOP: Asnyka - Złotoryjska (1694)
+  Coords (2180): 300463.47, 374334.70
+  Population (250m cell): 334
+  Nearest Transactions (RCN):
+    - 110m away: 5489 PLN/m2 (Total: 230000 PLN, Area: 41.9 m2)
+    - 129m away: 6005 PLN/m2 (Total: 520000 PLN, Area: 86.6 m2)
+    - 142m away: 5541 PLN/m2 (Total: 415000 PLN, Area: 74.9 m2)
+  Nearest Infrastructure (OSM):
+    - 2m away: POI ID N/A (Tags: ...)
+    - 8m away: POI ID N/A (Tags: ...)
+    - 18m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 3] STOP: Bydgoska - Szczecińska (1695)
+  Coords (2180): 302127.76, 376597.74
+  Population (250m cell): 308
+  Nearest Transactions (RCN):
+    - 201m away: 215 PLN/m2 (Total: 11350 PLN, Area: 52.7 m2)
+    - 204m away: 6358 PLN/m2 (Total: 220000 PLN, Area: 34.6 m2)
+    - 266m away: 7986 PLN/m2 (Total: 349000 PLN, Area: 43.7 m2)
+  Nearest Infrastructure (OSM):
+    - 4m away: POI ID N/A (Tags: ...)
+    - 8m away: POI ID N/A (Tags: ...)
+    - 41m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 4] STOP: Bydgoska - Osiedle (1696)
+  Coords (2180): 302469.55, 376869.52
+  Population (250m cell): 180
+  Nearest Transactions (RCN):
+    - 148m away: 5598 PLN/m2 (Total: 182000 PLN, Area: 32.51 m2)
+    - 148m away: 4730 PLN/m2 (Total: 240000 PLN, Area: 50.74 m2)
+    - 148m away: 3942 PLN/m2 (Total: 200000 PLN, Area: 50.74 m2)
+  Nearest Infrastructure (OSM):
+    - 4m away: POI ID N/A (Tags: ...)
+    - 6m away: POI ID N/A (Tags: ...)
+    - 33m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 5] STOP: Bydgoska - Szczytnicka (1697)
+  Coords (2180): 302765.33, 377145.31
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 320m away: 5130 PLN/m2 (Total: 295000 PLN, Area: 57.5 m2)
+    - 320m away: 4904 PLN/m2 (Total: 154000 PLN, Area: 31.4 m2)
+    - 362m away: 5198 PLN/m2 (Total: 262000 PLN, Area: 50.4 m2)
+  Nearest Infrastructure (OSM):
+    - 2m away: POI ID N/A (Tags: ...)
+    - 8m away: POI ID N/A (Tags: ...)
+    - 18m away: POI ID N/A (Tags: ...)
+--------------------
+
+CITY: LESZNO
+==================================================
+
+[SAMPLE 1] STOP: Dworzec kolejowy (1)
+  Coords (2180): 332317.15, 444893.33
+  Population (250m cell): 139
+  Nearest Transactions (RCN):
+    - 215m away: 12480 PLN/m2 (Total: 1551276 PLN, Area: 124.3 m2)
+    - 277m away: 12788 PLN/m2 (Total: 672798 PLN, Area: 52.61 m2)
+    - 277m away: 877 PLN/m2 (Total: 1587475 PLN, Area: 1809.35 m2)
+  Nearest Infrastructure (OSM):
+    - 5m away: POI ID N/A (Tags: ...)
+    - 6m away: POI ID N/A (Tags: ...)
+    - 12m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 2] STOP: Kasprowicza (2)
+  Coords (2180): 332139.06, 444370.67
+  Population (250m cell): 228
+  Nearest Transactions (RCN):
+    - 428m away: 4705 PLN/m2 (Total: 335000 PLN, Area: 71.2 m2)
+    - 473m away: 4217 PLN/m2 (Total: 253000 PLN, Area: 60.0 m2)
+    - 486m away: 6086 PLN/m2 (Total: 199000 PLN, Area: 32.7 m2)
+  Nearest Infrastructure (OSM):
+    - 9m away: POI ID N/A (Tags: ...)
+    - 21m away: POI ID N/A (Tags: ...)
+    - 26m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 3] STOP: Jana Pawła II Dom Rzemiosła (3)
+  Coords (2180): 332926.59, 444296.53
+  Population (250m cell): 832
+  Nearest Transactions (RCN):
+    - 58m away: 9313 PLN/m2 (Total: 599000 PLN, Area: 64.32 m2)
+    - 58m away: 63 PLN/m2 (Total: 25000 PLN, Area: 398.25 m2)
+    - 58m away: 63 PLN/m2 (Total: 25000 PLN, Area: 398.25 m2)
+  Nearest Infrastructure (OSM):
+    - 10m away: POI ID N/A (Tags: ...)
+    - 21m away: POI ID N/A (Tags: ...)
+    - 24m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 4] STOP: Lipowa market (4)
+  Coords (2180): 333166.06, 443765.51
+  Population (250m cell): 64
+  Nearest Transactions (RCN):
+    - 150m away: 8789 PLN/m2 (Total: 450000 PLN, Area: 51.2 m2)
+    - 150m away: 26102 PLN/m2 (Total: 450000 PLN, Area: 17.24 m2)
+    - 164m away: 7373 PLN/m2 (Total: 320000 PLN, Area: 43.4 m2)
+  Nearest Infrastructure (OSM):
+    - 5m away: POI ID N/A (Tags: ...)
+    - 5m away: POI ID N/A (Tags: ...)
+    - 7m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 5] STOP: Lipowa MPWiK (5)
+  Coords (2180): 333216.33, 443473.38
+  Population (250m cell): 599
+  Nearest Transactions (RCN):
+    - 133m away: 5398 PLN/m2 (Total: 153100 PLN, Area: 28.36 m2)
+    - 251m away: 9989 PLN/m2 (Total: 661000 PLN, Area: 66.17 m2)
+    - 277m away: 7373 PLN/m2 (Total: 320000 PLN, Area: 43.4 m2)
+  Nearest Infrastructure (OSM):
+    - 5m away: POI ID N/A (Tags: ...)
+    - 9m away: POI ID N/A (Tags: ...)
+    - 15m away: POI ID N/A (Tags: ...)
+--------------------
+
+CITY: LODZ
+==================================================
+
+[SAMPLE 1] STOP: Abramowskiego-Sienkiewicza (1)
+  Coords (2180): 532118.35, 432086.32
+  Population (250m cell): 380
+  Nearest Transactions (RCN):
+    - 20m away: 4643 PLN/m2 (Total: 91000 PLN, Area: 19.6 m2)
+    - 36m away: 4651 PLN/m2 (Total: 270000 PLN, Area: 58.05 m2)
+    - 73m away: 5271 PLN/m2 (Total: 80800 PLN, Area: 15.33 m2)
+  Nearest Infrastructure (OSM):
+    - 5m away: POI ID N/A (Tags: ...)
+    - 22m away: POI ID N/A (Tags: ...)
+    - 29m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 2] STOP: Brzeźna-Piotrkowska (2)
+  Coords (2180): 531763.26, 431930.63
+  Population (250m cell): 984
+  Nearest Transactions (RCN):
+    - 81m away: 8115 PLN/m2 (Total: 405000 PLN, Area: 49.91 m2)
+    - 122m away: 6572 PLN/m2 (Total: 240000 PLN, Area: 36.52 m2)
+    - 124m away: 13593 PLN/m2 (Total: 880000 PLN, Area: 64.74 m2)
+  Nearest Infrastructure (OSM):
+    - 8m away: POI ID N/A (Tags: ...)
+    - 9m away: POI ID N/A (Tags: ...)
+    - 12m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 3] STOP: Kochanówka (3)
+  Coords (2180): 524665.33, 437633.68
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 145m away: 6966 PLN/m2 (Total: 186000 PLN, Area: 26.7 m2)
+    - 278m away: 9744 PLN/m2 (Total: 670000 PLN, Area: 68.76 m2)
+    - 475m away: 11049 PLN/m2 (Total: 750000 PLN, Area: 67.88 m2)
+  Nearest Infrastructure (OSM):
+    - 7m away: POI ID N/A (Tags: ...)
+    - 9m away: POI ID N/A (Tags: ...)
+    - 11m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 4] STOP: Aleksandrowska-Lechicka (4)
+  Coords (2180): 525058.75, 437530.00
+  Population (250m cell): 165
+  Nearest Transactions (RCN):
+    - 192m away: 9744 PLN/m2 (Total: 670000 PLN, Area: 68.76 m2)
+    - 349m away: 6966 PLN/m2 (Total: 186000 PLN, Area: 26.7 m2)
+    - 455m away: 8591 PLN/m2 (Total: 472500 PLN, Area: 55.0 m2)
+  Nearest Infrastructure (OSM):
+    - 3m away: POI ID N/A (Tags: ...)
+    - 8m away: POI ID N/A (Tags: ...)
+    - 10m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 5] STOP: Aleksandrowska-Szczecińska (5)
+  Coords (2180): 525306.64, 437445.62
+  Population (250m cell): 70
+  Nearest Transactions (RCN):
+    - 317m away: 6659 PLN/m2 (Total: 300000 PLN, Area: 45.05 m2)
+    - 317m away: 6659 PLN/m2 (Total: 300000 PLN, Area: 45.05 m2)
+    - 412m away: 6161 PLN/m2 (Total: 390000 PLN, Area: 63.3 m2)
+  Nearest Infrastructure (OSM):
+    - 13m away: POI ID N/A (Tags: ...)
+    - 14m away: POI ID N/A (Tags: ...)
+    - 17m away: POI ID N/A (Tags: ...)
+--------------------
+
+CITY: LOMZA
+==================================================
+
+[SAMPLE 1] STOP: Akademicka — PWSIiP (171)
+  Coords (2180): 703786.00, 592615.06
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 407m away: 7400 PLN/m2 (Total: 356976 PLN, Area: 48.24 m2)
+    - 407m away: 3113 PLN/m2 (Total: 255587 PLN, Area: 82.1 m2)
+    - 407m away: 233 PLN/m2 (Total: 325478 PLN, Area: 1397.9 m2)
+  Nearest Infrastructure (OSM):
+    - 2m away: POI ID N/A (Tags: ...)
+    - 8m away: POI ID N/A (Tags: ...)
+    - 12m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 2] STOP: Akademcika — PWSIiP (172)
+  Coords (2180): 703796.22, 592579.41
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 436m away: 7117 PLN/m2 (Total: 274000 PLN, Area: 38.5 m2)
+    - 441m away: 3113 PLN/m2 (Total: 255587 PLN, Area: 82.1 m2)
+    - 441m away: 86 PLN/m2 (Total: 38000 PLN, Area: 444.12 m2)
+  Nearest Infrastructure (OSM):
+    - 2m away: POI ID N/A (Tags: ...)
+    - 7m away: POI ID N/A (Tags: ...)
+    - 15m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 3] STOP: Akademicka — Galeria (213)
+  Coords (2180): 703960.69, 593424.93
+  Population (250m cell): 34
+  Nearest Transactions (RCN):
+    - 422m away: 233 PLN/m2 (Total: 325478 PLN, Area: 1397.9 m2)
+    - 422m away: 7400 PLN/m2 (Total: 356976 PLN, Area: 48.24 m2)
+    - 422m away: 3113 PLN/m2 (Total: 255587 PLN, Area: 82.1 m2)
+  Nearest Infrastructure (OSM):
+    - 18m away: POI ID N/A (Tags: ...)
+    - 33m away: POI ID N/A (Tags: ...)
+    - 39m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 4] STOP: Akademicka — MPGKiM (170)
+  Coords (2180): 703834.88, 592741.88
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 275m away: 7400 PLN/m2 (Total: 356976 PLN, Area: 48.24 m2)
+    - 275m away: 7147 PLN/m2 (Total: 344133 PLN, Area: 48.15 m2)
+    - 275m away: 3113 PLN/m2 (Total: 255587 PLN, Area: 82.1 m2)
+  Nearest Infrastructure (OSM):
+    - 0m away: POI ID N/A (Tags: ...)
+    - 7m away: POI ID N/A (Tags: ...)
+    - 35m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 5] STOP: Akademicka — Okleina (174)
+  Coords (2180): 703945.58, 593344.54
+  Population (250m cell): 34
+  Nearest Transactions (RCN):
+    - 340m away: 233 PLN/m2 (Total: 325478 PLN, Area: 1397.9 m2)
+    - 340m away: 7556 PLN/m2 (Total: 456714 PLN, Area: 60.44 m2)
+    - 340m away: 8878 PLN/m2 (Total: 328676 PLN, Area: 37.02 m2)
+  Nearest Infrastructure (OSM):
+    - 17m away: POI ID N/A (Tags: ...)
+    - 52m away: POI ID N/A (Tags: ...)
+    - 72m away: POI ID N/A (Tags: ...)
+--------------------
+
+CITY: LUBLIN
+==================================================
+
+[SAMPLE 1] STOP: Zajezdnia Hutnicza (99)
+  Coords (2180): 750881.95, 381156.59
+  Population (250m cell): 1277
+  Nearest Transactions (RCN):
+    - 117m away: 9495 PLN/m2 (Total: 340000 PLN, Area: 35.81 m2)
+    - 155m away: 8190 PLN/m2 (Total: 300000 PLN, Area: 36.63 m2)
+    - 168m away: 7025 PLN/m2 (Total: 255000 PLN, Area: 36.3 m2)
+  Nearest Infrastructure (OSM):
+    - 21m away: POI ID N/A (Tags: ...)
+    - 31m away: POI ID N/A (Tags: ...)
+    - 39m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 2] STOP: Ogród Saski (1001)
+  Coords (2180): 747764.48, 381620.76
+  Population (250m cell): 166
+  Nearest Transactions (RCN):
+    - 95m away: 12639 PLN/m2 (Total: 2500000 PLN, Area: 197.8 m2)
+    - 95m away: 1024 PLN/m2 (Total: 3170000 PLN, Area: 3094.37 m2)
+    - 95m away: 11978 PLN/m2 (Total: 2150000 PLN, Area: 179.49 m2)
+  Nearest Infrastructure (OSM):
+    - 7m away: POI ID N/A (Tags: ...)
+    - 8m away: POI ID N/A (Tags: ...)
+    - 12m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 3] STOP: Ogród Saski (1003)
+  Coords (2180): 747703.39, 381655.23
+  Population (250m cell): 166
+  Nearest Transactions (RCN):
+    - 57m away: 25213 PLN/m2 (Total: 3170000 PLN, Area: 125.73 m2)
+    - 57m away: 12639 PLN/m2 (Total: 2500000 PLN, Area: 197.8 m2)
+    - 57m away: 11978 PLN/m2 (Total: 2150000 PLN, Area: 179.49 m2)
+  Nearest Infrastructure (OSM):
+    - 8m away: POI ID N/A (Tags: ...)
+    - 9m away: POI ID N/A (Tags: ...)
+    - 9m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 4] STOP: Krakowskie Przedmieście (1012)
+  Coords (2180): 747860.83, 381656.73
+  Population (250m cell): 338
+  Nearest Transactions (RCN):
+    - 86m away: 15046 PLN/m2 (Total: 325000 PLN, Area: 21.6 m2)
+    - 86m away: 12652 PLN/m2 (Total: 730000 PLN, Area: 57.7 m2)
+    - 112m away: 160 PLN/m2 (Total: 608000 PLN, Area: 3795.12 m2)
+  Nearest Infrastructure (OSM):
+    - 4m away: POI ID N/A (Tags: ...)
+    - 7m away: POI ID N/A (Tags: ...)
+    - 8m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 5] STOP: Krakowskie Przedmieście (1014)
+  Coords (2180): 747919.48, 381659.57
+  Population (250m cell): 338
+  Nearest Transactions (RCN):
+    - 116m away: 12577 PLN/m2 (Total: 246000 PLN, Area: 19.56 m2)
+    - 116m away: 12232 PLN/m2 (Total: 320000 PLN, Area: 26.16 m2)
+    - 116m away: 11120 PLN/m2 (Total: 290000 PLN, Area: 26.08 m2)
+  Nearest Infrastructure (OSM):
+    - 11m away: POI ID N/A (Tags: ...)
+    - 13m away: POI ID N/A (Tags: ...)
+    - 13m away: POI ID N/A (Tags: ...)
+--------------------
+
+CITY: OLSZTYN
+==================================================
+
+[SAMPLE 1] STOP: Redykajny (Hozjusza) (1)
+  Coords (2180): 594757.59, 661552.74
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 443m away: 10099 PLN/m2 (Total: 410000 PLN, Area: 40.6 m2)
+    - 443m away: 8629 PLN/m2 (Total: 340000 PLN, Area: 39.4 m2)
+    - 443m away: 8535 PLN/m2 (Total: 338000 PLN, Area: 39.6 m2)
+  Nearest Infrastructure (OSM):
+    - 22m away: POI ID N/A (Tags: ...)
+    - 204m away: POI ID N/A (Tags: ...)
+    - 212m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 2] STOP: Św. Arnolda (Hozjusza) (2)
+  Coords (2180): 594837.94, 661356.17
+  Population (250m cell): 83
+  Nearest Transactions (RCN):
+    - 260m away: 8535 PLN/m2 (Total: 338000 PLN, Area: 39.6 m2)
+    - 260m away: 8629 PLN/m2 (Total: 340000 PLN, Area: 39.4 m2)
+    - 260m away: 10099 PLN/m2 (Total: 410000 PLN, Area: 40.6 m2)
+  Nearest Infrastructure (OSM):
+    - 10m away: POI ID N/A (Tags: ...)
+    - 11m away: POI ID N/A (Tags: ...)
+    - 60m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 3] STOP: Św. Arnolda (Hozjusza) (3)
+  Coords (2180): 594879.63, 661282.74
+  Population (250m cell): 83
+  Nearest Transactions (RCN):
+    - 206m away: 8795 PLN/m2 (Total: 635000 PLN, Area: 72.2 m2)
+    - 213m away: 8535 PLN/m2 (Total: 338000 PLN, Area: 39.6 m2)
+    - 213m away: 10099 PLN/m2 (Total: 410000 PLN, Area: 40.6 m2)
+  Nearest Infrastructure (OSM):
+    - 4m away: POI ID N/A (Tags: ...)
+    - 74m away: POI ID N/A (Tags: ...)
+    - 84m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 4] STOP: Jemioły (Hozjusza) (4)
+  Coords (2180): 594914.44, 660997.39
+  Population (250m cell): 51
+  Nearest Transactions (RCN):
+    - 150m away: 8795 PLN/m2 (Total: 635000 PLN, Area: 72.2 m2)
+    - 194m away: 8535 PLN/m2 (Total: 338000 PLN, Area: 39.6 m2)
+    - 194m away: 8629 PLN/m2 (Total: 340000 PLN, Area: 39.4 m2)
+  Nearest Infrastructure (OSM):
+    - 15m away: POI ID N/A (Tags: ...)
+    - 41m away: POI ID N/A (Tags: ...)
+    - 83m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 5] STOP: Jemioły (Hozjusza) (5)
+  Coords (2180): 594918.21, 661034.39
+  Population (250m cell): 51
+  Nearest Transactions (RCN):
+    - 133m away: 8795 PLN/m2 (Total: 635000 PLN, Area: 72.2 m2)
+    - 179m away: 10099 PLN/m2 (Total: 410000 PLN, Area: 40.6 m2)
+    - 179m away: 8629 PLN/m2 (Total: 340000 PLN, Area: 39.4 m2)
+  Nearest Infrastructure (OSM):
+    - 4m away: POI ID N/A (Tags: ...)
+    - 43m away: POI ID N/A (Tags: ...)
+    - 47m away: POI ID N/A (Tags: ...)
+--------------------
+
+CITY: OPOLE
+==================================================
+
+[SAMPLE 1] STOP: 1 Maja - Dworzec Główny (2) (2)
+  Coords (2180): 424297.26, 311242.10
+  Population (250m cell): 625
+  Nearest Transactions (RCN):
+    - 26m away: 7498 PLN/m2 (Total: 565000 PLN, Area: 75.35 m2)
+    - 46m away: 16884 PLN/m2 (Total: 2178000 PLN, Area: 129.0 m2)
+    - 51m away: 7213 PLN/m2 (Total: 515000 PLN, Area: 71.4 m2)
+  Nearest Infrastructure (OSM):
+    - 5m away: POI ID N/A (Tags: ...)
+    - 7m away: POI ID N/A (Tags: ...)
+    - 11m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 2] STOP: 1 Maja - Dworzec Główny (1) (1)
+  Coords (2180): 424309.44, 311253.71
+  Population (250m cell): 625
+  Nearest Transactions (RCN):
+    - 11m away: 7498 PLN/m2 (Total: 565000 PLN, Area: 75.35 m2)
+    - 44m away: 7213 PLN/m2 (Total: 515000 PLN, Area: 71.4 m2)
+    - 44m away: 7674 PLN/m2 (Total: 545000 PLN, Area: 71.02 m2)
+  Nearest Infrastructure (OSM):
+    - 8m away: POI ID N/A (Tags: ...)
+    - 10m away: POI ID N/A (Tags: ...)
+    - 16m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 3] STOP: 1 Maja - Kasprowicza (3) (3)
+  Coords (2180): 425476.58, 311367.60
+  Population (250m cell): 91
+  Nearest Transactions (RCN):
+    - 13m away: 6546 PLN/m2 (Total: 410000 PLN, Area: 62.63 m2)
+    - 13m away: 11943 PLN/m2 (Total: 748000 PLN, Area: 62.63 m2)
+    - 34m away: 10213 PLN/m2 (Total: 335000 PLN, Area: 32.8 m2)
+  Nearest Infrastructure (OSM):
+    - 16m away: POI ID N/A (Tags: ...)
+    - 20m away: POI ID N/A (Tags: ...)
+    - 21m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 4] STOP: 1 Maja - Kasprowicza (4) (4)
+  Coords (2180): 425416.79, 311337.54
+  Population (250m cell): 1000
+  Nearest Transactions (RCN):
+    - 32m away: 10127 PLN/m2 (Total: 575000 PLN, Area: 56.78 m2)
+    - 50m away: 3251 PLN/m2 (Total: 173331 PLN, Area: 53.31 m2)
+    - 65m away: 7135 PLN/m2 (Total: 347396 PLN, Area: 48.69 m2)
+  Nearest Infrastructure (OSM):
+    - 2m away: POI ID N/A (Tags: ...)
+    - 9m away: POI ID N/A (Tags: ...)
+    - 10m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 5] STOP: 1 Maja - Katowicka (6) (6)
+  Coords (2180): 424743.33, 311272.47
+  Population (250m cell): 339
+  Nearest Transactions (RCN):
+    - 26m away: 9863 PLN/m2 (Total: 360000 PLN, Area: 36.5 m2)
+    - 26m away: 8531 PLN/m2 (Total: 360000 PLN, Area: 42.2 m2)
+    - 32m away: 8905 PLN/m2 (Total: 375000 PLN, Area: 42.11 m2)
+  Nearest Infrastructure (OSM):
+    - 7m away: POI ID N/A (Tags: ...)
+    - 7m away: POI ID N/A (Tags: ...)
+    - 13m away: POI ID N/A (Tags: ...)
+--------------------
+
+CITY: POZNAN
+==================================================
+
+[SAMPLE 1] STOP: Kórnik - Bnin Osiedle (KDBOS01)
+  Coords (2180): 369365.14, 485813.43
+  Population (250m cell): 613
+  Nearest Transactions (RCN):
+    - 127m away: 6716 PLN/m2 (Total: 400000 PLN, Area: 59.56 m2)
+    - 241m away: 6417 PLN/m2 (Total: 499000 PLN, Area: 77.76 m2)
+    - 307m away: 9091 PLN/m2 (Total: 680000 PLN, Area: 74.8 m2)
+  Nearest Infrastructure (OSM):
+    - 1m away: POI ID N/A (Tags: ...)
+    - 8m away: POI ID N/A (Tags: ...)
+    - 13m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 2] STOP: Kórnik - Błażejewska (KDBLA01)
+  Coords (2180): 369853.15, 486336.49
+  Population (250m cell): 123
+  Nearest Transactions (RCN):
+    - 450m away: 4245 PLN/m2 (Total: 188000 PLN, Area: 44.29 m2)
+    - 450m away: 4164 PLN/m2 (Total: 176000 PLN, Area: 42.27 m2)
+    - 592m away: 6716 PLN/m2 (Total: 400000 PLN, Area: 59.56 m2)
+  Nearest Infrastructure (OSM):
+    - 8m away: POI ID N/A (Tags: ...)
+    - 9m away: POI ID N/A (Tags: ...)
+    - 36m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 3] STOP: Kórnik - Błażejewska (KDBLA02)
+  Coords (2180): 369826.80, 486412.62
+  Population (250m cell): 123
+  Nearest Transactions (RCN):
+    - 386m away: 4245 PLN/m2 (Total: 188000 PLN, Area: 44.29 m2)
+    - 386m away: 4164 PLN/m2 (Total: 176000 PLN, Area: 42.27 m2)
+    - 605m away: 9027 PLN/m2 (Total: 630000 PLN, Area: 69.79 m2)
+  Nearest Infrastructure (OSM):
+    - 4m away: POI ID N/A (Tags: ...)
+    - 5m away: POI ID N/A (Tags: ...)
+    - 10m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 4] STOP: Kórnik - Parkowa-Instytut (KDINS02)
+  Coords (2180): 370062.26, 488264.95
+  Population (250m cell): 63
+  Nearest Transactions (RCN):
+    - 556m away: 2772 PLN/m2 (Total: 41500 PLN, Area: 14.97 m2)
+    - 556m away: 3073 PLN/m2 (Total: 46000 PLN, Area: 14.97 m2)
+    - 578m away: 2621 PLN/m2 (Total: 40000 PLN, Area: 15.26 m2)
+  Nearest Infrastructure (OSM):
+    - 4m away: POI ID N/A (Tags: ...)
+    - 5m away: POI ID N/A (Tags: ...)
+    - 13m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 5] STOP: Kórnik - Pl. Niepodległości (KDNIE01)
+  Coords (2180): 369479.84, 488657.45
+  Population (250m cell): 71
+  Nearest Transactions (RCN):
+    - 53m away: 6692 PLN/m2 (Total: 710000 PLN, Area: 106.1 m2)
+    - 108m away: 15878 PLN/m2 (Total: 950000 PLN, Area: 59.83 m2)
+    - 108m away: 13838 PLN/m2 (Total: 950000 PLN, Area: 68.65 m2)
+  Nearest Infrastructure (OSM):
+    - 6m away: POI ID N/A (Tags: ...)
+    - 7m away: POI ID N/A (Tags: ...)
+    - 10m away: POI ID N/A (Tags: ...)
+--------------------
+
+CITY: PRZEMYSL
+==================================================
+
+[SAMPLE 1] STOP: Jagiellońska - PL. RYBI - Kier. Plac Na Bramie (1)
+  Coords (2180): 771332.29, 219792.68
+  Population (250m cell): 671
+  Nearest Transactions (RCN):
+    - 149m away: 4044 PLN/m2 (Total: 200000 PLN, Area: 49.46 m2)
+    - 195m away: 5127 PLN/m2 (Total: 106438 PLN, Area: 20.76 m2)
+    - 229m away: 3005 PLN/m2 (Total: 190000 PLN, Area: 63.23 m2)
+  Nearest Infrastructure (OSM):
+    - 14m away: POI ID N/A (Tags: ...)
+    - 15m away: POI ID N/A (Tags: ...)
+    - 18m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 2] STOP: 3 - GO MAJA - OS. Hoffmanowej - Kier. Żurawica (2)
+  Coords (2180): 771003.22, 220183.81
+  Population (250m cell): 495
+  Nearest Transactions (RCN):
+    - 68m away: 5945 PLN/m2 (Total: 283000 PLN, Area: 47.6 m2)
+    - 68m away: 6870 PLN/m2 (Total: 327000 PLN, Area: 47.6 m2)
+    - 157m away: 6628 PLN/m2 (Total: 460000 PLN, Area: 69.4 m2)
+  Nearest Infrastructure (OSM):
+    - 2m away: POI ID N/A (Tags: ...)
+    - 6m away: POI ID N/A (Tags: ...)
+    - 12m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 3] STOP: 3 - GO MAJA - DOM Handlowy - Kier. Centrum (3)
+  Coords (2180): 770993.48, 220191.12
+  Population (250m cell): 495
+  Nearest Transactions (RCN):
+    - 80m away: 5945 PLN/m2 (Total: 283000 PLN, Area: 47.6 m2)
+    - 80m away: 6870 PLN/m2 (Total: 327000 PLN, Area: 47.6 m2)
+    - 144m away: 6628 PLN/m2 (Total: 460000 PLN, Area: 69.4 m2)
+  Nearest Infrastructure (OSM):
+    - 4m away: POI ID N/A (Tags: ...)
+    - 9m away: POI ID N/A (Tags: ...)
+    - 11m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 4] STOP: Jagiellońska - PL. Pileckiego - Kier. Zasanie (4)
+  Coords (2180): 771386.42, 219777.58
+  Population (250m cell): 671
+  Nearest Transactions (RCN):
+    - 171m away: 4044 PLN/m2 (Total: 200000 PLN, Area: 49.46 m2)
+    - 173m away: 6619 PLN/m2 (Total: 195000 PLN, Area: 29.46 m2)
+    - 173m away: 3005 PLN/m2 (Total: 190000 PLN, Area: 63.23 m2)
+  Nearest Infrastructure (OSM):
+    - 19m away: POI ID N/A (Tags: ...)
+    - 24m away: POI ID N/A (Tags: ...)
+    - 26m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 5] STOP: Jagiellońska - PL. Pileckiego - Końcowy (6)
+  Coords (2180): 771386.42, 219777.58
+  Population (250m cell): 671
+  Nearest Transactions (RCN):
+    - 171m away: 4044 PLN/m2 (Total: 200000 PLN, Area: 49.46 m2)
+    - 173m away: 6619 PLN/m2 (Total: 195000 PLN, Area: 29.46 m2)
+    - 173m away: 3005 PLN/m2 (Total: 190000 PLN, Area: 63.23 m2)
+  Nearest Infrastructure (OSM):
+    - 19m away: POI ID N/A (Tags: ...)
+    - 24m away: POI ID N/A (Tags: ...)
+    - 26m away: POI ID N/A (Tags: ...)
+--------------------
+
+CITY: RADOM
+==================================================
+
+[SAMPLE 1] STOP: Witosa / Warszawska (2)
+  Coords (2180): 648881.76, 400579.75
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 1157m away: 5715 PLN/m2 (Total: 360000 PLN, Area: 62.99 m2)
+    - 1647m away: 5136 PLN/m2 (Total: 650000 PLN, Area: 126.55 m2)
+    - 1663m away: 5729 PLN/m2 (Total: 725000 PLN, Area: 126.55 m2)
+  Nearest Infrastructure (OSM):
+    - 4m away: POI ID N/A (Tags: ...)
+    - 41m away: POI ID N/A (Tags: ...)
+    - 43m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 2] STOP: Witosa / Cmentarz (4)
+  Coords (2180): 649661.01, 401052.11
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 1813m away: 5715 PLN/m2 (Total: 360000 PLN, Area: 62.99 m2)
+    - 2498m away: 5136 PLN/m2 (Total: 650000 PLN, Area: 126.55 m2)
+    - 2511m away: 5729 PLN/m2 (Total: 725000 PLN, Area: 126.55 m2)
+  Nearest Infrastructure (OSM):
+    - 9m away: POI ID N/A (Tags: ...)
+    - 37m away: POI ID N/A (Tags: ...)
+    - 40m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 3] STOP: Warszawska / Barlickiego (5)
+  Coords (2180): 648903.42, 400219.92
+  Population (250m cell): 77
+  Nearest Transactions (RCN):
+    - 798m away: 5715 PLN/m2 (Total: 360000 PLN, Area: 62.99 m2)
+    - 1373m away: 5136 PLN/m2 (Total: 650000 PLN, Area: 126.55 m2)
+    - 1386m away: 5729 PLN/m2 (Total: 725000 PLN, Area: 126.55 m2)
+  Nearest Infrastructure (OSM):
+    - 8m away: POI ID N/A (Tags: ...)
+    - 8m away: POI ID N/A (Tags: ...)
+    - 11m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 4] STOP: Warszawska / Ofiar Firleja (6)
+  Coords (2180): 649034.32, 399619.62
+  Population (250m cell): 110
+  Nearest Transactions (RCN):
+    - 259m away: 5715 PLN/m2 (Total: 360000 PLN, Area: 62.99 m2)
+    - 1126m away: 5136 PLN/m2 (Total: 650000 PLN, Area: 126.55 m2)
+    - 1130m away: 5729 PLN/m2 (Total: 725000 PLN, Area: 126.55 m2)
+  Nearest Infrastructure (OSM):
+    - 4m away: POI ID N/A (Tags: ...)
+    - 8m away: POI ID N/A (Tags: ...)
+    - 38m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 5] STOP: Ofiar Firleja / Gombrowicza (7)
+  Coords (2180): 649330.38, 399789.63
+  Population (250m cell): 31
+  Nearest Transactions (RCN):
+    - 592m away: 5715 PLN/m2 (Total: 360000 PLN, Area: 62.99 m2)
+    - 1466m away: 5136 PLN/m2 (Total: 650000 PLN, Area: 126.55 m2)
+    - 1470m away: 5729 PLN/m2 (Total: 725000 PLN, Area: 126.55 m2)
+  Nearest Infrastructure (OSM):
+    - 4m away: POI ID N/A (Tags: ...)
+    - 16m away: POI ID N/A (Tags: ...)
+    - 22m away: POI ID N/A (Tags: ...)
+--------------------
+
+CITY: RZESZOW
+==================================================
+
+[SAMPLE 1] STOP: Gwoźnica Górna 24 (1)
+  Coords (2180): 715944.93, 221012.91
+  Population (250m cell): 23
+  Nearest Transactions (RCN):
+    - 9019m away: 243 PLN/m2 (Total: 10000 PLN, Area: 41.2 m2)
+    - 9019m away: 109 PLN/m2 (Total: 40000 PLN, Area: 366.77 m2)
+    - 9791m away: 2540 PLN/m2 (Total: 170000 PLN, Area: 66.94 m2)
+  Nearest Infrastructure (OSM):
+    - 0m away: POI ID N/A (Tags: ...)
+    - 171m away: POI ID N/A (Tags: ...)
+    - 181m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 2] STOP: Gwoźnica Górna poczta 21 (2)
+  Coords (2180): 715565.13, 221973.27
+  Population (250m cell): 17
+  Nearest Transactions (RCN):
+    - 8760m away: 2540 PLN/m2 (Total: 170000 PLN, Area: 66.94 m2)
+    - 9628m away: 3581 PLN/m2 (Total: 265000 PLN, Area: 74.0 m2)
+    - 9686m away: 243 PLN/m2 (Total: 10000 PLN, Area: 41.2 m2)
+  Nearest Infrastructure (OSM):
+    - 0m away: POI ID N/A (Tags: ...)
+    - 15m away: POI ID N/A (Tags: ...)
+    - 34m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 3] STOP: Gwoźnica Górna poczta 22 (3)
+  Coords (2180): 715550.28, 221974.21
+  Population (250m cell): 17
+  Nearest Transactions (RCN):
+    - 8753m away: 2540 PLN/m2 (Total: 170000 PLN, Area: 66.94 m2)
+    - 9639m away: 3581 PLN/m2 (Total: 265000 PLN, Area: 74.0 m2)
+    - 9680m away: 109 PLN/m2 (Total: 40000 PLN, Area: 366.77 m2)
+  Nearest Infrastructure (OSM):
+    - 0m away: POI ID N/A (Tags: ...)
+    - 15m away: POI ID N/A (Tags: ...)
+    - 34m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 4] STOP: Gwoźnica Górna szkoła 19 (4)
+  Coords (2180): 715513.47, 222384.94
+  Population (250m cell): 25
+  Nearest Transactions (RCN):
+    - 8365m away: 2540 PLN/m2 (Total: 170000 PLN, Area: 66.94 m2)
+    - 9390m away: 3581 PLN/m2 (Total: 265000 PLN, Area: 74.0 m2)
+    - 10037m away: 243 PLN/m2 (Total: 10000 PLN, Area: 41.2 m2)
+  Nearest Infrastructure (OSM):
+    - 0m away: POI ID N/A (Tags: ...)
+    - 10m away: POI ID N/A (Tags: ...)
+    - 104m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 5] STOP: Gwoźnica Górna szkoła 20 (5)
+  Coords (2180): 715436.29, 222455.07
+  Population (250m cell): 17
+  Nearest Transactions (RCN):
+    - 8269m away: 2540 PLN/m2 (Total: 170000 PLN, Area: 66.94 m2)
+    - 9403m away: 3581 PLN/m2 (Total: 265000 PLN, Area: 74.0 m2)
+    - 10069m away: 243 PLN/m2 (Total: 10000 PLN, Area: 41.2 m2)
+  Nearest Infrastructure (OSM):
+    - 0m away: POI ID N/A (Tags: ...)
+    - 11m away: POI ID N/A (Tags: ...)
+    - 36m away: POI ID N/A (Tags: ...)
+--------------------
+
+CITY: SUWALKI
+==================================================
+
+[SAMPLE 1] STOP: Północna / Różana (02) (1)
+  Coords (2180): 758323.56, 701102.48
+  Population (250m cell): 189
+  Nearest Transactions (RCN):
+    - 108m away: 531 PLN/m2 (Total: 428000 PLN, Area: 805.41 m2)
+    - 108m away: 536 PLN/m2 (Total: 432000 PLN, Area: 805.41 m2)
+    - 108m away: 670 PLN/m2 (Total: 540000 PLN, Area: 805.41 m2)
+  Nearest Infrastructure (OSM):
+    - 1m away: POI ID N/A (Tags: ...)
+    - 8m away: POI ID N/A (Tags: ...)
+    - 15m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 2] STOP: Dwernickiego / Plaza (01) (2)
+  Coords (2180): 757003.02, 700757.81
+  Population (250m cell): 91
+  Nearest Transactions (RCN):
+    - 96m away: 8201 PLN/m2 (Total: 299000 PLN, Area: 36.46 m2)
+    - 133m away: 5994 PLN/m2 (Total: 422000 PLN, Area: 70.4 m2)
+    - 133m away: 3766 PLN/m2 (Total: 225000 PLN, Area: 59.74 m2)
+  Nearest Infrastructure (OSM):
+    - 9m away: POI ID N/A (Tags: ...)
+    - 9m away: POI ID N/A (Tags: ...)
+    - 12m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 3] STOP: Noniewicza / Stokrotka (05) (3)
+  Coords (2180): 756937.62, 700579.12
+  Population (250m cell): 168
+  Nearest Transactions (RCN):
+    - 48m away: 5516 PLN/m2 (Total: 200000 PLN, Area: 36.26 m2)
+    - 112m away: 8201 PLN/m2 (Total: 299000 PLN, Area: 36.46 m2)
+    - 114m away: 10113 PLN/m2 (Total: 1600000 PLN, Area: 158.22 m2)
+  Nearest Infrastructure (OSM):
+    - 10m away: POI ID N/A (Tags: ...)
+    - 14m away: POI ID N/A (Tags: ...)
+    - 16m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 4] STOP: Północna / Fabryka Mebli (03) (4)
+  Coords (2180): 758502.46, 701288.66
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 287m away: 3968 PLN/m2 (Total: 250000 PLN, Area: 63.0 m2)
+    - 335m away: 4806 PLN/m2 (Total: 360000 PLN, Area: 74.9 m2)
+    - 356m away: 621 PLN/m2 (Total: 500000 PLN, Area: 805.41 m2)
+  Nearest Infrastructure (OSM):
+    - 6m away: POI ID N/A (Tags: ...)
+    - 12m away: POI ID N/A (Tags: ...)
+    - 53m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 5] STOP: Jana Pawła II / SOK (01) (5)
+  Coords (2180): 757292.92, 701292.40
+  Population (250m cell): 398
+  Nearest Transactions (RCN):
+    - 49m away: 7370 PLN/m2 (Total: 410000 PLN, Area: 55.63 m2)
+    - 93m away: 8726 PLN/m2 (Total: 600000 PLN, Area: 68.76 m2)
+    - 93m away: 8074 PLN/m2 (Total: 550000 PLN, Area: 68.12 m2)
+  Nearest Infrastructure (OSM):
+    - 5m away: POI ID N/A (Tags: ...)
+    - 9m away: POI ID N/A (Tags: ...)
+    - 18m away: POI ID N/A (Tags: ...)
+--------------------
+
+CITY: SWINOUJSCIE
+==================================================
+
+[SAMPLE 1] STOP: 1 Maja - Dom Kultury (1)
+  Coords (2180): 191787.62, 675730.42
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 5566m away: 9683 PLN/m2 (Total: 470000 PLN, Area: 48.54 m2)
+    - 5566m away: 12945 PLN/m2 (Total: 495000 PLN, Area: 38.24 m2)
+    - 5566m away: 10342 PLN/m2 (Total: 450000 PLN, Area: 43.51 m2)
+  Nearest Infrastructure (OSM):
+    - 7m away: POI ID N/A (Tags: ...)
+    - 10m away: POI ID N/A (Tags: ...)
+    - 16m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 2] STOP: 1 Maja - Dom Kultury (2)
+  Coords (2180): 191795.54, 675738.38
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 5560m away: 9683 PLN/m2 (Total: 470000 PLN, Area: 48.54 m2)
+    - 5560m away: 12945 PLN/m2 (Total: 495000 PLN, Area: 38.24 m2)
+    - 5560m away: 10342 PLN/m2 (Total: 450000 PLN, Area: 43.51 m2)
+  Nearest Infrastructure (OSM):
+    - 6m away: POI ID N/A (Tags: ...)
+    - 8m away: POI ID N/A (Tags: ...)
+    - 9m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 3] STOP: 1 Maja / I Armii Wojska Polskiego (3)
+  Coords (2180): 191352.79, 675701.21
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 5515m away: 9814 PLN/m2 (Total: 428000 PLN, Area: 43.61 m2)
+    - 5515m away: 10342 PLN/m2 (Total: 450000 PLN, Area: 43.51 m2)
+    - 5515m away: 9683 PLN/m2 (Total: 470000 PLN, Area: 48.54 m2)
+  Nearest Infrastructure (OSM):
+    - 14m away: POI ID N/A (Tags: ...)
+    - 14m away: POI ID N/A (Tags: ...)
+    - 16m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 4] STOP: 1 Maja / I Armii Wojska Polskiego (7)
+  Coords (2180): 191291.71, 675718.43
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 5489m away: 12945 PLN/m2 (Total: 495000 PLN, Area: 38.24 m2)
+    - 5489m away: 9683 PLN/m2 (Total: 470000 PLN, Area: 48.54 m2)
+    - 5489m away: 9814 PLN/m2 (Total: 428000 PLN, Area: 43.61 m2)
+  Nearest Infrastructure (OSM):
+    - 0m away: POI ID N/A (Tags: ...)
+    - 9m away: POI ID N/A (Tags: ...)
+    - 15m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 5] STOP: 1 Maja - kościół (4)
+  Coords (2180): 192624.92, 675628.17
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 5906m away: 12945 PLN/m2 (Total: 495000 PLN, Area: 38.24 m2)
+    - 5906m away: 10342 PLN/m2 (Total: 450000 PLN, Area: 43.51 m2)
+    - 5906m away: 9814 PLN/m2 (Total: 428000 PLN, Area: 43.61 m2)
+  Nearest Infrastructure (OSM):
+    - 4m away: POI ID N/A (Tags: ...)
+    - 6m away: POI ID N/A (Tags: ...)
+    - 12m away: POI ID N/A (Tags: ...)
+--------------------
+
+CITY: SZCZECIN
+==================================================
+
+[SAMPLE 1] STOP: Turzyn Dworzec 11 (10111)
+  Coords (2180): 202988.53, 627471.68
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 295m away: 8669 PLN/m2 (Total: 170000 PLN, Area: 19.61 m2)
+    - 322m away: 4821 PLN/m2 (Total: 70000 PLN, Area: 14.52 m2)
+    - 339m away: 6237 PLN/m2 (Total: 310000 PLN, Area: 49.7 m2)
+  Nearest Infrastructure (OSM):
+    - 8m away: POI ID N/A (Tags: ...)
+    - 8m away: POI ID N/A (Tags: ...)
+    - 10m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 2] STOP: Turzyn Dworzec 12 (10112)
+  Coords (2180): 203140.89, 627411.02
+  Population (250m cell): 4
+  Nearest Transactions (RCN):
+    - 227m away: 8569 PLN/m2 (Total: 406000 PLN, Area: 47.38 m2)
+    - 227m away: 8412 PLN/m2 (Total: 337000 PLN, Area: 40.06 m2)
+    - 241m away: 5926 PLN/m2 (Total: 515000 PLN, Area: 86.91 m2)
+  Nearest Infrastructure (OSM):
+    - 9m away: POI ID N/A (Tags: ...)
+    - 10m away: POI ID N/A (Tags: ...)
+    - 10m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 3] STOP: Turzyn 11 (10211)
+  Coords (2180): 203302.47, 627541.66
+  Population (250m cell): 711
+  Nearest Transactions (RCN):
+    - 120m away: 8669 PLN/m2 (Total: 170000 PLN, Area: 19.61 m2)
+    - 154m away: 5242 PLN/m2 (Total: 450000 PLN, Area: 85.84 m2)
+    - 156m away: 5926 PLN/m2 (Total: 515000 PLN, Area: 86.91 m2)
+  Nearest Infrastructure (OSM):
+    - 3m away: POI ID N/A (Tags: ...)
+    - 3m away: POI ID N/A (Tags: ...)
+    - 14m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 4] STOP: Turzyn 12 (10212)
+  Coords (2180): 203300.01, 627468.52
+  Population (250m cell): 711
+  Nearest Transactions (RCN):
+    - 103m away: 5926 PLN/m2 (Total: 515000 PLN, Area: 86.91 m2)
+    - 125m away: 8412 PLN/m2 (Total: 337000 PLN, Area: 40.06 m2)
+    - 125m away: 8569 PLN/m2 (Total: 406000 PLN, Area: 47.38 m2)
+  Nearest Infrastructure (OSM):
+    - 5m away: POI ID N/A (Tags: ...)
+    - 12m away: POI ID N/A (Tags: ...)
+    - 19m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 5] STOP: Turzyn 21 (10221)
+  Coords (2180): 203343.90, 627392.92
+  Population (250m cell): 711
+  Nearest Transactions (RCN):
+    - 38m away: 8412 PLN/m2 (Total: 337000 PLN, Area: 40.06 m2)
+    - 38m away: 8569 PLN/m2 (Total: 406000 PLN, Area: 47.38 m2)
+    - 41m away: 5926 PLN/m2 (Total: 515000 PLN, Area: 86.91 m2)
+  Nearest Infrastructure (OSM):
+    - 1m away: POI ID N/A (Tags: ...)
+    - 3m away: POI ID N/A (Tags: ...)
+    - 10m away: POI ID N/A (Tags: ...)
+--------------------
+
+CITY: TORUN
+==================================================
+
+[SAMPLE 1] STOP: Kolankowskiego (12901)
+  Coords (2180): 479353.09, 573728.15
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 101m away: 3780 PLN/m2 (Total: 230000 PLN, Area: 60.84 m2)
+    - 101m away: 7314 PLN/m2 (Total: 445000 PLN, Area: 60.84 m2)
+    - 162m away: 8588 PLN/m2 (Total: 418000 PLN, Area: 48.67 m2)
+  Nearest Infrastructure (OSM):
+    - 3m away: POI ID N/A (Tags: ...)
+    - 4m away: POI ID N/A (Tags: ...)
+    - 8m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 2] STOP: Witosa (12802)
+  Coords (2180): 479043.69, 573408.86
+  Population (250m cell): 555
+  Nearest Transactions (RCN):
+    - 58m away: 10224 PLN/m2 (Total: 365000 PLN, Area: 35.7 m2)
+    - 74m away: 7896 PLN/m2 (Total: 280000 PLN, Area: 35.46 m2)
+    - 106m away: 9864 PLN/m2 (Total: 355000 PLN, Area: 35.99 m2)
+  Nearest Infrastructure (OSM):
+    - 1m away: POI ID N/A (Tags: ...)
+    - 8m away: POI ID N/A (Tags: ...)
+    - 27m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 3] STOP: Ligi Polskiej (11804)
+  Coords (2180): 479079.37, 573087.48
+  Population (250m cell): 605
+  Nearest Transactions (RCN):
+    - 64m away: 7348 PLN/m2 (Total: 358000 PLN, Area: 48.72 m2)
+    - 83m away: 7862 PLN/m2 (Total: 625000 PLN, Area: 79.5 m2)
+    - 204m away: 8031 PLN/m2 (Total: 585000 PLN, Area: 72.84 m2)
+  Nearest Infrastructure (OSM):
+    - 3m away: POI ID N/A (Tags: ...)
+    - 10m away: POI ID N/A (Tags: ...)
+    - 26m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 4] STOP: Wyszyńskiego (12004)
+  Coords (2180): 478684.45, 573158.11
+  Population (250m cell): 1426
+  Nearest Transactions (RCN):
+    - 70m away: 8575 PLN/m2 (Total: 325000 PLN, Area: 37.9 m2)
+    - 156m away: 8354 PLN/m2 (Total: 298000 PLN, Area: 35.67 m2)
+    - 182m away: 6593 PLN/m2 (Total: 480000 PLN, Area: 72.8 m2)
+  Nearest Infrastructure (OSM):
+    - 3m away: POI ID N/A (Tags: ...)
+    - 11m away: POI ID N/A (Tags: ...)
+    - 24m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 5] STOP: Ślaskiego (12102)
+  Coords (2180): 478265.67, 573196.68
+  Population (250m cell): 710
+  Nearest Transactions (RCN):
+    - 103m away: 9973 PLN/m2 (Total: 365000 PLN, Area: 36.6 m2)
+    - 122m away: 6996 PLN/m2 (Total: 340000 PLN, Area: 48.6 m2)
+    - 127m away: 7778 PLN/m2 (Total: 280000 PLN, Area: 36.0 m2)
+  Nearest Infrastructure (OSM):
+    - 3m away: POI ID N/A (Tags: ...)
+    - 4m away: POI ID N/A (Tags: ...)
+    - 6m away: POI ID N/A (Tags: ...)
+--------------------
+
+CITY: TROJMIASTO
+==================================================
+
+[SAMPLE 1] STOP: Anyżowa 02 (30102)
+  Coords (2180): 465575.78, 734654.02
+  Population (250m cell): 329
+  Nearest Transactions (RCN):
+    - 147m away: 10867 PLN/m2 (Total: 515000 PLN, Area: 47.39 m2)
+    - 276m away: 80925 PLN/m2 (Total: 700000 PLN, Area: 8.65 m2)
+    - 276m away: 129480 PLN/m2 (Total: 1120000 PLN, Area: 8.65 m2)
+  Nearest Infrastructure (OSM):
+    - 9m away: POI ID N/A (Tags: ...)
+    - 14m away: POI ID N/A (Tags: ...)
+    - 26m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 2] STOP: Dąbrowa Centrum 02 (30103)
+  Coords (2180): 465292.87, 734639.72
+  Population (250m cell): 15
+  Nearest Transactions (RCN):
+    - 96m away: 12614 PLN/m2 (Total: 430000 PLN, Area: 34.09 m2)
+    - 96m away: 5507 PLN/m2 (Total: 95000 PLN, Area: 17.25 m2)
+    - 126m away: 4476 PLN/m2 (Total: 64000 PLN, Area: 14.3 m2)
+  Nearest Infrastructure (OSM):
+    - 3m away: POI ID N/A (Tags: ...)
+    - 4m away: POI ID N/A (Tags: ...)
+    - 6m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 3] STOP: Wiczlińska - Las 02 (30104)
+  Coords (2180): 464453.57, 735054.86
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 488m away: 9099 PLN/m2 (Total: 535000 PLN, Area: 58.8 m2)
+    - 657m away: 8003 PLN/m2 (Total: 1010000 PLN, Area: 126.2 m2)
+    - 708m away: 7849 PLN/m2 (Total: 715000 PLN, Area: 91.09 m2)
+  Nearest Infrastructure (OSM):
+    - 4m away: POI ID N/A (Tags: ...)
+    - 38m away: POI ID N/A (Tags: ...)
+    - 57m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 4] STOP: Wiczlino Działki II 02 (30105)
+  Coords (2180): 463894.30, 735382.93
+  Population (250m cell): 53
+  Nearest Transactions (RCN):
+    - 628m away: 12394 PLN/m2 (Total: 1099214 PLN, Area: 88.69 m2)
+    - 629m away: 10893 PLN/m2 (Total: 960000 PLN, Area: 88.13 m2)
+    - 641m away: 12347 PLN/m2 (Total: 1096000 PLN, Area: 88.77 m2)
+  Nearest Infrastructure (OSM):
+    - 32m away: POI ID N/A (Tags: ...)
+    - 37m away: POI ID N/A (Tags: ...)
+    - 41m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 5] STOP: Wiczlino Działki I 02 (30106)
+  Coords (2180): 463556.56, 735460.43
+  Population (250m cell): 76
+  Nearest Transactions (RCN):
+    - 479m away: 12034 PLN/m2 (Total: 930000 PLN, Area: 77.28 m2)
+    - 569m away: 11647 PLN/m2 (Total: 739000 PLN, Area: 63.45 m2)
+    - 607m away: 12470 PLN/m2 (Total: 717500 PLN, Area: 57.54 m2)
+  Nearest Infrastructure (OSM):
+    - 6m away: POI ID N/A (Tags: ...)
+    - 18m away: POI ID N/A (Tags: ...)
+    - 20m away: POI ID N/A (Tags: ...)
+--------------------
+
+CITY: WARSZAWA
+==================================================
+
+[SAMPLE 1] STOP: Łosie, Łosie-pętla (122)
+  Coords (2180): 648253.34, 512329.53
+  Population (250m cell): 5
+  Nearest Transactions (RCN):
+    - 7210m away: 6996 PLN/m2 (Total: 695000 PLN, Area: 99.34 m2)
+    - 7210m away: 7097 PLN/m2 (Total: 705000 PLN, Area: 99.34 m2)
+    - 7906m away: 6226 PLN/m2 (Total: 700500 PLN, Area: 112.51 m2)
+  Nearest Infrastructure (OSM):
+    - 37m away: POI ID N/A (Tags: ...)
+    - 75m away: POI ID N/A (Tags: ...)
+    - 89m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 2] STOP: Łosie, Sosnowa (123)
+  Coords (2180): 647417.73, 512423.71
+  Population (250m cell): 5
+  Nearest Transactions (RCN):
+    - 6724m away: 6996 PLN/m2 (Total: 695000 PLN, Area: 99.34 m2)
+    - 6724m away: 7097 PLN/m2 (Total: 705000 PLN, Area: 99.34 m2)
+    - 7163m away: 7774 PLN/m2 (Total: 1250000 PLN, Area: 160.8 m2)
+  Nearest Infrastructure (OSM):
+    - 61m away: POI ID N/A (Tags: ...)
+    - 126m away: POI ID N/A (Tags: ...)
+    - 131m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 3] STOP: Łosie, Jaworowa (120)
+  Coords (2180): 646518.81, 512912.27
+  Population (250m cell): 7
+  Nearest Transactions (RCN):
+    - 6208m away: 14689 PLN/m2 (Total: 1250000 PLN, Area: 85.1 m2)
+    - 6208m away: 7774 PLN/m2 (Total: 1250000 PLN, Area: 160.8 m2)
+    - 6619m away: 7097 PLN/m2 (Total: 705000 PLN, Area: 99.34 m2)
+  Nearest Infrastructure (OSM):
+    - 236m away: POI ID N/A (Tags: ...)
+    - 257m away: POI ID N/A (Tags: ...)
+    - 291m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 4] STOP: Łosie, Szyszkowa (125)
+  Coords (2180): 646169.97, 513007.40
+  Population (250m cell): 7
+  Nearest Transactions (RCN):
+    - 5851m away: 7774 PLN/m2 (Total: 1250000 PLN, Area: 160.8 m2)
+    - 5851m away: 14689 PLN/m2 (Total: 1250000 PLN, Area: 85.1 m2)
+    - 6536m away: 7097 PLN/m2 (Total: 705000 PLN, Area: 99.34 m2)
+  Nearest Infrastructure (OSM):
+    - 53m away: POI ID N/A (Tags: ...)
+    - 70m away: POI ID N/A (Tags: ...)
+    - 84m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 5] STOP: Ruda, Nadrzeczna (54)
+  Coords (2180): 645915.77, 512528.65
+  Population (250m cell): 59
+  Nearest Transactions (RCN):
+    - 5665m away: 7774 PLN/m2 (Total: 1250000 PLN, Area: 160.8 m2)
+    - 5665m away: 14689 PLN/m2 (Total: 1250000 PLN, Area: 85.1 m2)
+    - 5994m away: 6996 PLN/m2 (Total: 695000 PLN, Area: 99.34 m2)
+  Nearest Infrastructure (OSM):
+    - 124m away: POI ID N/A (Tags: ...)
+    - 144m away: POI ID N/A (Tags: ...)
+    - 148m away: POI ID N/A (Tags: ...)
+--------------------
+
+CITY: WROCLAW
+==================================================
+
+[SAMPLE 1] STOP: Kotowice - Ogrodowa (79)
+  Coords (2180): 375824.60, 352196.97
+  Population (250m cell): 4
+  Nearest Transactions (RCN):
+    - 454m away: 144 PLN/m2 (Total: 8200 PLN, Area: 57.0 m2)
+    - 2698m away: 8811 PLN/m2 (Total: 540000 PLN, Area: 61.29 m2)
+    - 2819m away: 5816 PLN/m2 (Total: 808000 PLN, Area: 138.93 m2)
+  Nearest Infrastructure (OSM):
+    - 16m away: POI ID N/A (Tags: ...)
+    - 18m away: POI ID N/A (Tags: ...)
+    - 22m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 2] STOP: Kotowice Główna/Cmentarna (76)
+  Coords (2180): 376086.08, 352084.53
+  Population (250m cell): 49
+  Nearest Transactions (RCN):
+    - 588m away: 144 PLN/m2 (Total: 8200 PLN, Area: 57.0 m2)
+    - 2795m away: 8811 PLN/m2 (Total: 540000 PLN, Area: 61.29 m2)
+    - 2947m away: 5816 PLN/m2 (Total: 808000 PLN, Area: 138.93 m2)
+  Nearest Infrastructure (OSM):
+    - 37m away: POI ID N/A (Tags: ...)
+    - 67m away: POI ID N/A (Tags: ...)
+    - 125m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 3] STOP: Kotowice - Główna (na wys. nr 6) (78)
+  Coords (2180): 375816.71, 352589.58
+  Population (250m cell): 11
+  Nearest Transactions (RCN):
+    - 103m away: 144 PLN/m2 (Total: 8200 PLN, Area: 57.0 m2)
+    - 2309m away: 8811 PLN/m2 (Total: 540000 PLN, Area: 61.29 m2)
+    - 2427m away: 5816 PLN/m2 (Total: 808000 PLN, Area: 138.93 m2)
+  Nearest Infrastructure (OSM):
+    - 17m away: POI ID N/A (Tags: ...)
+    - 19m away: POI ID N/A (Tags: ...)
+    - 21m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 4] STOP: Kotowice II - Spacerowa/Leśna (81)
+  Coords (2180): 375424.34, 352494.76
+  Population (250m cell): 41
+  Nearest Transactions (RCN):
+    - 502m away: 144 PLN/m2 (Total: 8200 PLN, Area: 57.0 m2)
+    - 2483m away: 8811 PLN/m2 (Total: 540000 PLN, Area: 61.29 m2)
+    - 2546m away: 5816 PLN/m2 (Total: 808000 PLN, Area: 138.93 m2)
+  Nearest Infrastructure (OSM):
+    - 4m away: POI ID N/A (Tags: ...)
+    - 15m away: POI ID N/A (Tags: ...)
+    - 20m away: POI ID N/A (Tags: ...)
+--------------------
+
+[SAMPLE 5] STOP: Durok - skrzy. (obr. Groblice) (59)
+  Coords (2180): 373612.34, 351267.29
+  Population (250m cell): 0
+  Nearest Transactions (RCN):
+    - 1159m away: 10823 PLN/m2 (Total: 485000 PLN, Area: 44.81 m2)
+    - 1159m away: 6695 PLN/m2 (Total: 300000 PLN, Area: 44.81 m2)
+    - 1170m away: 8726 PLN/m2 (Total: 450000 PLN, Area: 51.57 m2)
+  Nearest Infrastructure (OSM):
+    - 3m away: POI ID N/A (Tags: ...)
+    - 15m away: POI ID N/A (Tags: ...)
+    - 18m away: POI ID N/A (Tags: ...)
+--------------------
+

@@ -1,0 +1,159 @@
+STRUCTURAL HUB AUDIT 6.2 - HYBRID VERIFICATION
+Logic: Technical Tags + Name-based Safety Net for T0/T1
+====================================================================================================
+
+CITY: WARSZAWA
+Object Name                                   | Tier                 | Signature       | Value       
+----------------------------------------------------------------------------------------------------
+Warszawa Centralna                            | T0_GLOBAL_HUB        | UIC:True|IATA:False |   3262195789
+Mostówka                                      | T0_GLOBAL_HUB        | UIC:True|IATA:False |   3262195789
+Teresin Niepokalanów                          | T0_GLOBAL_HUB        | UIC:True|IATA:False |   3262195789
+Warszawa Wschodnia                            | T0_GLOBAL_HUB        | UIC:True|IATA:False |   3262195789
+Warszawa Gdańska                              | T0_GLOBAL_HUB        | UIC:True|IATA:False |   3262195789
+Warszawa Zachodnia                            | T0_GLOBAL_HUB        | UIC:True|IATA:False |   3262195789
+Tłuszcz                                       | T0_GLOBAL_HUB        | UIC:True|IATA:False |   3262195789
+Lotnisko Chopina                              | T0_GLOBAL_HUB        | UIC:False|IATA:True |   1875388114
+Port Lotniczy Warszawa-Modlin                 | T0_GLOBAL_HUB        | UIC:False|IATA:True |   1846719549
+Lotnisko Warszawa-Babice                      | T0_GLOBAL_HUB        | UIC:False|IATA:False |   1726180300
+Lądowisko Sobienie Szlacheckie                | T0_GLOBAL_HUB        | UIC:False|IATA:False |   1330324148
+Skierniewice-Trzcianna                        | T0_GLOBAL_HUB        | UIC:False|IATA:False |   1286216124
+Góra Kalwaria                                 | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    652439158
+Pilawa                                        | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    652439158
+Legionowo Piaski                              | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    652439158
+Zegrze Południowe                             | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    652439158
+Legionowo                                     | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    652439158
+Warszawa Wawer                                | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    652439158
+Błonie                                        | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    652439158
+Sochaczew Muzeum                              | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    652439158
+Wieliszew                                     | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    652439158
+Warszawa Okęcie                               | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    652439158
+Sochaczew                                     | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    652439158
+Grodzisk Mazowiecki Radońska                  | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    652439158
+Słodowiec                                     | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    652439158
+
+====================================================================================================
+
+CITY: KRAKOW
+Object Name                                   | Tier                 | Signature       | Value       
+----------------------------------------------------------------------------------------------------
+Kraków Główny                                 | T0_GLOBAL_HUB        | UIC:True|IATA:False |   3054695612
+Międzynarodowy Port Lotniczy im. Jana Pawła I | T0_GLOBAL_HUB        | UIC:False|IATA:True |   1682986926
+Lotnisko Pobiednik Wielki                     | T0_GLOBAL_HUB        | UIC:False|IATA:False |   1515187105
+Lądowisko Kraków-Czyżyny                      | T0_GLOBAL_HUB        | UIC:False|IATA:False |   1255171356
+Wieliczka Park                                | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    610939122
+Podłęże                                       | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    610939122
+Niedźwiedź                                    | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    610939122
+Krzeszowice                                   | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    610939122
+Brzeźnica                                     | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    610939122
+Radziszów                                     | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    610939122
+Kraków Batowice                               | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    610939122
+Kłaj                                          | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    610939122
+Kraków Bieżanów                               | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    610939122
+Kraków Mydlniki                               | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    610939122
+Podbory Skawińskie                            | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    610939122
+Kraków Płaszów                                | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    610939122
+Zastów                                        | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    610939122
+Zabierzów                                     | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    610939122
+Kraków Bonarka                                | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    610939122
+Skawina                                       | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    610939122
+Słomniki                                      | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    610939122
+Leńcze                                        | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    610939122
+Szpital Kliniczny im. doktora Józefa Babiński | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    281003072
+Kampus 600-lecia Odnowienia Uniwersytetu Jagi | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    270100526
+Akademia Górniczo-Hutnicza                    | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    267397464
+
+====================================================================================================
+
+CITY: LODZ
+Object Name                                   | Tier                 | Signature       | Value       
+----------------------------------------------------------------------------------------------------
+Pabianice                                     | T0_GLOBAL_HUB        | UIC:True|IATA:False |   2990999178
+Łódź Chojny                                   | T0_GLOBAL_HUB        | UIC:True|IATA:False |   2990999178
+Port Lotniczy Łódź im. Władysława Reymonta    | T0_GLOBAL_HUB        | UIC:False|IATA:True |   1582044359
+Zgierz Kontrewers                             | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    598199836
+Łódź Lublinek                                 | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    598199836
+Stryków                                       | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    598199836
+Zgierz                                        | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    598199836
+Łódź Fabryczna                                | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    598199836
+Gałkówek                                      | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    598199836
+Łódź Kaliska                                  | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    598199836
+Łódź Widzew                                   | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    598199836
+Łódź Żabieniec                                | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    598199836
+Zgierz Północ                                 | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    598199836
+Instytut Centrum Zdrowia Matki Polki          | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    270127007
+Specjalistyczny Psychiatryczny Zespół Opieki  | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    262510901
+Centralny Szpital Kliniczny                   | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    259284789
+Wojewódzki Zespół Zakładów Opieki Zdrowotnej  | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    256924509
+Politechnika Łódzka - Kampus B                | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    251236576
+Politechnika Łódzka - Kampus A                | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    243406265
+Wojewódzki Szpital Specjalistyczny im. M. Kop | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    237292711
+Unnamed Infrastructure                        | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    236226919
+Unnamed Infrastructure                        | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    235645023
+Wojewódzki Szpital Specjalistyczny im. Marii  | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    235435783
+Specjalistyczny Szpital Gruźlicy              | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    233752486
+Wojewódzki Specjalistyczny Szpital im. dr. Wł | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    229209761
+
+====================================================================================================
+
+CITY: TROJMIASTO
+Object Name                                   | Tier                 | Signature       | Value       
+----------------------------------------------------------------------------------------------------
+Gdynia Główna                                 | T0_GLOBAL_HUB        | UIC:True|IATA:False |   3036074196
+Gdańsk Główny                                 | T0_GLOBAL_HUB        | UIC:False|IATA:False |   3036074196
+49. Baza Lotnicza                             | T0_GLOBAL_HUB        | UIC:False|IATA:False |   1709355343
+Port lotniczy Gdynia-Kosakowo                 | T0_GLOBAL_HUB        | UIC:False|IATA:False |   1704238797
+Port Lotniczy Gdańsk im. Lecha Wałęsy         | T0_GLOBAL_HUB        | UIC:False|IATA:True |   1611173631
+Unnamed Infrastructure                        | T0_GLOBAL_HUB        | UIC:False|IATA:False |   1475111058
+Bałtycki Terminal Kontenerowy                 | T0_GLOBAL_HUB        | UIC:False|IATA:False |   1393284424
+Unnamed Infrastructure                        | T0_GLOBAL_HUB        | UIC:False|IATA:False |   1392155211
+Wolny Obszar Celny                            | T0_GLOBAL_HUB        | UIC:False|IATA:False |   1368812335
+Unnamed Infrastructure                        | T0_GLOBAL_HUB        | UIC:False|IATA:False |   1362509840
+Gdynia Container Terminal                     | T0_GLOBAL_HUB        | UIC:False|IATA:False |   1321819916
+Terminal T5                                   | T0_GLOBAL_HUB        | UIC:False|IATA:False |   1307551625
+Terminal T4                                   | T0_GLOBAL_HUB        | UIC:False|IATA:False |   1289083870
+BLG AutoTerminal Gdańsk                       | T0_GLOBAL_HUB        | UIC:False|IATA:False |   1159013510
+GBT - Gdański Terminal Masowy                 | T0_GLOBAL_HUB        | UIC:False|IATA:False |   1150696822
+Unnamed Infrastructure                        | T0_GLOBAL_HUB        | UIC:False|IATA:False |   1132813034
+przystań morska Mechelinki                    | T0_GLOBAL_HUB        | UIC:False|IATA:False |   1119278058
+Unnamed Infrastructure                        | T0_GLOBAL_HUB        | UIC:False|IATA:False |   1057433723
+Morski Terminal Przeładunkowy na Martwej Wiśl | T0_GLOBAL_HUB        | UIC:False|IATA:False |    993832473
+przystań rybacka Rewa II                      | T0_GLOBAL_HUB        | UIC:False|IATA:False |    809115902
+Żukowo Wschodnie                              | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    607214839
+Gdańsk Osowa                                  | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    607214839
+Dzierżążno                                    | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    607214839
+Gdynia Chylonia                               | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    607214839
+Wejherowo                                     | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    607214839
+
+====================================================================================================
+
+CITY: BIALYSTOK
+Object Name                                   | Tier                 | Signature       | Value       
+----------------------------------------------------------------------------------------------------
+Lotnisko Białystok-Krywlany                   | T0_GLOBAL_HUB        | UIC:False|IATA:False |   1410014374
+Narew 2                                       | T0_GLOBAL_HUB        | UIC:False|IATA:False |   1167454104
+Wasilków                                      | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    563404679
+Czarny Blok                                   | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    563404679
+Białystok                                     | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    563404679
+Baciuty                                       | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    563404679
+Białystok Starosielce                         | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    563404679
+Białystok Fabryczny                           | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    563404679
+Knyszyn                                       | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    563404679
+Lewickie                                      | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    563404679
+Strabla                                       | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    563404679
+Łapy                                          | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    563404679
+Politechnika Białostocka                      | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    248762322
+Samodzielny Publiczny Psychiatryczny Zakład O | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    235719173
+Uniwersytet w Białymstoku                     | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    221610603
+Uniwersytecki Szpital Kliniczny - Oddział     | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    220529492
+Uniwersytet Medyczny                          | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    203654088
+Wydział Inżynierii Zarządzania Politechniki B | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    201041447
+Samodzielny Publiczny Zakład Opieki Zdrowotne | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    196985134
+Wojewódzki Szpital Zespolony im. Jędrzeja Śni | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    194718554
+Białostockie Centrum Onkologii im. Marii Skło | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    187293480
+Uniwersytecki Szpital Kliniczny               | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    179799099
+Uniwersytet Muzyczny Fryderyka Chopina Wydzia | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    177955393
+Uniwersytecki Dziecięcy Szpital Kliniczny im. | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    163985099
+Wojewódzki Szpital Zespolony im. Jędrzeja Śni | T1_NATIONAL_MAGNET   | UIC:False|IATA:False |    159093930
+
+====================================================================================================
+

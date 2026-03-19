@@ -1,0 +1,394 @@
+DEEP CRITICAL AUDIT: URBAN GRAVITY ENGINE 5.0
+================================================================================
+
+CITY: BIALYSTOK
+  Unique POI Types: 23
+  Tiers present: ['T5_DAILY_SERVICE', 'T2_STRATEGIC_HUB', 'T3_LOCAL_CORE', 'T4_ADMIN_SECURITY', 'T1_REGIONAL_MAGNET', 'T6_MICRO_INFRA']
+  Tier Ranges:
+    - T1_REGIONAL_MAGNET  :      6546286 to     19850360
+    - T2_STRATEGIC_HUB    :       648856 to      1817956
+    - T3_LOCAL_CORE       :        61363 to       276991
+    - T4_ADMIN_SECURITY   :        17885 to        21274
+    - T5_DAILY_SERVICE    :         5915 to         6152
+    - T6_MICRO_INFRA      :            6 to            6
+  Top 5 Strategic: hospital, courthouse, university, college, school
+------------------------------------------------------------
+
+CITY: BYDGOSZCZ
+  Unique POI Types: 24
+  Tiers present: ['T2_STRATEGIC_HUB', 'T3_LOCAL_CORE', 'T5_DAILY_SERVICE', 'T4_ADMIN_SECURITY', 'T1_REGIONAL_MAGNET', 'T6_MICRO_INFRA']
+  Tier Ranges:
+    - T1_REGIONAL_MAGNET  :     14500376 to     19497480
+    - T2_STRATEGIC_HUB    :       651822 to      1774155
+    - T3_LOCAL_CORE       :        63727 to       353243
+    - T4_ADMIN_SECURITY   :        13596 to        22382
+    - T5_DAILY_SERVICE    :         6014 to         6166
+    - T6_MICRO_INFRA      :            6 to            6
+  Top 5 Strategic: hospital, college, university, courthouse, school
+------------------------------------------------------------
+
+CITY: CZESTOCHOWA
+  Unique POI Types: 23
+  Tiers present: ['T2_STRATEGIC_HUB', 'T3_LOCAL_CORE', 'T5_DAILY_SERVICE', 'T4_ADMIN_SECURITY', 'T1_REGIONAL_MAGNET', 'T6_MICRO_INFRA']
+  Tier Ranges:
+    - T1_REGIONAL_MAGNET  :     13817088 to     20837202
+    - T2_STRATEGIC_HUB    :       618762 to      1677843
+    - T3_LOCAL_CORE       :        58937 to       326953
+    - T4_ADMIN_SECURITY   :        17708 to        20905
+    - T5_DAILY_SERVICE    :         5682 to         5905
+    - T6_MICRO_INFRA      :            6 to            6
+  Top 5 Strategic: hospital, university, college, courthouse, school
+------------------------------------------------------------
+
+CITY: ELBLAG
+  Unique POI Types: 23
+  Tiers present: ['T2_STRATEGIC_HUB', 'T5_DAILY_SERVICE', 'T3_LOCAL_CORE', 'T6_MICRO_INFRA', 'T4_ADMIN_SECURITY', 'T1_REGIONAL_MAGNET']
+  Tier Ranges:
+    - T1_REGIONAL_MAGNET  :     12334354 to     21265474
+    - T2_STRATEGIC_HUB    :       583586 to      1694365
+    - T3_LOCAL_CORE       :        57127 to       301456
+    - T4_ADMIN_SECURITY   :        15831 to        19043
+    - T5_DAILY_SERVICE    :         5463 to         5907
+    - T6_MICRO_INFRA      :            5 to            5
+  Top 5 Strategic: hospital, university, college, courthouse, school
+------------------------------------------------------------
+
+CITY: ELK
+  Unique POI Types: 20
+  Tiers present: ['T2_STRATEGIC_HUB', 'T5_DAILY_SERVICE', 'T3_LOCAL_CORE', 'T4_ADMIN_SECURITY', 'T1_REGIONAL_MAGNET', 'T6_MICRO_INFRA']
+  Tier Ranges:
+    - T1_REGIONAL_MAGNET  :      5600660 to     20414606
+    - T2_STRATEGIC_HUB    :       550399 to      1539366
+    - T3_LOCAL_CORE       :        52037 to        94848
+    - T4_ADMIN_SECURITY   :        13101 to        17385
+    - T5_DAILY_SERVICE    :         5136 to         5271
+    - T6_MICRO_INFRA      :            5 to            5
+  Top 5 Strategic: hospital, university, courthouse, mall, supermarket
+  [!] CRITICAL: No T0 (Global Hubs) found!
+------------------------------------------------------------
+
+CITY: GIZYCKO
+  Unique POI Types: 19
+  Tiers present: ['T5_DAILY_SERVICE', 'T2_STRATEGIC_HUB', 'T3_LOCAL_CORE', 'T4_ADMIN_SECURITY', 'T6_MICRO_INFRA', 'T1_REGIONAL_MAGNET']
+  Tier Ranges:
+    - T1_REGIONAL_MAGNET  :      9361925 to     19204828
+    - T2_STRATEGIC_HUB    :       508007 to      1385410
+    - T3_LOCAL_CORE       :        50801 to        93699
+    - T4_ADMIN_SECURITY   :        13142 to        21524
+    - T5_DAILY_SERVICE    :         4798 to         4955
+    - T6_MICRO_INFRA      :            5 to            5
+  Top 5 Strategic: hospital, courthouse, school, mall, supermarket
+------------------------------------------------------------
+
+CITY: GORZOW
+  Unique POI Types: 23
+  Tiers present: ['T5_DAILY_SERVICE', 'T2_STRATEGIC_HUB', 'T3_LOCAL_CORE', 'T4_ADMIN_SECURITY', 'T6_MICRO_INFRA', 'T1_REGIONAL_MAGNET']
+  Tier Ranges:
+    - T1_REGIONAL_MAGNET  :     11867665 to     22577211
+    - T2_STRATEGIC_HUB    :       583694 to      1488426
+    - T3_LOCAL_CORE       :        56286 to       117887
+    - T4_ADMIN_SECURITY   :        14978 to        21124
+    - T5_DAILY_SERVICE    :         5406 to         5560
+    - T6_MICRO_INFRA      :            5 to            5
+  Top 5 Strategic: hospital, courthouse, college, university, mall
+------------------------------------------------------------
+
+CITY: GZM
+  Unique POI Types: 25
+  Tiers present: ['T2_STRATEGIC_HUB', 'T5_DAILY_SERVICE', 'T3_LOCAL_CORE', 'T4_ADMIN_SECURITY', 'T1_REGIONAL_MAGNET', 'T6_MICRO_INFRA']
+  Tier Ranges:
+    - T1_REGIONAL_MAGNET  :     13443622 to     25038000
+    - T2_STRATEGIC_HUB    :       750187 to      1984876
+    - T3_LOCAL_CORE       :        70906 to       356137
+    - T4_ADMIN_SECURITY   :        19381 to        24214
+    - T5_DAILY_SERVICE    :         6852 to         7123
+    - T6_MICRO_INFRA      :            7 to            7
+  Top 5 Strategic: faculty, hospital, university, college, courthouse
+------------------------------------------------------------
+
+CITY: KIELCE
+  Unique POI Types: 23
+  Tiers present: ['T5_DAILY_SERVICE', 'T2_STRATEGIC_HUB', 'T3_LOCAL_CORE', 'T4_ADMIN_SECURITY', 'T6_MICRO_INFRA', 'T1_REGIONAL_MAGNET']
+  Tier Ranges:
+    - T1_REGIONAL_MAGNET  :      6386569 to     19473637
+    - T2_STRATEGIC_HUB    :       592101 to      1630335
+    - T3_LOCAL_CORE       :        59780 to       324910
+    - T4_ADMIN_SECURITY   :        18664 to        21367
+    - T5_DAILY_SERVICE    :         5786 to         6066
+    - T6_MICRO_INFRA      :            6 to            6
+  Top 5 Strategic: hospital, courthouse, university, college, school
+------------------------------------------------------------
+
+CITY: KRAKOW
+  Unique POI Types: 26
+  Tiers present: ['T2_STRATEGIC_HUB', 'T5_DAILY_SERVICE', 'T3_LOCAL_CORE', 'T1_REGIONAL_MAGNET', 'T4_ADMIN_SECURITY', 'T6_MICRO_INFRA', 'T0_GLOBAL_HUB']
+  Tier Ranges:
+    - T0_GLOBAL_HUB       :    184818537 to    184818537
+    - T1_REGIONAL_MAGNET  :      6795355 to     20323563
+    - T2_STRATEGIC_HUB    :       660235 to      1791531
+    - T3_LOCAL_CORE       :        66347 to       236369
+    - T4_ADMIN_SECURITY   :        17942 to        19089
+    - T5_DAILY_SERVICE    :         6412 to         6716
+    - T6_MICRO_INFRA      :            6 to            6
+  Top 5 Strategic: aerodrome, hospital, college, faculty, university_department
+------------------------------------------------------------
+
+CITY: KUTNO
+  Unique POI Types: 20
+  Tiers present: ['T5_DAILY_SERVICE', 'T2_STRATEGIC_HUB', 'T3_LOCAL_CORE', 'T6_MICRO_INFRA', 'T4_ADMIN_SECURITY', 'T1_REGIONAL_MAGNET']
+  Tier Ranges:
+    - T1_REGIONAL_MAGNET  :     10193123 to     20090699
+    - T2_STRATEGIC_HUB    :       539228 to      1537721
+    - T3_LOCAL_CORE       :        53923 to        95942
+    - T4_ADMIN_SECURITY   :        15852 to        27746
+    - T5_DAILY_SERVICE    :         4883 to         5028
+    - T6_MICRO_INFRA      :            5 to            5
+  Top 5 Strategic: hospital, college, courthouse, mall, social_facility
+  [!] CRITICAL: No T0 (Global Hubs) found!
+------------------------------------------------------------
+
+CITY: LEGNICA
+  Unique POI Types: 20
+  Tiers present: ['T2_STRATEGIC_HUB', 'T3_LOCAL_CORE', 'T4_ADMIN_SECURITY', 'T5_DAILY_SERVICE', 'T1_REGIONAL_MAGNET', 'T6_MICRO_INFRA']
+  Tier Ranges:
+    - T1_REGIONAL_MAGNET  :      5783894 to     25862503
+    - T2_STRATEGIC_HUB    :       588501 to      1774398
+    - T3_LOCAL_CORE       :        55527 to       103618
+    - T4_ADMIN_SECURITY   :        11450 to        15033
+    - T5_DAILY_SERVICE    :         5338 to         5533
+    - T6_MICRO_INFRA      :            5 to            5
+  Top 5 Strategic: hospital, university, courthouse, mall, school
+  [!] CRITICAL: No T0 (Global Hubs) found!
+------------------------------------------------------------
+
+CITY: LESZNO
+  Unique POI Types: 23
+  Tiers present: ['T2_STRATEGIC_HUB', 'T5_DAILY_SERVICE', 'T3_LOCAL_CORE', 'T1_REGIONAL_MAGNET', 'T4_ADMIN_SECURITY', 'T6_MICRO_INFRA']
+  Tier Ranges:
+    - T1_REGIONAL_MAGNET  :      5378579 to     14289664
+    - T2_STRATEGIC_HUB    :       565009 to      1532560
+    - T3_LOCAL_CORE       :        53099 to       270091
+    - T4_ADMIN_SECURITY   :        10911 to        17313
+    - T5_DAILY_SERVICE    :         5192 to         5322
+    - T6_MICRO_INFRA      :            5 to            5
+  Top 5 Strategic: hospital, university, courthouse, college, mall
+------------------------------------------------------------
+
+CITY: LODZ
+  Unique POI Types: 24
+  Tiers present: ['T2_STRATEGIC_HUB', 'T3_LOCAL_CORE', 'T5_DAILY_SERVICE', 'T1_REGIONAL_MAGNET', 'T4_ADMIN_SECURITY', 'T6_MICRO_INFRA', 'T0_GLOBAL_HUB']
+  Tier Ranges:
+    - T0_GLOBAL_HUB       :    181936654 to    181936654
+    - T1_REGIONAL_MAGNET  :     11098272 to     22025856
+    - T2_STRATEGIC_HUB    :       698044 to      1787127
+    - T3_LOCAL_CORE       :        64926 to       194963
+    - T4_ADMIN_SECURITY   :        21590 to        24945
+    - T5_DAILY_SERVICE    :         6278 to         6520
+    - T6_MICRO_INFRA      :            6 to            6
+  Top 5 Strategic: aerodrome, hospital, college, university, courthouse
+------------------------------------------------------------
+
+CITY: LOMZA
+  Unique POI Types: 20
+  Tiers present: ['T5_DAILY_SERVICE', 'T3_LOCAL_CORE', 'T2_STRATEGIC_HUB', 'T4_ADMIN_SECURITY', 'T1_REGIONAL_MAGNET', 'T6_MICRO_INFRA']
+  Tier Ranges:
+    - T1_REGIONAL_MAGNET  :      5457368 to     20827750
+    - T2_STRATEGIC_HUB    :       540180 to      1396398
+    - T3_LOCAL_CORE       :        53322 to       101997
+    - T4_ADMIN_SECURITY   :        10804 to        18193
+    - T5_DAILY_SERVICE    :         5098 to         5131
+    - T6_MICRO_INFRA      :            5 to            5
+  Top 5 Strategic: hospital, courthouse, college, university, school
+  [!] CRITICAL: No T0 (Global Hubs) found!
+------------------------------------------------------------
+
+CITY: LUBLIN
+  Unique POI Types: 24
+  Tiers present: ['T2_STRATEGIC_HUB', 'T3_LOCAL_CORE', 'T5_DAILY_SERVICE', 'T4_ADMIN_SECURITY', 'T1_REGIONAL_MAGNET', 'T6_MICRO_INFRA']
+  Tier Ranges:
+    - T1_REGIONAL_MAGNET  :      6298991 to     20244061
+    - T2_STRATEGIC_HUB    :       669439 to      1630395
+    - T3_LOCAL_CORE       :        61947 to       342372
+    - T4_ADMIN_SECURITY   :        12515 to        27751
+    - T5_DAILY_SERVICE    :         5977 to         6216
+    - T6_MICRO_INFRA      :            6 to            6
+  Top 5 Strategic: hospital, university, courthouse, college, mall
+------------------------------------------------------------
+
+CITY: OLSZTYN
+  Unique POI Types: 25
+  Tiers present: ['T2_STRATEGIC_HUB', 'T5_DAILY_SERVICE', 'T3_LOCAL_CORE', 'T4_ADMIN_SECURITY', 'T1_REGIONAL_MAGNET', 'T6_MICRO_INFRA']
+  Tier Ranges:
+    - T1_REGIONAL_MAGNET  :      6649329 to     23035211
+    - T2_STRATEGIC_HUB    :       655053 to      1720630
+    - T3_LOCAL_CORE       :        64387 to       268554
+    - T4_ADMIN_SECURITY   :        16989 to        20865
+    - T5_DAILY_SERVICE    :         6178 to         6402
+    - T6_MICRO_INFRA      :            6 to            6
+  Top 5 Strategic: hospital, college, courthouse, university, school
+------------------------------------------------------------
+
+CITY: OPOLE
+  Unique POI Types: 23
+  Tiers present: ['T2_STRATEGIC_HUB', 'T3_LOCAL_CORE', 'T5_DAILY_SERVICE', 'T1_REGIONAL_MAGNET', 'T4_ADMIN_SECURITY', 'T6_MICRO_INFRA']
+  Tier Ranges:
+    - T1_REGIONAL_MAGNET  :     11066337 to     19556392
+    - T2_STRATEGIC_HUB    :       580536 to      1591878
+    - T3_LOCAL_CORE       :        56506 to       307095
+    - T4_ADMIN_SECURITY   :        11642 to        17489
+    - T5_DAILY_SERVICE    :         5505 to         5684
+    - T6_MICRO_INFRA      :            6 to            6
+  Top 5 Strategic: college, hospital, university, courthouse, mall
+------------------------------------------------------------
+
+CITY: POZNAN
+  Unique POI Types: 24
+  Tiers present: ['T2_STRATEGIC_HUB', 'T4_ADMIN_SECURITY', 'T5_DAILY_SERVICE', 'T3_LOCAL_CORE', 'T1_REGIONAL_MAGNET', 'T6_MICRO_INFRA']
+  Tier Ranges:
+    - T1_REGIONAL_MAGNET  :      7182116 to     21962669
+    - T2_STRATEGIC_HUB    :       700948 to      1851269
+    - T3_LOCAL_CORE       :        67786 to       195823
+    - T4_ADMIN_SECURITY   :        14087 to        22223
+    - T5_DAILY_SERVICE    :         6571 to         6813
+    - T6_MICRO_INFRA      :            7 to            7
+  Top 5 Strategic: hospital, university, courthouse, college, school
+------------------------------------------------------------
+
+CITY: PRZEMYSL
+  Unique POI Types: 22
+  Tiers present: ['T5_DAILY_SERVICE', 'T2_STRATEGIC_HUB', 'T3_LOCAL_CORE', 'T1_REGIONAL_MAGNET', 'T4_ADMIN_SECURITY', 'T6_MICRO_INFRA']
+  Tier Ranges:
+    - T1_REGIONAL_MAGNET  :     11489263 to     18816248
+    - T2_STRATEGIC_HUB    :       559894 to      1662692
+    - T3_LOCAL_CORE       :        52962 to       107019
+    - T4_ADMIN_SECURITY   :        16401 to        20114
+    - T5_DAILY_SERVICE    :         5148 to         5323
+    - T6_MICRO_INFRA      :            5 to            5
+  Top 5 Strategic: hospital, university, college, courthouse, mall
+  [!] CRITICAL: No T0 (Global Hubs) found!
+------------------------------------------------------------
+
+CITY: RADOM
+  Unique POI Types: 24
+  Tiers present: ['T5_DAILY_SERVICE', 'T1_REGIONAL_MAGNET', 'T2_STRATEGIC_HUB', 'T3_LOCAL_CORE', 'T4_ADMIN_SECURITY', 'T6_MICRO_INFRA']
+  Tier Ranges:
+    - T1_REGIONAL_MAGNET  :      5896164 to     18184248
+    - T2_STRATEGIC_HUB    :       619711 to      1712938
+    - T3_LOCAL_CORE       :        58829 to       339352
+    - T4_ADMIN_SECURITY   :        12305 to        24965
+    - T5_DAILY_SERVICE    :         5646 to         5862
+    - T6_MICRO_INFRA      :            6 to            6
+  Top 5 Strategic: hospital, college, courthouse, university, school
+------------------------------------------------------------
+
+CITY: RZESZOW
+  Unique POI Types: 24
+  Tiers present: ['T2_STRATEGIC_HUB', 'T5_DAILY_SERVICE', 'T4_ADMIN_SECURITY', 'T3_LOCAL_CORE', 'T1_REGIONAL_MAGNET', 'T6_MICRO_INFRA']
+  Tier Ranges:
+    - T1_REGIONAL_MAGNET  :      6587558 to     20961660
+    - T2_STRATEGIC_HUB    :       624776 to      1682629
+    - T3_LOCAL_CORE       :        63460 to       356028
+    - T4_ADMIN_SECURITY   :        12416 to        20374
+    - T5_DAILY_SERVICE    :         6119 to         6373
+    - T6_MICRO_INFRA      :            6 to            6
+  Top 5 Strategic: hospital, university, courthouse, college, school
+------------------------------------------------------------
+
+CITY: SUWALKI
+  Unique POI Types: 21
+  Tiers present: ['T2_STRATEGIC_HUB', 'T5_DAILY_SERVICE', 'T6_MICRO_INFRA', 'T3_LOCAL_CORE', 'T4_ADMIN_SECURITY', 'T1_REGIONAL_MAGNET']
+  Tier Ranges:
+    - T1_REGIONAL_MAGNET  :     13421045 to     20929373
+    - T2_STRATEGIC_HUB    :       554117 to      1507281
+    - T3_LOCAL_CORE       :        53068 to       281974
+    - T4_ADMIN_SECURITY   :        15282 to        23462
+    - T5_DAILY_SERVICE    :         5181 to         5266
+    - T6_MICRO_INFRA      :            5 to            5
+  Top 5 Strategic: hospital, university, courthouse, school, mall
+------------------------------------------------------------
+
+CITY: SWINOUJSCIE
+  Unique POI Types: 19
+  Tiers present: ['T2_STRATEGIC_HUB', 'T5_DAILY_SERVICE', 'T4_ADMIN_SECURITY', 'T3_LOCAL_CORE', 'T6_MICRO_INFRA', 'T1_REGIONAL_MAGNET']
+  Tier Ranges:
+    - T1_REGIONAL_MAGNET  :     10342781 to     16794205
+    - T2_STRATEGIC_HUB    :       494724 to      1523683
+    - T3_LOCAL_CORE       :        51268 to        52717
+    - T4_ADMIN_SECURITY   :        13503 to        21404
+    - T5_DAILY_SERVICE    :         4866 to         5089
+    - T6_MICRO_INFRA      :            5 to            5
+  Top 5 Strategic: hospital, courthouse, school, social_facility, mall
+  [!] CRITICAL: No T0 (Global Hubs) found!
+------------------------------------------------------------
+
+CITY: SZCZECIN
+  Unique POI Types: 24
+  Tiers present: ['T3_LOCAL_CORE', 'T5_DAILY_SERVICE', 'T2_STRATEGIC_HUB', 'T1_REGIONAL_MAGNET', 'T4_ADMIN_SECURITY', 'T6_MICRO_INFRA']
+  Tier Ranges:
+    - T1_REGIONAL_MAGNET  :      6665566 to     24960969
+    - T2_STRATEGIC_HUB    :       629615 to      1661247
+    - T3_LOCAL_CORE       :        61636 to       362764
+    - T4_ADMIN_SECURITY   :        17996 to        20033
+    - T5_DAILY_SERVICE    :         6009 to         6247
+    - T6_MICRO_INFRA      :            6 to            6
+  Top 5 Strategic: hospital, university, courthouse, college, school
+------------------------------------------------------------
+
+CITY: TORUN
+  Unique POI Types: 23
+  Tiers present: ['T2_STRATEGIC_HUB', 'T4_ADMIN_SECURITY', 'T5_DAILY_SERVICE', 'T1_REGIONAL_MAGNET', 'T3_LOCAL_CORE', 'T6_MICRO_INFRA']
+  Tier Ranges:
+    - T1_REGIONAL_MAGNET  :      5848078 to     19455493
+    - T2_STRATEGIC_HUB    :       623502 to      1608483
+    - T3_LOCAL_CORE       :        58020 to       347857
+    - T4_ADMIN_SECURITY   :        12433 to        18845
+    - T5_DAILY_SERVICE    :         5723 to         5918
+    - T6_MICRO_INFRA      :            6 to            6
+  Top 5 Strategic: college, hospital, courthouse, university, school
+------------------------------------------------------------
+
+CITY: TROJMIASTO
+  Unique POI Types: 24
+  Tiers present: ['T2_STRATEGIC_HUB', 'T3_LOCAL_CORE', 'T5_DAILY_SERVICE', 'T4_ADMIN_SECURITY', 'T1_REGIONAL_MAGNET', 'T6_MICRO_INFRA', 'T0_GLOBAL_HUB']
+  Tier Ranges:
+    - T0_GLOBAL_HUB       :    207180278 to    207180278
+    - T1_REGIONAL_MAGNET  :      7018132 to     23975556
+    - T2_STRATEGIC_HUB    :       702556 to      1874310
+    - T3_LOCAL_CORE       :        65653 to       199167
+    - T4_ADMIN_SECURITY   :        20816 to        25018
+    - T5_DAILY_SERVICE    :         6360 to         6616
+    - T6_MICRO_INFRA      :            6 to            6
+  Top 5 Strategic: aerodrome, hospital, university, courthouse, college
+------------------------------------------------------------
+
+CITY: WARSZAWA
+  Unique POI Types: 25
+  Tiers present: ['T2_STRATEGIC_HUB', 'T5_DAILY_SERVICE', 'T3_LOCAL_CORE', 'T4_ADMIN_SECURITY', 'T1_REGIONAL_MAGNET', 'T6_MICRO_INFRA']
+  Tier Ranges:
+    - T1_REGIONAL_MAGNET  :      7444617 to     24988422
+    - T2_STRATEGIC_HUB    :       703827 to      2009341
+    - T3_LOCAL_CORE       :        70632 to       281904
+    - T4_ADMIN_SECURITY   :        22439 to        25784
+    - T5_DAILY_SERVICE    :         6851 to         7136
+    - T6_MICRO_INFRA      :            7 to            7
+  Top 5 Strategic: hospital, university, courthouse, college, mall
+
+  WARSAW SPECIAL FOCUS (Airports):
+    - aerodrome      : Val=      281904, Tier=T3_LOCAL_CORE
+    - terminal       : Val=      228113, Tier=T3_LOCAL_CORE
+    - station        : Val=      749112, Tier=T2_STRATEGIC_HUB
+------------------------------------------------------------
+
+CITY: WROCLAW
+  Unique POI Types: 24
+  Tiers present: ['T2_STRATEGIC_HUB', 'T5_DAILY_SERVICE', 'T4_ADMIN_SECURITY', 'T3_LOCAL_CORE', 'T1_REGIONAL_MAGNET', 'T6_MICRO_INFRA']
+  Tier Ranges:
+    - T1_REGIONAL_MAGNET  :      6788379 to     24370238
+    - T2_STRATEGIC_HUB    :       701054 to      1714410
+    - T3_LOCAL_CORE       :        66595 to       235912
+    - T4_ADMIN_SECURITY   :        13913 to        20083
+    - T5_DAILY_SERVICE    :         6457 to         6719
+    - T6_MICRO_INFRA      :            6 to            6
+  Top 5 Strategic: hospital, courthouse, college, university, mall
+------------------------------------------------------------
+

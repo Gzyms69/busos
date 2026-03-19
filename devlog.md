@@ -131,4 +131,59 @@ Ten dokument zawiera szczegółowy zapis kroków podjętych w projekcie, wraz z 
 - **Wynik:** Stworzenie "Atlasu Próbkowanego" (`reports/city_data_samples.txt`), dokumentującego 100% spójności danych populacyjnych (GUS), transportowych (GTFS) i rynkowych (RCN) dla każdego miasta w Polsce.
 
 ---
-**Status Projektu:** Dane ujednolicone, zweryfikowane przestrzennie i gotowe do analizy korelacyjnej (Faza 2).
+
+## Faza 10: Wielka Sanacja i Operacjonalizacja (Enterprise Ready)
+
+### 23. Refaktoryzacja Systemowa
+- **Działanie:** Gruntowna reorganizacja struktury plików. Przeniesienie skryptów do `scripts/pipeline/` (ścieżka wykonawcza 01-11), `scripts/tools/` (diagnostyka) oraz `scripts/archive/`.
+- **Uzasadnienie:** Przekształcenie warsztatu badawczego w powtarzalny proces inżynieryjny. Wprowadzenie `RUN_ORDER.md`.
+
+### 24. Uwolnienie Repozytorium (Git Restoration)
+- **Działanie:** Naprawa błędu w `.gitignore`, który blokował foldery `scripts/` i `reports/`. Pełna synchronizacja kodu z GitHubem.
+- **Uzasadnienie:** Zapewnienie transparentności i bezpieczeństwa kodu poza lokalną maszyną.
+
+### 25. Diagnostyka Mikro-Danych i Fix "TOT"
+- **Działanie:** Wykrycie błędu Case-Sensitivity w siatce populacji (poszukiwanie `tot` zamiast `TOT`). Naprawa generatora próbek.
+- **Wynik:** Odblokowanie realnych liczb ludności przy przystankach (np. 984 osoby przy ul. Brzeźnej w Łodzi).
+
+---
+
+## Faza 11: Projektowanie Inteligencji Przestrzennej (Urban Gravity)
+
+### 26. Problem "Pustych POI" i Taksonomii
+- **Działanie:** Wykrycie braku treści w atlasie próbek (`POI ID N/A`). Zidentyfikowanie przyczyn: brak obsługi warstwy poligonów i błędne mapowanie kolumn.
+- **Reakcja:** Masowa ekstrakcja narodowych statystyk POI (`national_poi_stats.json`) z 29 miast.
+
+### 27. Koncepcja Urban Gravity Engine 2.0
+- **Działanie:** Zaprojektowanie zaawansowanego algorytmu wagowania infrastruktury.
+- **Kluczowe założenia:** 
+  - **Local Scarcity:** Rzadkość obiektu w skali miasta definiuje jego wartość.
+  - **Strategic Tiering:** 5 poziomów istotności (od Szpitali/Uczelni x15 do Paczkomatów x0.2).
+  - **Noise Cancellation:** Całkowite wycięcie szumu (ławki, śmietniki, parkingi).
+  - **Distance Decay:** Wartość obiektu maleje wraz z odległością od przystanku (bufor 500m).
+
+---
+
+## Faza 12: Inteligencja Urbanistyczna (Urban Gravity 3.0)
+
+### 28. Kryzys Modelu Logarytmicznego (RCA)
+- **Problem:** Model 2.2 pozwalał rzadkim, nieistotnym obiektom (WiFi, Juice Bar) na dominację nad strategicznymi celami (Szpitale).
+- **Przyczyna:** Zbyt mała separacja mnożników Tierów względem potęgi rzadkości statystycznej.
+
+### 29. Wdrożenie Modelu Izolacji Warstwowej (Tier Isolation)
+- **Logika:** Wprowadzenie sztywnych podłóg punktowych:
+  - **Tier 1 (Regional Magnets):** 1 000 000 pkt (Szpitale, Uczelnie, Dworce).
+  - **Tier 2 (Strategic Hubs):** 100 000 pkt (Galerie, Supermarkety, Szkoły, Policja).
+  - **Tier 3 (Local Core):** 10 000 pkt (Przychodnie, Kultura, Przedszkola).
+  - **Tier 4-6:** Odpowiednio 1 000, 100 i 1 pkt.
+- **Formuła:** `V = (Base_Tier * log10(Pop)) * Scarcity_Bonus * Uniqueness`. Scarcity działa tylko jako mikro-modyfikator wewnątrz warstwy.
+
+### 30. Ostateczna Weryfikacja (National Audit 3.0)
+- **Wynik:** Pełen sukces merytoryczny. W każdym z 29 miast zachowano żelazną hierarchię: Szpital > Supermarket > Żabka > Paczkomat.
+- **Skalowalność:** Model zapewnia uczciwe porównanie między metropolią (Warszawa) a mniejszymi ośrodkami (Giżycko), zachowując rzędy wielkości właściwe dla funkcji społecznej obiektów.
+
+---
+**Status Projektu:** System wyceny infrastruktury jest "betonowy". Przechodzimy do obliczeń DNA Przystanków (Faza 2).
+
+
+

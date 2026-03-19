@@ -1,0 +1,211 @@
+ISOLATION & CLIPPING INTEGRITY REPORT 2026
+============================================================
+
+CITY: BIALYSTOK
+  - Files: OK
+  - Stops: 1689
+  - POIs:  269348
+  - RCN:   4175
+  - TOTAL POPULATION (TOT): 430573 (OK)
+----------------------------------------
+CITY: BYDGOSZCZ
+  - Files: OK
+  - Stops: 1185
+  - POIs:  272107
+  - RCN:   2522
+  - TOTAL POPULATION (TOT): 466007 (OK)
+----------------------------------------
+CITY: CZESTOCHOWA
+  - Files: OK
+  - Stops: 891
+  - POIs:  168381
+  - RCN:   2225
+  - TOTAL POPULATION (TOT): 258085 (OK)
+----------------------------------------
+CITY: ELBLAG
+  - Files: OK
+  - Stops: 363
+  - POIs:  64788
+  - RCN:   1159
+  - TOTAL POPULATION (TOT): 121746 (OK)
+----------------------------------------
+CITY: ELK
+  - Files: OK
+  - Stops: 313
+  - POIs:  70975
+  - RCN:   1383
+  - TOTAL POPULATION (TOT): 74625 (OK)
+----------------------------------------
+CITY: GIZYCKO
+  - Files: OK
+  - Stops: 139
+  - POIs:  25210
+  - RCN:   394
+  - TOTAL POPULATION (TOT): 36450 (OK)
+----------------------------------------
+CITY: GORZOW
+  - Files: OK
+  - Stops: 428
+  - POIs:  119583
+  - RCN:   2335
+  - TOTAL POPULATION (TOT): 131987 (OK)
+----------------------------------------
+CITY: GZM
+  - Files: OK
+  - Stops: 8941
+  - POIs:  2187646
+  - RCN:   27412
+  - TOTAL POPULATION (TOT): 3451625 (HIGH)
+    [!] WARNING: Large metro area: 3451625 (Baseline: 50000)
+----------------------------------------
+CITY: KIELCE
+  - Files: OK
+  - Stops: 1341
+  - POIs:  363052
+  - RCN:   3316
+  - TOTAL POPULATION (TOT): 333933 (OK)
+----------------------------------------
+CITY: KRAKOW
+  - Files: OK
+  - Stops: 4141
+  - POIs:  1138777
+  - RCN:   20045
+  - TOTAL POPULATION (TOT): 1286445 (OK)
+----------------------------------------
+CITY: KUTNO
+  - Files: OK
+  - Stops: 220
+  - POIs:  30497
+  - RCN:   437
+  - TOTAL POPULATION (TOT): 47182 (OK)
+----------------------------------------
+CITY: LEGNICA
+  - Files: OK
+  - Stops: 357
+  - POIs:  67922
+  - RCN:   3171
+  - TOTAL POPULATION (TOT): 122446 (OK)
+----------------------------------------
+CITY: LESZNO
+  - Files: OK
+  - Stops: 281
+  - POIs:  62556
+  - RCN:   1476
+  - TOTAL POPULATION (TOT): 85310 (OK)
+----------------------------------------
+CITY: LODZ
+  - Files: OK
+  - Stops: 2584
+  - POIs:  626719
+  - RCN:   12000
+  - TOTAL POPULATION (TOT): 959397 (OK)
+----------------------------------------
+CITY: LOMZA
+  - Files: OK
+  - Stops: 177
+  - POIs:  26351
+  - RCN:   693
+  - TOTAL POPULATION (TOT): 63433 (OK)
+----------------------------------------
+CITY: LUBLIN
+  - Files: OK
+  - Stops: 1294
+  - POIs:  381873
+  - RCN:   6180
+  - TOTAL POPULATION (TOT): 479003 (OK)
+----------------------------------------
+CITY: OLSZTYN
+  - Files: OK
+  - Stops: 2715
+  - POIs:  570582
+  - RCN:   8511
+  - TOTAL POPULATION (TOT): 762477 (HIGH)
+    [!] WARNING: Large metro area: 762477 (Baseline: 170000)
+----------------------------------------
+CITY: OPOLE
+  - Files: OK
+  - Stops: 530
+  - POIs:  114097
+  - RCN:   1660
+  - TOTAL POPULATION (TOT): 159298 (OK)
+----------------------------------------
+CITY: POZNAN
+  - Files: OK
+  - Stops: 5085
+  - POIs:  1551244
+  - RCN:   20384
+  - TOTAL POPULATION (TOT): 1752544 (HIGH)
+    [!] WARNING: Large metro area: 1752544 (Baseline: 530000)
+----------------------------------------
+CITY: PRZEMYSL
+  - Files: OK
+  - Stops: 307
+  - POIs:  63740
+  - RCN:   693
+  - TOTAL POPULATION (TOT): 81176 (OK)
+----------------------------------------
+CITY: RADOM
+  - Files: OK
+  - Stops: 712
+  - POIs:  290462
+  - RCN:   1255
+  - TOTAL POPULATION (TOT): 242800 (OK)
+----------------------------------------
+CITY: RZESZOW
+  - Files: OK
+  - Stops: 2600
+  - POIs:  775421
+  - RCN:   5842
+  - TOTAL POPULATION (TOT): 669423 (HIGH)
+    [!] WARNING: Large metro area: 669423 (Baseline: 190000)
+----------------------------------------
+CITY: SUWALKI
+  - Files: OK
+  - Stops: 331
+  - POIs:  46789
+  - RCN:   1096
+  - TOTAL POPULATION (TOT): 75172 (OK)
+----------------------------------------
+CITY: SWINOUJSCIE
+  - Files: OK
+  - Stops: 207
+  - POIs:  31440
+  - RCN:   1705
+  - TOTAL POPULATION (TOT): 45199 (OK)
+----------------------------------------
+CITY: SZCZECIN
+  - Files: OK
+  - Stops: 1765
+  - POIs:  528877
+  - RCN:   4425
+  - TOTAL POPULATION (TOT): 534541 (OK)
+----------------------------------------
+CITY: TORUN
+  - Files: OK
+  - Stops: 899
+  - POIs:  208547
+  - RCN:   4248
+  - TOTAL POPULATION (TOT): 266137 (OK)
+----------------------------------------
+CITY: TROJMIASTO
+  - Files: OK
+  - Stops: 3191
+  - POIs:  610163
+  - RCN:   25722
+  - TOTAL POPULATION (TOT): 1180724 (HIGH)
+    [!] WARNING: Large metro area: 1180724 (Baseline: 50000)
+----------------------------------------
+CITY: WARSZAWA
+  - Files: OK
+  - Stops: 10099
+  - POIs:  2453277
+  - RCN:   43048
+  - TOTAL POPULATION (TOT): 3344965 (OK)
+----------------------------------------
+CITY: WROCLAW
+  - Files: OK
+  - Stops: 3148
+  - POIs:  1137175
+  - RCN:   14594
+  - TOTAL POPULATION (TOT): 1428938 (OK)
+----------------------------------------

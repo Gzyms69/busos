@@ -1,0 +1,173 @@
+URBAN GRAVITY ENGINE 5.4 - SEMANTIC PRECISION AUDIT
+===============================================================================================
+
+CITY: WARSZAWA
+T0_GLOBAL_HUB             | T0_GLOBAL_HUB             |     2 |       261380486
+hospital                  | T1_REGIONAL_MAGNET        |    76 |        26215426
+university                | T1_REGIONAL_MAGNET        |   128 |        20818363
+college                   | T1_REGIONAL_MAGNET        |   109 |        11041017
+mall                      | T2_STRATEGIC_HUB          |   156 |         2255536
+school                    | T2_STRATEGIC_HUB          |  1444 |         1799905
+department_store          | T2_STRATEGIC_HUB          |    24 |         1441774
+supermarket               | T2_STRATEGIC_HUB          |  1002 |         1228820
+station                   | T2_STRATEGIC_HUB          |    85 |          845750
+T3_LOCAL_CORE             | T3_LOCAL_CORE             |    24 |          279241
+social_facility           | T3_LOCAL_CORE             |   312 |          151385
+theatre                   | T3_LOCAL_CORE             |    86 |          118661
+cinema                    | T3_LOCAL_CORE             |    44 |          106849
+clinic                    | T3_LOCAL_CORE             |   317 |          103930
+museum                    | T3_LOCAL_CORE             |     1 |           92938
+library                   | T3_LOCAL_CORE             |   392 |           89905
+doctors                   | T3_LOCAL_CORE             |   870 |           89653
+ferry_terminal            | T3_LOCAL_CORE             |    22 |           87119
+bank                      | T4_DAILY_SERVICE          |   579 |            8541
+convenience               | T4_DAILY_SERVICE          |  3078 |            8217
+pharmacy                  | T4_DAILY_SERVICE          |  1065 |            8167
+residential               | T5_SPEC_GASTRO            |     1 |            3349
+customs                   | T5_SPEC_GASTRO            |     1 |            3180
+prison                    | T5_SPEC_GASTRO            |     5 |            3001
+nature_reserve            | T5_SPEC_GASTRO            |   318 |            2864
+golf_course               | T5_SPEC_GASTRO            |    14 |            2838
+summer_camp               | T5_SPEC_GASTRO            |     1 |            2777
+stadium                   | T5_SPEC_GASTRO            |    41 |            2721
+resort                    | T5_SPEC_GASTRO            |     9 |            2656
+adventure_park            | T5_SPEC_GASTRO            |     1 |            2412
+
+===============================================================================================
+
+CITY: KRAKOW
+T0_GLOBAL_HUB             | T0_GLOBAL_HUB             |     1 |       236006994
+hospital                  | T1_REGIONAL_MAGNET        |    32 |        23314501
+college                   | T1_REGIONAL_MAGNET        |    17 |        14907912
+university                | T1_REGIONAL_MAGNET        |   127 |        13814694
+faculty                   | T1_REGIONAL_MAGNET        |     2 |         8445075
+mall                      | T2_STRATEGIC_HUB          |    51 |         2047871
+school                    | T2_STRATEGIC_HUB          |   589 |         1753075
+supermarket               | T2_STRATEGIC_HUB          |   396 |         1152496
+department_store          | T2_STRATEGIC_HUB          |    11 |         1069056
+station                   | T2_STRATEGIC_HUB          |    19 |          804822
+T3_LOCAL_CORE             | T3_LOCAL_CORE             |     4 |          308537
+social_facility           | T3_LOCAL_CORE             |    88 |          118855
+theatre                   | T3_LOCAL_CORE             |    36 |          111924
+clinic                    | T3_LOCAL_CORE             |   180 |          101662
+cinema                    | T3_LOCAL_CORE             |    18 |          101575
+library                   | T3_LOCAL_CORE             |   147 |           85560
+doctors                   | T3_LOCAL_CORE             |   325 |           85390
+ferry_terminal            | T3_LOCAL_CORE             |     8 |           82007
+hotel                     | T4_DAILY_SERVICE          |     1 |           12341
+bank                      | T4_DAILY_SERVICE          |   202 |            8092
+convenience               | T4_DAILY_SERVICE          |  1336 |            7683
+pharmacy                  | T4_DAILY_SERVICE          |   431 |            7617
+golf_course               | T5_SPEC_GASTRO            |     2 |            4112
+nature_reserve            | T5_SPEC_GASTRO            |    62 |            3126
+beach_resort              | T5_SPEC_GASTRO            |     2 |            3108
+exhibition_centre         | T5_SPEC_GASTRO            |     1 |            2685
+scrapyard                 | T5_SPEC_GASTRO            |     1 |            2570
+prison                    | T5_SPEC_GASTRO            |     2 |            2532
+stadium                   | T5_SPEC_GASTRO            |    30 |            2451
+planned                   | T5_SPEC_GASTRO            |     1 |            2394
+
+===============================================================================================
+
+CITY: BIALYSTOK
+hospital                  | T1_REGIONAL_MAGNET        |    12 |        20652936
+university                | T1_REGIONAL_MAGNET        |    27 |        14409368
+college                   | T1_REGIONAL_MAGNET        |     7 |         9275118
+mall                      | T2_STRATEGIC_HUB          |    31 |         1793052
+school                    | T2_STRATEGIC_HUB          |   159 |         1760560
+department_store          | T2_STRATEGIC_HUB          |    10 |         1414542
+supermarket               | T2_STRATEGIC_HUB          |   171 |         1086925
+station                   | T2_STRATEGIC_HUB          |    10 |          729222
+T3_LOCAL_CORE             | T3_LOCAL_CORE             |     3 |          253333
+theatre                   | T3_LOCAL_CORE             |    11 |          129840
+social_facility           | T3_LOCAL_CORE             |    48 |          115804
+clinic                    | T3_LOCAL_CORE             |    61 |           92644
+doctors                   | T3_LOCAL_CORE             |    91 |           82487
+library                   | T3_LOCAL_CORE             |    33 |           82029
+cinema                    | T3_LOCAL_CORE             |     5 |           74049
+bank                      | T4_DAILY_SERVICE          |    82 |            7546
+convenience               | T4_DAILY_SERVICE          |   413 |            7382
+pharmacy                  | T4_DAILY_SERVICE          |   160 |            6899
+nature_reserve            | T5_SPEC_GASTRO            |    26 |            3551
+prison                    | T5_SPEC_GASTRO            |     3 |            2698
+resort                    | T5_SPEC_GASTRO            |     3 |            2416
+logistics                 | T5_SPEC_GASTRO            |     1 |            2303
+nursing_home              | T5_SPEC_GASTRO            |     3 |            2085
+traffic_park              | T5_SPEC_GASTRO            |     1 |            2052
+park                      | T5_SPEC_GASTRO            |    64 |            2040
+ice_rink                  | T5_SPEC_GASTRO            |     1 |            2016
+mobile_industrial_equipment | T5_SPEC_GASTRO            |     1 |            2010
+driver_training           | T5_SPEC_GASTRO            |     1 |            1984
+grave_yard                | T5_SPEC_GASTRO            |    10 |            1975
+bike_park                 | T5_SPEC_GASTRO            |     1 |            1961
+
+===============================================================================================
+
+CITY: SUWALKI
+hospital                  | T1_REGIONAL_MAGNET        |     1 |        23716087
+university                | T1_REGIONAL_MAGNET        |     1 |        20257484
+school                    | T2_STRATEGIC_HUB          |    27 |         1523589
+mall                      | T2_STRATEGIC_HUB          |     7 |         1355473
+department_store          | T2_STRATEGIC_HUB          |     4 |         1216698
+supermarket               | T2_STRATEGIC_HUB          |    33 |         1044513
+station                   | T2_STRATEGIC_HUB          |     2 |          629125
+T3_LOCAL_CORE             | T3_LOCAL_CORE             |     1 |          319519
+cinema                    | T3_LOCAL_CORE             |     1 |          134297
+social_facility           | T3_LOCAL_CORE             |     2 |          126012
+theatre                   | T3_LOCAL_CORE             |     1 |           97100
+library                   | T3_LOCAL_CORE             |     1 |           85244
+atm                       | T5_SPEC_GASTRO            |    15 |           83268
+doctors                   | T3_LOCAL_CORE             |    11 |           76259
+convenience               | T4_DAILY_SERVICE          |    24 |            6628
+bank                      | T4_DAILY_SERVICE          |    15 |            6482
+pharmacy                  | T4_DAILY_SERVICE          |    29 |            6138
+prison                    | T5_SPEC_GASTRO            |     1 |            2528
+nature_reserve            | T5_SPEC_GASTRO            |     1 |            2339
+marketplace               | T5_SPEC_GASTRO            |     2 |            2065
+animal_shelter            | T5_SPEC_GASTRO            |     1 |            2024
+stadium                   | T5_SPEC_GASTRO            |     7 |            1852
+water_park                | T5_SPEC_GASTRO            |     1 |            1753
+community_centre          | T5_SPEC_GASTRO            |     1 |            1587
+garden_centre             | T5_SPEC_GASTRO            |     1 |            1581
+courthouse                | T5_SPEC_GASTRO            |     1 |            1521
+deli                      | T5_SPEC_GASTRO            |     1 |            1479
+common                    | T5_SPEC_GASTRO            |     1 |            1438
+dairy                     | T5_SPEC_GASTRO            |     1 |            1371
+park                      | T5_SPEC_GASTRO            |    24 |            1361
+
+===============================================================================================
+
+CITY: GIZYCKO
+hospital                  | T1_REGIONAL_MAGNET        |     1 |        21677994
+school                    | T2_STRATEGIC_HUB          |    17 |         1358708
+mall                      | T2_STRATEGIC_HUB          |     5 |         1039788
+supermarket               | T2_STRATEGIC_HUB          |    21 |          870010
+station                   | T2_STRATEGIC_HUB          |     3 |          575097
+T3_LOCAL_CORE             | T3_LOCAL_CORE             |     3 |          116203
+clinic                    | T3_LOCAL_CORE             |     3 |           90151
+theatre                   | T3_LOCAL_CORE             |     3 |           86738
+library                   | T3_LOCAL_CORE             |     3 |           76892
+social_facility           | T3_LOCAL_CORE             |     1 |           58956
+doctors                   | T3_LOCAL_CORE             |     2 |           58043
+ferry_terminal            | T3_LOCAL_CORE             |     6 |           56597
+bank                      | T4_DAILY_SERVICE          |     8 |            6274
+convenience               | T4_DAILY_SERVICE          |    30 |            5762
+pharmacy                  | T4_DAILY_SERVICE          |    17 |            5711
+nature_reserve            | T5_SPEC_GASTRO            |     5 |            2623
+golf_course               | T5_SPEC_GASTRO            |     1 |            2072
+stadium                   | T5_SPEC_GASTRO            |     1 |            1836
+marketplace               | T5_SPEC_GASTRO            |     1 |            1721
+grave_yard                | T5_SPEC_GASTRO            |     1 |            1681
+park                      | T5_SPEC_GASTRO            |    12 |            1515
+marina                    | T5_SPEC_GASTRO            |    26 |            1511
+ice_rink                  | T5_SPEC_GASTRO            |     1 |            1500
+swimming_area             | T5_SPEC_GASTRO            |     2 |            1500
+prison                    | T5_SPEC_GASTRO            |     1 |            1431
+doityourself              | T5_SPEC_GASTRO            |     2 |            1400
+townhall                  | T5_SPEC_GASTRO            |     1 |            1215
+sports_centre             | T5_SPEC_GASTRO            |     8 |            1207
+sports                    | T5_SPEC_GASTRO            |     1 |            1151
+variety_store             | T5_SPEC_GASTRO            |     1 |            1144
+
+===============================================================================================
+

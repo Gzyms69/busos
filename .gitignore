@@ -1,15 +1,27 @@
+# Środowisko i tymczasowe
 .venv/
-data/
-reports/
-scripts/
 __pycache__/
 .ipynb_checkpoints/
-*.zip
-*.gml
-*.gpkg
-*.dbf
-*.shp
-*.shx
-*.prj
+*.pyc
 .DS_Store
 .env
+
+# Logi i Cache
+cache/
+logs/
+
+# DANE (ŚCISŁA IZOLACJA)
+# Całkowicie blokujemy folder data. Zawiera on dziesiątki gigabajtów 
+# rozpakowanych plików GTFS (.txt), bazy GPKG, PBF, SQLite,
+# pliki sieci drogowych (.graphml) oraz lokalne zrzuty JSON.
+# Żadne dane przetwarzane nie mają prawa trafić do repozytorium kodu.
+data/
+
+# RAPORTY
+# Ignorujemy archiwum, ale śledzimy ostateczne pliki audytowe
+reports/archive/
+
+# GWARANCJA ŚLEDZENIA KODU I KONFIGURACJI
+!scripts/
+!config/
+!docs/

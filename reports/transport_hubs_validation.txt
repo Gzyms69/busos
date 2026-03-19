@@ -1,0 +1,138 @@
+HUB VALIDATION TABLE v5.6 (STEMMING & DECLENSION CHECK)
+===============================================================================================
+
+CITY: WARSZAWA
+  - [T1_REGIONAL_MAGNET] Szkoła Główna Gospodarstwa Wiejskiego         | Val:        32030062
+  - [T1_REGIONAL_MAGNET] Akademia Sztuki Wojennej                      | Val:        31631312
+  - [T1_REGIONAL_MAGNET] Centrum Szkolenia Policji w Legionowie        | Val:        31232186
+  - [T1_REGIONAL_MAGNET] Wojskowa Akademia Techniczna                  | Val:        31177363
+  - [T1_REGIONAL_MAGNET] Mazowieckie Specjalistyczne Centrum Zdrowia im. prof. Jana Mazurkiewicza | Val:        30905063
+  - [T1_REGIONAL_MAGNET] Akademia Wychowania Fizycznego                | Val:        30602159
+  - [T1_REGIONAL_MAGNET] Baza Szkolenia Poligonowego i Innowacji Ratownictwa APoż | Val:        28282325
+  - [T1_REGIONAL_MAGNET] Centralny Szpital Kliniczny MON               | Val:        28268927
+  - [T1_REGIONAL_MAGNET] Samodzielny Publiczny Szpital Kliniczny im. Prof. Adama Grucy CMKP | Val:        28209280
+  - [T1_REGIONAL_MAGNET] Warszawski Uniwersytet Medyczny               | Val:        28052335
+  - [T1_REGIONAL_MAGNET] Mazowieckie Centrum Leczenia Chorób Płuc i Gruźlicy | Val:        27937562
+  - [T1_REGIONAL_MAGNET] Centrum Zdrowia Dziecka                       | Val:        27779397
+  - [T1_REGIONAL_MAGNET] Zakład Kynologii Policyjnej CSP               | Val:        27623423
+  - [T1_REGIONAL_MAGNET] N/A                                           | Val:        27585945
+  - [T1_REGIONAL_MAGNET] Europejskie Centrum Zdrowia Otwock            | Val:        27568125
+  - [T1_REGIONAL_MAGNET] Politechnika Warszawska                       | Val:        27291310
+  - [T1_REGIONAL_MAGNET] Narodowy Instytut Onkologii                   | Val:        27135168
+  - [T1_REGIONAL_MAGNET] Kampus Ochota UW                              | Val:        26929396
+  - [T1_REGIONAL_MAGNET] Państwowy Instytut Medyczny MSWiA             | Val:        26316744
+  - [T1_REGIONAL_MAGNET] UKSW Kampus Wóycickiego                       | Val:        25918557
+  - [T1_REGIONAL_MAGNET] Mazowiecki Szpital Wojewódzki Drewnica        | Val:        25821264
+  - [T1_REGIONAL_MAGNET] Mazowieckie Centrum Rehabilitacji \           | Val:        25719512
+  - [T1_REGIONAL_MAGNET] SZPZOZ im. Dzieci Warszawy w Dziekanowie Leśnym | Val:        25440950
+  - [T1_REGIONAL_MAGNET] Mazowiecki Szpital Bródnowski                 | Val:        25434201
+  - [T1_REGIONAL_MAGNET] Uniwersytet Kardynała Stefana Wyszyńskiego - Kampus Dewajtis | Val:        25433760
+-----------------------------------------------------------------------------------------------
+CITY: KRAKOW
+  - [T1_REGIONAL_MAGNET] Szpital Kliniczny im. doktora Józefa Babińskiego SP ZOZ | Val:        28100307
+  - [T1_REGIONAL_MAGNET] Kampus 600-lecia Odnowienia Uniwersytetu Jagiellońskiego | Val:        27010053
+  - [T1_REGIONAL_MAGNET] Akademia Górniczo-Hutnicza                    | Val:        26739746
+  - [T1_REGIONAL_MAGNET] Akademia Kultury Fizycznej                    | Val:        25910218
+  - [T1_REGIONAL_MAGNET] Szpital Specjalistyczny im. Ludwika Rydygiera w Krakowie | Val:        25525517
+  - [T1_REGIONAL_MAGNET] Szpital Uniwersytecki                         | Val:        25455335
+  - [T1_REGIONAL_MAGNET] Uniwersytecki Szpital Dziecięcy               | Val:        24841808
+  - [T1_REGIONAL_MAGNET] Uniwersytet Rolniczy — Kampus Balicka         | Val:        24757616
+  - [T1_REGIONAL_MAGNET] Krakowski Szpital Specjalistyczny imienia świętego Jana Pawła II | Val:        24612772
+  - [T1_REGIONAL_MAGNET] Szpital specjalistyczny imienia Stefana Żeromskiego | Val:        24471870
+  - [T1_REGIONAL_MAGNET] 5. Wojskowy Szpital Kliniczny z Polikliniką SP ZOZ w Krakowie | Val:        24330248
+  - [T1_REGIONAL_MAGNET] Miejskie Centrum Opieki dla Osób Starszych, Przewlekle Niepełnosprawnych oraz Niesamodzielnych | Val:        23790847
+  - [T1_REGIONAL_MAGNET] Instytut Fizyki Jądrowej im. Henryka Niewodniczańskiego PAN | Val:        23775262
+  - [T1_REGIONAL_MAGNET] Uniwersytet Rolniczy — Centrum Badawcze WHiBZ | Val:        23711274
+  - [T1_REGIONAL_MAGNET] Uniwersytet Jagielloński                      | Val:        23651761
+  - [T1_REGIONAL_MAGNET] Politechnika Krakowska - Wydział Mechaniczny  | Val:        23496351
+  - [T1_REGIONAL_MAGNET] Politechnika Krakowska - Kampus Warszawska    | Val:        23347655
+  - [T1_REGIONAL_MAGNET] Szpital Uniwersytecki CM UJ                   | Val:        23318747
+  - [T1_REGIONAL_MAGNET] Uniwersytet Ekonomiczny w Krakowie            | Val:        23103674
+  - [T1_REGIONAL_MAGNET] Uniwersytet Rolniczy                          | Val:        22964190
+  - [T1_REGIONAL_MAGNET] Krakowskie Centrum Rehabilitacji              | Val:        22709561
+  - [T1_REGIONAL_MAGNET] Szpital w Proszowicach                        | Val:        22660919
+  - [T1_REGIONAL_MAGNET] Ujastek Grupa Neomedic                        | Val:        22414079
+  - [T1_REGIONAL_MAGNET] Uniwersytet Rolniczy                          | Val:        22369508
+  - [T1_REGIONAL_MAGNET] Wydział Farmaceutyczny UJ                     | Val:        21804795
+-----------------------------------------------------------------------------------------------
+CITY: LODZ
+  - [T1_REGIONAL_MAGNET] Instytut Centrum Zdrowia Matki Polki          | Val:        27012701
+  - [T1_REGIONAL_MAGNET] Specjalistyczny Psychiatryczny Zespół Opieki Zdrowotnej | Val:        26251090
+  - [T1_REGIONAL_MAGNET] Centralny Szpital Kliniczny                   | Val:        25928479
+  - [T1_REGIONAL_MAGNET] Wojewódzki Zespół Zakładów Opieki Zdrowotnej – Centrum Leczenia Chorób Płuc i Rehabilitacji im. błogosławionego ojca Rafała Chylińskiego | Val:        25692451
+  - [T1_REGIONAL_MAGNET] Politechnika Łódzka - Kampus B                | Val:        25123658
+  - [T1_REGIONAL_MAGNET] Politechnika Łódzka - Kampus A                | Val:        24340626
+  - [T1_REGIONAL_MAGNET] Wojewódzki Szpital Specjalistyczny im. M. Kopernika | Val:        23729271
+  - [T1_REGIONAL_MAGNET] N/A                                           | Val:        23622692
+  - [T1_REGIONAL_MAGNET] N/A                                           | Val:        23564502
+  - [T1_REGIONAL_MAGNET] Wojewódzki Szpital Specjalistyczny im. Marii Skłodowskiej – Curie | Val:        23543578
+  - [T1_REGIONAL_MAGNET] Specjalistyczny Szpital Gruźlicy, Chorób Płuc i Rehabilitacji w Tuszynie | Val:        23375249
+  - [T1_REGIONAL_MAGNET] Wojewódzki Specjalistyczny Szpital im. dr. Władysława Biegańskiego | Val:        22920976
+  - [T1_REGIONAL_MAGNET] Politechnika Łódzka - Kampus C                | Val:        22135368
+  - [T1_REGIONAL_MAGNET] Uniwersytecki Szpital Kliniczny nr 2 Uniwersytetu Medycznego w Łodzi | Val:        21860702
+  - [T1_REGIONAL_MAGNET] Wydział Biologii i Ochrony Środowiska Uniwersytetu Łódzkiego | Val:        21772675
+  - [T1_REGIONAL_MAGNET] III Szpital Miejski im. dr. Karola Jonschera  | Val:        21098692
+  - [T1_REGIONAL_MAGNET] Akademia Sztuk Pięknych im. Władysława Strzemińskiego | Val:        20982507
+  - [T1_REGIONAL_MAGNET] WSS im. M. Pirogowa. Ośrodek Szpitalny im. M. Madurowicza | Val:        20977747
+  - [T1_REGIONAL_MAGNET] Szpital Pediatryczny im. Marii Konopnickiej   | Val:        20946583
+  - [T1_REGIONAL_MAGNET] Państwowa Wyższa Szkoła Filmowa, Telewizyjna i Teatralna im. Leona Schillera | Val:        20900491
+  - [T1_REGIONAL_MAGNET] Ośrodek Pediatryczny im. dr J. Korczaka - Wojewódzki Szpital Specjalistyczny im. M.Kopernika w Łodzi | Val:        20656664
+  - [T1_REGIONAL_MAGNET] Wydział Farmaceutyczny Uniwersytetu Medycznego w Łodzi | Val:        20550414
+  - [T1_REGIONAL_MAGNET] Centrum Badań Molekularnych i Makromolekularnych PAN | Val:        20512589
+  - [T1_REGIONAL_MAGNET] Wydział Prawa i Administracji Uniwersytetu Łódzkiego | Val:        20293959
+  - [T1_REGIONAL_MAGNET] Uniwersytecki Szpital Kliniczny nr 1 im. N. Barlickiego. SPZOZ | Val:        20157898
+-----------------------------------------------------------------------------------------------
+CITY: TROJMIASTO
+  - [T1_REGIONAL_MAGNET] Politechnika Gdańska                          | Val:        27500557
+  - [T1_REGIONAL_MAGNET] Uniwersytet Gdański                           | Val:        26809363
+  - [T1_REGIONAL_MAGNET] Akademia Marynarki Wojennej im. Bohaterów Westerplatte | Val:        25516338
+  - [T1_REGIONAL_MAGNET] Akademia Wychowania Fizycznego i Sportu im. Jędrzeja Śniadeckiego | Val:        25353624
+  - [T1_REGIONAL_MAGNET] Szpital Specjalistyczny im. Floriana Ceynowy w Wejherowie | Val:        24920911
+  - [T1_REGIONAL_MAGNET] Uniwersyteckie Centrum Kliniczne              | Val:        24459481
+  - [T1_REGIONAL_MAGNET] Gdański Uniwersytet Medyczny                  | Val:        24356409
+  - [T1_REGIONAL_MAGNET] Pomorskie Centrum Rehabilitacji - Szpital w Dzierżążnie | Val:        24264764
+  - [T1_REGIONAL_MAGNET] Szpital Św. Wojciecha                         | Val:        24189194
+  - [T1_REGIONAL_MAGNET] 7 Szpital Marynarki Wojennej                  | Val:        24138970
+  - [T1_REGIONAL_MAGNET] Szpital Dziecięcy Polanki                     | Val:        23774007
+  - [T1_REGIONAL_MAGNET] Szpital Morski im. PCK                        | Val:        23724343
+  - [T1_REGIONAL_MAGNET] Uniwersytet Morski w Gdyni                    | Val:        22637495
+  - [T1_REGIONAL_MAGNET] Wojewódzki Szpital Psychiatryczny im. Tadeusza Bilikiewicza | Val:        22221383
+  - [T1_REGIONAL_MAGNET] Uniwersytet Gdański                           | Val:        21318104
+  - [T1_REGIONAL_MAGNET] Uniwersyteckie Centrum Medycyny Morskiej i Tropikalnej | Val:        21004822
+  - [T1_REGIONAL_MAGNET] Szpital im. Mikołaja Kopernika                | Val:        20843818
+  - [T1_REGIONAL_MAGNET] Szpital Powiatowy im. Aleksandra Majkowskiego w Kartuzach | Val:        20833997
+  - [T1_REGIONAL_MAGNET] Uniwersytet WSB Merito                        | Val:        20758687
+  - [T1_REGIONAL_MAGNET] N/A                                           | Val:        20556904
+  - [T1_REGIONAL_MAGNET] Akademia Muzyczna im. Stanisława Moniuszki w Gdańsku | Val:        20471256
+  - [T1_REGIONAL_MAGNET] Zespół Szkół Samochodowych                    | Val:        20435510
+  - [T1_REGIONAL_MAGNET] Ośrodek Terapii Uzależnień w Smażynie         | Val:        20308620
+  - [T1_REGIONAL_MAGNET] Centrum Offshore Uniwersytetu Morskiego w Gdyni | Val:        20124297
+  - [T1_REGIONAL_MAGNET] Szpital MSWiA                                 | Val:        19258383
+-----------------------------------------------------------------------------------------------
+CITY: BIALYSTOK
+  - [T1_REGIONAL_MAGNET] Politechnika Białostocka                      | Val:        24876232
+  - [T1_REGIONAL_MAGNET] Samodzielny Publiczny Psychiatryczny Zakład Opieki Zdrowotnej im. dr. Stanisława Deresza | Val:        23571917
+  - [T1_REGIONAL_MAGNET] Uniwersytet w Białymstoku                     | Val:        22161060
+  - [T1_REGIONAL_MAGNET] Uniwersytecki Szpital Kliniczny - Oddział     | Val:        22052949
+  - [T1_REGIONAL_MAGNET] Uniwersytet Medyczny                          | Val:        20365409
+  - [T1_REGIONAL_MAGNET] Wydział Inżynierii Zarządzania Politechniki Białostockiej | Val:        20104145
+  - [T1_REGIONAL_MAGNET] Samodzielny Publiczny Zakład Opieki Zdrowotnej w Łapach | Val:        19698513
+  - [T1_REGIONAL_MAGNET] Wojewódzki Szpital Zespolony im. Jędrzeja Śniadeckiego | Val:        19471855
+  - [T1_REGIONAL_MAGNET] Białostockie Centrum Onkologii im. Marii Skłodowskiej - Curie | Val:        18729348
+  - [T1_REGIONAL_MAGNET] Uniwersytecki Szpital Kliniczny               | Val:        17979910
+  - [T1_REGIONAL_MAGNET] Uniwersytet Muzyczny Fryderyka Chopina Wydział Instrumentalno-Pedagogiczny w Białymstoku | Val:        17795539
+  - [T1_REGIONAL_MAGNET] Uniwersytecki Dziecięcy Szpital Kliniczny im. Ludwika Zamenhofa | Val:        16398510
+  - [T1_REGIONAL_MAGNET] Wojewódzki Szpital Zespolony im. Jędrzeja Śniadeckiego | Val:        15909393
+  - [T1_REGIONAL_MAGNET] SP ZOZ MSWiA im. Mariana Zyndrama-Kościałkowskiego | Val:        15152403
+  - [T1_REGIONAL_MAGNET] Niepaństwowa Wyższa Szkoła Pedagogiczna       | Val:        15040366
+  - [T1_REGIONAL_MAGNET] Wyższa Szkoła Ekonomiczna                     | Val:        14810385
+  - [T1_REGIONAL_MAGNET] Uniwersytet Medyczny w Białymstoku - Zakład Medycyny Rodzinnej i Pielęgniarstwa Środowiskowego | Val:        14711093
+  - [T1_REGIONAL_MAGNET] Politechnika Białostocka - Wydział Architektury | Val:        14159253
+  - [T1_REGIONAL_MAGNET] Uniwersytet w Białymstoku - Wydział Nauk o Edukacji | Val:        13455045
+  - [T1_REGIONAL_MAGNET] Uniwersytet w Białymstoku - Wydział Prawa     | Val:        13411481
+  - [T1_REGIONAL_MAGNET] Centrum Zawodów Medycznych i Społecznych - Szkoła Policealna Województwa Podlaskiego | Val:        12848471
+  - [T1_REGIONAL_MAGNET] Wyższa Szkoła Ekonomiczna                     | Val:        12630535
+  - [T1_REGIONAL_MAGNET] WANS - Wschodnioeuropejska Akademia Nauk Stosowanych | Val:        12468983
+  - [T1_REGIONAL_MAGNET] Aula im. Janusza Korczaka                     | Val:        12059940
+  - [T1_REGIONAL_MAGNET] Samodzielny Szpital Miejski im. PCK           | Val:        12028541
+-----------------------------------------------------------------------------------------------

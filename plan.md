@@ -30,7 +30,6 @@ Status: 100% Complete - DATA HARDENED. Final stitching required for ZIP-based ci
 - **Task 1.3:** Consolidate all Hubs into a single `master_analytical.gpkg` with a unified schema.
 
 ## 4. Master Analytical Pipeline (Phase 2)
-
 ### Step 1: Pre-computation of Stop Metrics (`compute_stop_dna.py`)
 For each of the 55,933 stops, generate a "DNA Profile":
 - `wealth_index`: Mean price/m2 in 1500m radius.
@@ -38,8 +37,29 @@ For each of the 55,933 stops, generate a "DNA Profile":
 - `poi_score`: Count of critical POIs (Schools, Hospitals, Trade).
 - `transit_load`: (Lines count * average frequency).
 
+## Phase 2.1: The Urban Gravity Engine (ISC+) - ADVANCED MODELING
+This phase introduces infrastructural intelligence by weighting POIs based on local context and physical scale.
+
+### Step 1.1: Data Isolation & Autonomous Hubs
+- **Structure:** Every city folder (`data/cities/{city}/`) will be reorganized into:
+  - `01_source/`: Raw GTFS, OSM, RCN files.
+  - `02_spatial/`: Unified GeoPackages + **`population_local.gpkg`** (Clipped NSP 2021 TOT grid).
+  - `03_config/`: **`poi_valuation.json`** (City-specific scarcity weights).
+  - `04_results/`: Stop DNA and city reports.
+- **Goal:** 100% independent city units for parallel processing and scalability.
+
+### Step 1.2: Infrastructural Scarcity Context (ISC) Logic
+- **Formula:** $Weight = TierMultiplier \times (TotalPOI / CountOfType)$.
+- **Logic:** A hospital in a metropolis is weighted higher than in a small town because it serves a larger, more complex urban fabric (represented by Total POI).
+
+### Step 1.3: Volume & Diversity Scaling (ISC+)
+- **Volume Factor:** Polygon-based POIs (buildings) are multiplied by $\log(Area \times Levels)$.
+- **Saturation Penalty:** Diminishing returns for repetitive services (e.g., the 5th supermarket in one zone adds less value than the 1st).
+- **Blacklist:** Zero-weight for urban noise (benches, waste baskets, parking spaces).
+
 ### Step 2: Spatial Routing Audit (`routing_analysis.py`)
-- Calculate the "Walking Distance Gap" for a 5% sample of all stops.
+...
+- Calculate the "Walking Distance Gap".
 - Compare Euclidean distance vs real sidewalk distance to identify topological barriers (rails, rivers, gated communities).
 
 ### Step 3: Priority Profiling (`city_priority_report.py`)
