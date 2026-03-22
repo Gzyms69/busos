@@ -135,6 +135,10 @@ def process_city(city_name, global_rail_gdf):
     final_city_stops = pd.concat([urban_gdf] + filtered_rail + strategic_points, ignore_index=True)
     final_city_stops['city'] = city_name
     
+    # POPRAWKA: Bezwzględnie nadajemy znormalizowaną nazwę (norm_name) każdemu przystankowi
+    # aby usunąć diakrytyki, znaki specjalne, przedrostki itp., co warunkuje mądre grupowanie w Step 15.
+    final_city_stops['norm_name'] = final_city_stops['stop_name'].apply(normalize_name)
+    
     # POPRAWKA P0-1: Filtr MAD post-merge na FINALNYM zbiorze
     # Chroni przed stacjami PKP z bledna lokalizacja ktore ominely pre-filtr
     final_median_x = final_city_stops.geometry.x.median()

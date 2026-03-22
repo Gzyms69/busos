@@ -50,7 +50,10 @@ class TurboOrchestrator:
             else:
                 self.target_cities = []
         else:
-            self.target_cities = cities
+            parsed_cities = []
+            for c in cities:
+                parsed_cities.extend([x.strip() for x in c.split(',') if x.strip()])
+            self.target_cities = parsed_cities
 
         # EKSPORT ZMIENNYCH ŚRODOWISKOWYCH (FIX: PRZEKAZYWANIE FILTRÓW)
         os.environ["PIPELINE_DATA_DIR"] = str(self.data_dir)

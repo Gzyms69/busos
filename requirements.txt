@@ -13,3 +13,5 @@ requests
 h3>=4.0
 lxml
 urllib3
+pyarrow
+fastparquet
