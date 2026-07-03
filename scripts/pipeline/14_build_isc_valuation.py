@@ -14,15 +14,15 @@ warnings.filterwarnings("ignore", message=".*Geometry is in a geographic CRS.*")
 def get_data_dir():
     return Path(os.environ.get("PIPELINE_DATA_DIR", "data"))
 
-# --- URBAN GRAVITY ENGINE 7.9: TRANSPORT-CENTRIC TAXONOMY ---
+# --- URBAN GRAVITY ENGINE 11.0: URBAN FABRIC RESCUE ---
 TIER_VALUES = {
-    "T0_MEGA_HUB":        20000000.0, # Airport, Port, Rail Hub
-    "T1_NATIONAL_MAGNET": 10000000.0, # Hospital, University, Stadium
-    "T2_STRATEGIC_HUB":   1000000.0,  # Mall, Office, Industrial, Commercial, Gov
-    "T3_LOCAL_CORE":      100000.0,   # High School, Culture, Marketplace, Sport
+    "T0_MEGA_HUB":        5000000.0, # Airport, Port, Rail Hub
+    "T1_NATIONAL_MAGNET": 1000000.0, # Hospital, University, Stadium
+    "T2_STRATEGIC_HUB":   250000.0,  # Mall, Office, Industrial, Commercial, Gov
+    "T3_LOCAL_CORE":      50000.0,   # High School, Culture, Marketplace, Sport
     "T4_DAILY_SERVICE":   10000.0,    # Pharmacy, Bank, Post, Convenience, Kindergarten
-    "T5_SPEC_GASTRO":     1000.0,     # Restaurant, Local Airfield
-    "T6_MICRO_INFRA":     10.0        # ATM, Locker
+    "T5_SPEC_GASTRO":     2500.0,     # Restaurant, Local Airfield
+    "T6_MICRO_INFRA":     100.0       # ATM, Locker
 }
 
 TAG_WHITELIST = {
@@ -80,16 +80,12 @@ TAG_WHITELIST = {
     "post_office":      ("post_office", "T4_DAILY_SERVICE"),
     "police":           ("police_station", "T4_DAILY_SERVICE"),
     "convenience":      ("convenience_store", "T4_DAILY_SERVICE"),
-    "place_of_worship": ("place_of_worship", "T4_DAILY_SERVICE"),
-    "park":             ("park_recreation", "T4_DAILY_SERVICE"),
-    "garden":           ("park_recreation", "T4_DAILY_SERVICE"),
     "hotel":            ("hotel_accommodation", "T4_DAILY_SERVICE"),
     "hostel":           ("hotel_accommodation", "T4_DAILY_SERVICE"),
     "clothes":          ("specialized_retail", "T4_DAILY_SERVICE"),
     "furniture":        ("specialized_retail", "T4_DAILY_SERVICE"),
     "electronics":      ("specialized_retail", "T4_DAILY_SERVICE"),
     "fuel":             ("car_services", "T4_DAILY_SERVICE"),
-    # car_repair usunięty na prośbę użytkownika - zbyt duży szum osiedlowy
 
     # T5 - SPECIALIZED / LOW IMPACT
     "restaurant": ("gastronomy", "T5_SPEC_GASTRO"),
@@ -100,16 +96,42 @@ TAG_WHITELIST = {
     "chemist":    ("personal_services", "T5_SPEC_GASTRO"),
     "airfield":   ("local_airfield", "T5_SPEC_GASTRO"),
 
-    # T6 - MICRO
-    "parcel_locker": ("micro_parcel_locker", "T6_MICRO_INFRA"),
-    "atm":           ("micro_atm", "T6_MICRO_INFRA"),
-    "playground":    ("micro_playground", "T6_MICRO_INFRA")
+    # T6 - MICRO INFRA (The Junk/Spam Tier - No Retention Floor)
+    "parcel_locker":    ("micro_parcel_locker", "T6_MICRO_INFRA"),
+    "atm":              ("micro_atm", "T6_MICRO_INFRA"),
+    "playground":       ("micro_playground", "T6_MICRO_INFRA"),
+    "bench":            ("micro_playground", "T6_MICRO_INFRA"),
+    "park":             ("park_recreation", "T6_MICRO_INFRA"),
+    "garden":           ("park_recreation", "T6_MICRO_INFRA"),
+    "recreation_ground":("park_recreation", "T6_MICRO_INFRA"),
+    "place_of_worship": ("place_of_worship", "T6_MICRO_INFRA")
 }
 
 def parse_hstore(hstore_str):
     if not hstore_str or pd.isna(hstore_str): return {}
+    # Standardowy parser HSTORE OpenStreetMap
     pattern = r'"?([^"=>]+)"?=>"?([^",]+)"?'
     return dict(re.findall(pattern, hstore_str))
+
+def spatial_dissolve_strategic(gdf):
+    """Scalamy obiekty T0 i T1 o tej samej nazwie, aby nie dublować wag (np. pawilony szpitala)."""
+    strategic = gdf[gdf['tier'].isin(['T0_MEGA_HUB', 'T1_NATIONAL_MAGNET'])].copy()
+    others = gdf[~gdf['tier'].isin(['T0_MEGA_HUB', 'T1_NATIONAL_MAGNET'])].copy()
+    
+    if strategic.empty: return gdf
+    
+    # Grupowanie po nazwie i klastrowanie przestrzenne (bufor 10m by skleić stykające się budynki)
+    # Zabezpieczamy się przed pustymi nazwami
+    strategic['name_clean'] = strategic['name'].fillna("bez_nazwy")
+    strategic['geometry'] = strategic.geometry.buffer(10)
+    
+    # Dissolve po nazwie i tierze
+    dissolved = strategic.dissolve(by=['name_clean', 'cat_name', 'tier'], aggfunc={'area_m2': 'sum'}).reset_index()
+    # Przywracamy geometrię i nazwę
+    dissolved['geometry'] = dissolved.geometry.buffer(-10)
+    dissolved = dissolved.rename(columns={'name_clean': 'name'})
+    
+    return pd.concat([dissolved, others], ignore_index=True)
 
 def identify_v7_9_tag(row, city_name):
     tags = parse_hstore(row.get('all_tags', ''))
@@ -156,18 +178,24 @@ def process_city(city_name, data_dir):
             all_gdf.append(gdf)
         gdf = pd.concat(all_gdf, ignore_index=True)
         
+        # KRYTYCZNE v13.0: Wyciągamy nazwę z all_tags, jeśli nie ma jej jako osobnej kolumny
+        if 'name' not in gdf.columns:
+            gdf['name'] = gdf['all_tags'].apply(lambda x: parse_hstore(x).get('name'))
+        
         tag_results = gdf.apply(lambda row: identify_v7_9_tag(row, city_name), axis=1, result_type='expand')
         tag_results.columns = ['cat_name', 'tier']
         gdf = pd.concat([gdf, tag_results], axis=1)
         gdf = gdf[gdf['cat_name'].notna()]
         
+        # NOWOŚĆ v13.0: Zszywanie pawilonów strategicznych (T0/T1) przed wyceną
+        gdf = spatial_dissolve_strategic(gdf)
+        
         if gdf.empty: return False
         
-        # Wektorowe obliczenie wartosci
+        # Wektorowe obliczenie wartosci (Linear Physics v10.0)
         gdf['base_val'] = gdf['tier'].map(TIER_VALUES)
-        gdf['d_mult'] = gdf['cat_name'].apply(lambda c: 15.0 if ("rail" in c or "airport" in c) else 1.0)
         gdf['area_factor'] = gdf['area_m2'].apply(lambda a: 1.0 + math.log10((a / 100.0) + 1) if a > 0 else 1.0)
-        gdf['val'] = gdf['base_val'] * h_grav * gdf['area_factor'] * gdf['d_mult']
+        gdf['val'] = gdf['base_val'] * h_grav * gdf['area_factor']
         
         objs = gdf[['cat_name', 'tier', 'val']].rename(columns={'cat_name': 'cat'}).to_dict('records')
         if not objs: return False

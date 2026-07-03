@@ -1,0 +1,65 @@
+wing: busos
+rooms:
+- name: logs
+  description: Files from logs/
+  keywords:
+  - logs
+  - logs
+- name: configuration
+  description: Files from config/
+  keywords:
+  - configuration
+  - config
+- name: documentation
+  description: Files from docs/
+  keywords:
+  - documentation
+  - docs
+- name: notebooks
+  description: Files from notebooks/
+  keywords:
+  - notebooks
+  - notebooks
+- name: reports
+  description: Files from reports/
+  keywords:
+  - reports
+  - reports
+- name: urban_dashboard
+  description: Files from urban-dashboard/
+  keywords:
+  - urban_dashboard
+  - urban-dashboard
+- name: data_kielce_e2e
+  description: Files from data_kielce_e2e/
+  keywords:
+  - data_kielce_e2e
+  - data_kielce_e2e
+- name: cache
+  description: Files from cache/
+  keywords:
+  - cache
+  - cache
+- name: scripts
+  description: Files from scripts/
+  keywords:
+  - scripts
+  - scripts
+- name: testing
+  description: Files from tests/
+  keywords:
+  - testing
+  - tests
+- name: data
+  description: Files from data/
+  keywords:
+  - data
+  - data
+- name: backend
+  description: Files from database/
+  keywords:
+  - backend
+  - database
+- name: general
+  description: Files that don't fit other rooms
+  keywords: []

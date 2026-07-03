@@ -108,7 +108,7 @@ class TurboOrchestrator:
         process.stdout.close()
         return process.wait(), metrics
 
-    def run_global_step(self, step_id, script_path):
+    def run_global_step(self, step_id, script_path, extra_args=None):
         self.logger.info(f"\n" + "="*80)
         self.logger.info(f" START KROKU: {step_id} ({Path(script_path).name})")
         self.logger.info("="*80)
@@ -118,6 +118,8 @@ class TurboOrchestrator:
             return True
 
         cmd = [sys.executable, str(script_path)]
+        if extra_args:
+            cmd.extend(extra_args)
         if self.force_update: cmd.append("--force")
 
         rc, metrics = self.stream_process(cmd, "GLOBAL")
@@ -227,18 +229,25 @@ def main():
         (12, "scripts/pipeline/12_audit_data_quality.py", False),
         (13, "scripts/pipeline/13_isolate_city_data.py", False),
         (14, "scripts/pipeline/14_build_isc_valuation.py", False),
-        (15, "scripts/pipeline/15_compute_stop_dna.py", False)
+        (15, "scripts/pipeline/15_compute_stop_dna.py", False),
+        (16, "scripts/pipeline/15_compute_stop_dna.py --stitch", True)
     ]
 
     orch.logger.info("=== PANCERNY ORKIESTRATOR 3.2 - SYSTEM TRANSPARENTNY ===")
     
-    for num, script, is_global in pipeline:
+    for num, script_entry, is_global in pipeline:
         if args.step is not None and args.step != num:
             continue
             
+        # Obsługa argumentów w ścieżce skryptu
+        parts = script_entry.split(' ')
+        script = parts[0]
+        extra_args = parts[1:]
+
         success = False
         if is_global:
-            success = orch.run_global_step(f"step_{num:02d}", script)
+            # Modyfikujemy run_global_step by przyjmował extra_args
+            success = orch.run_global_step(f"step_{num:02d}", script, extra_args)
         else:
             success = orch.run_city_parallel_step(f"step_{num:02d}", script)
             

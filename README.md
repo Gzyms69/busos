@@ -10,69 +10,40 @@ It acts as a Digital Auditor of Urban Policy, revealing whether cities favor aff
 
 ---
 
-## 2. Mathematical Architecture: Physics of the City (v9.1)
+## 2. Mathematical Architecture: Physics of the City (v13.0 - Rygor Tkanki Miejskiej)
 
-The most critical achievement of this platform is its custom-built **Urban Gravity Engine**, which relies on strict mathematical rules to simulate how humans move, choose services, and assign value to urban spaces. This is divided into two distinct phases: **Macro-Valuation (Script 14)** and **Micro-Gravity Distribution (Script 15)**.
+The most critical achievement of this platform is its custom-built **Urban Gravity Engine**, which relies on strict mathematical rules to simulate how humans move, choose services, and assign value to urban spaces. This is divided into three distinct phases: **Macro-Valuation**, **Calibrated Hybrid Clustering**, and **Dynamic Micro-Gravity Distribution**.
 
-### A. Phase I: Macro-Valuation of Infrastructure (Script 14)
-Before a transit stop is evaluated, the system looks at the city as a whole and determines the "Stock Market Value" of every single POI (Point of Interest) using the `identify_v7_9_tag` algorithm.
+### A. Phase I: Macro-Valuation & Spatial Dissolve (Script 14)
+**1. The "Spatial Dissolve" Algorithm (v13.0):**
+To prevent artificial value inflation, the system unifies fragmented OSM complexes (e.g., a hospital with 15 pavilions) into a single analytical unit.
+*   **Target:** Tier T0 (Mega Hubs) and T1 (National Magnets).
+*   **Logic:** Buffers objects by 10m, dissolves by `name` and `tier`, and restores geometry. 
+*   **Result:** A 15-building campus is treated as **One Object** with summed area, preventing 15x weight multiplication.
 
-**1. The Base Tier Matrix:**
-Every parsed OSM tag is mapped to a structural Base Tier:
-*   **T0 Mega Hubs:** 20,000,000 pts (Airports `iata`, Main Rail `uic_ref` or "Główny").
-*   **T1 National Magnets:** 10,000,000 pts (Hospitals, University Campuses, Stadiums).
-*   **T2 Strategic Hubs:** 1,000,000 pts (Malls, Commercial/Industrial Zones, Govt buildings).
-*   **T3 Local Cores:** 100,000 pts (High Schools, Theatres, Marketplaces).
-*   **T4 Daily Services:** 10,000 pts (Pharmacies, Kindergartens, Parks, Convenience stores).
-*   **T5 Specialized Gastro:** 1,000 pts (Restaurants, Fast Food).
-*   **T6 Micro Infra:** 10 pts (ATMs, Parcel Lockers, Playgrounds).
+**2. The Balanced Tier Matrix (Urban Fabric Rescue):**
+Parks and religious sites are demoted to T6 to prioritize commercial/service density.
+*   **T0 Mega Hubs:** 5,000,000 pts (Airports, Main Rail).
+*   **T1 National Magnets:** 1,000,000 pts (Hospitals, University Campuses).
+*   **T2 Strategic Hubs:** 250,000 pts (Malls, Commercial/Industrial Zones).
+*   **T3 Local Cores:** 50,000 pts (High Schools, Theatres).
+*   **T4 Daily Services:** 10,000 pts (Pharmacies, Banks, Convenience stores).
+*   **T5 Specialized Gastro:** 2,500 pts (Restaurants, Hotels).
+*   **T6 Micro Infra:** 100 pts (**Parks**, **Churches**, ATMs, Lockers).
 
-**2. The Valuation Equation (Per Object):**
-The value of a building isn't just its Tier. It is calculated as:
-`Raw_Value = Base_Tier * Human_Gravity * Area_Factor * Strategic_Multiplier`
-*   **Human Gravity (`h_grav`):** `log10(City_Population)`. A hospital in a metropolis of 2,000,000 people (`log10 = ~6.3`) is mathematically worth more than a hospital in a town of 50,000 (`log10 = ~4.6`), reflecting total systemic capacity.
-*   **Area Factor:** `1.0 + log10((Area_m2 / 100.0) + 1)`. A massive logistics hub gets an exponential boost over a small shop. (Points default to 1.0).
-*   **Strategic Multiplier:** Any object containing "rail" or "airport" gets a brutal `x15.0` multiplier because transit infrastructure handles vastly more daily human traffic per square meter than any standard building.
+### B. Phase II: Calibrated Hybrid Hub Agglomeration (Script 15)
+1.  **Semantic Phase:** Group by `norm_name` (150m threshold, `complete` linkage).
+2.  **Stitching Phase:** Merge different names (e.g. "Galeria Korona" and "IX Wieków") if centroids are within **100 meters**.
 
-**3. Mean Aggregation & The Scarcity Bonus:**
-Instead of assigning wild values to individual hospitals, the engine calculates the **Mean Raw Value** for an entire category (e.g., all hospitals in Warsaw). Then, it applies the Scarcity Index:
-`Scarcity_Bonus = 1.0 + (log2((Total_City_POIs / Category_POIs) + 1) / 50.0)`
-If a city has 100,000 objects, but only 3 theatres, the theatre category receives a rarity multiplier. This final aggregated number becomes the `final_value` (`w`) stored in `poi_valuation.json`.
+### C. Phase III: Dynamic Micro-Gravity Distribution (Script 15)
+**1. Dynamic Diminishing Returns (The High-Street Shield):**
+*   **T0 / T1 (National Hubs):** Power = `0.2`. No floor.
+*   **T2 (Strategic Hubs - Malls):** Power = `1.2`. **No floor** (Penalty falls to zero).
+*   **T4 / T5 (Urban Fabric - Stores/Gastro):** Power = `1.0`. **20% RETENTION FLOOR** (Protects the High Street).
+*   **T6 (Micro-Infra - Parks/Spam):** Power = `2.0`. **No floor** (Aggressively hits zero).
 
-### B. Phase II: Micro-Gravity Distribution (Script 15)
-Once every category has a price tag, transit stops "compete" to capture this value based on proximity and podaż (supply). 
-
-**1. The "Single Linkage" Hub Agglomeration:**
-Physical poles (e.g., 6 shelters at an intersection) are grouped by `norm_name` (names stripped of all punctuation/numbers). Then, `AgglomerativeClustering` is applied using a **150-meter threshold with `linkage='single'`**. This chains all stops belonging to a massive terminal into **One Logical Hub**, preventing them from dividing their GTFS departures and cannibalizing each other.
-
-**2. The Huff Gravity Pull (`pull`):**
-For every POI within a 500m radius of the Hub's centroid, the Euclidean distance is calculated (using C-GEOS vectorization `geometry.distance`). 
-`Pull = exp(-0.005 * Distance)`
-*   At 0 meters, `Pull = 1.000` (100% force).
-*   At 500 meters, `Pull = ~0.082` (Force drops by ~92%).
-
-**3. Market Cannibalization & Diminishing Returns:**
-To prevent "Clone Inflation" (e.g., an estate with 31 playgrounds defeating the Central Station), we apply a **Category Rank Penalty**:
-`w_penalized = w / (Category_Rank ^ Penalty_Power)`
-*   `T0 / T1`: Power = `0.2` (A second university faculty retains 87% value. Synergies are encouraged).
-*   `T2 / T3`: Power = `0.6` (Moderate root decay for a second school or mall).
-*   `T4`: Power = `1.0` (Linear decay for a second pharmacy).
-*   `T5 / T6`: Power = `1.5` (Brutal decay. The 31st playground gives only 0.5% of its original points).
-
-After penalties, stops compete for the building via the **Huff Market Share**:
-`Captured_Value = (w_penalized * Pull) * (Pull / Sum_of_all_Pulls_from_competing_Stops)`
-
-**4. The Gravity Fallacy Fix (Conservation of Human Mass):**
-For Population (GUS Grid), distance doesn't "kill" people; it only dictates which stop they choose. 
-`Captured_Population = Total_Grid_Pop * (Pull / Sum_of_all_Pulls_from_competing_Stops)`
-If 1000 people live in a cell, exactly 1000 people are distributed among the nearby stops.
-
-**5. Domain Synergy & Final Linear Z-Score:**
-The sum of all `Captured_Value` becomes the `raw_gravity`. This is boosted by the **Domain Synergy Bonus**: `infra_score = raw_gravity * (1.0 + 0.1 * unique_domain_count)`. A stop serving retail, health, and parks gets a 30% multiplier.
-
-Finally, the ultimate **Stop DNA Score** is calculated using absolute linear Z-Scores (Standard Deviations from the Mean) to preserve the exponential dominance of Mega Hubs:
-`Local_Score = (Z(infra_score) * 0.35) + (Z(transit_freq) * 0.35) + (Z(pop_val) * 0.15) + (Z(market_val) * 0.15)`
-The resulting score precisely ranks the Hub into percentiles, yielding absolute Grades (from A+ to F).
+**2. Shannon Entropy & Log-Normalized Z-Score:**
+`Local_Score = Z(log1p(infra)) * 0.35 + Z(log1p(transit)) * 0.35 + Z(log1p(pop)) * 0.15 + Z(log1p(market)) * 0.15`
 
 ---
 
