@@ -228,6 +228,10 @@ Schema (one row per physical stop):
 | `poi_total_count_1500m` | int | infrastructure.gpkg | All POIs within 1500m |
 | `poi_category_diversity` | int | infrastructure.gpkg | Unique OSM categories within 500m (out of 34 known) |
 | `repair_source` | str/null | transactions.gpkg | Flag from script 08/09 (null = clean) |
+| `dist_to_cbd` | float | computed | Euclidean distance to city center (meters) |
+| `nearest_road_class` | str | OSM | Highway tag of nearest road (e.g., primary, residential) |
+| `bdot_building_type` | str | BDOT10k | Building function/type |
+| `ceidg_business_count` | int | CEIDG | Number of active businesses in 500m |
 
 **Additional output: `04_results/raw_poi_distances.parquet`**
 
@@ -259,6 +263,14 @@ if args.ai_export:
 - [ ] Scripts 08/09 produce `repair_source` and `repair_confidence` columns
 
 ---
+
+### 2.3 External Government Data Integration (GUGiK & Full RCN)
+To maximize the feature space and avoid Omitted Variable Bias, the following open government APIs and datasets must be integrated:
+1. **Full RCN (Rejestr Cen Nieruchomości):** Since Feb 2026, RCN is fully open and free. Instead of partial scraping, download the full national/voivodeship GeoParquet from Geoportal (`mapy.geoportal.gov.pl/wss/service/rcn`).
+2. **BDOT10k (Topography & Buildings):** Download bulk GeoParquet from Geoportal (Data for download -> Topography). Provides building footprints, year of construction, number of floors, and building functions.
+3. **K-GESUT (Utilities):** Powiat-level data for underground infrastructure. 
+4. **ULDK (Usługa Lokalizacji Działek Katastralnych):** GUGiK API for precise parcel geometry querying via HTTP GET.
+5. **EZiUDP (Ewidencja Zbiorów i Usług):** The central registry for all local county WFS addresses to fetch live spatial data if national GeoParquets are delayed.
 
 ## 3. Phase 2: XGBoost Baseline (TOD Premium)
 
@@ -305,8 +317,10 @@ explainer = shap.TreeExplainer(model)
 shap_values = explainer(X_test)
 
 # Extract: "How much does +1 departure/hour contribute to price_m2?"
-transit_freq_shap = shap_values[:, 'transit_freq'].values
-tod_premium_per_kurs = np.median(transit_freq_shap)
+# WARNING: SHAP median is correlational. Use ALE (Accumulated Local Effects) 
+# from scikit-learn/alibi for true marginal effect when features are correlated.
+from sklearn.inspection import PartialDependenceDisplay
+# tod_premium_per_kurs should be derived from ALE slope, not SHAP median.
 ```
 
 **Deliverable:** JSON report per city:
@@ -592,6 +606,13 @@ Unlike flat SHAP, GNN explanations reveal **which specific POI connections** dri
 | Spatial context | None (flat features) | Captures barriers, walk paths |
 | TOD Premium | Single number for city | Different per stop (spatial variation) |
 | EU AI Act readiness | Sufficient | Stronger (graph path transparency) |
+
+
+### 6.4 Causal Verification (Placebo & Barriers)
+
+To verify the GNN isn't just hallucinating "urban density" as "transit value":
+1. **Placebo Test:** Generate fake stops in random urban locations with 0 transit. Run `Explainer` on them. If they get a TOD Premium > 0, the model is measuring density, not transit.
+2. **Barrier Variation:** Compare nodes with identical Euclidean distance to a stop but different Network distance (due to rivers/tracks). The price delta isolates pure accessibility.
 
 ### Acceptance Criteria — Phase 5
 - [ ] GNNExplainer produces valid edge masks for sample nodes
@@ -932,3 +953,13 @@ data/cities/kielce/
 
 requirements-ai.txt                     ← Phase 0
 ```
+
+---
+
+## Appendix C: Causal Inference Protocol (The "No Hallucination" Guarantee)
+
+To ensure the models measure the **causal effect** of transit rather than spurious urban correlations (Omitted Variable Bias), the following protocol applies:
+
+1. **Difference-in-Differences (DiD):** Use historical RCN data (2020-2026) and historical GTFS to compare price trajectories *before* and *after* a new transit line opens (e.g., Warsaw M2 subway in 2022) against a control area. This is the only way to prove true "effect".
+2. **Double Machine Learning (DML):** Use `DoubleML` or `econml` packages to partial out observed confounders (distance to center, building type, road class) from both prices and transit frequency, estimating the true causal parameter on the residuals.
+3. **Triangulation via CEIDG:** Validate economic value by calculating business registration dynamics (CEIDG) per H3 hex. If transit adds value, it should be visible in both real estate prices and entrepreneurial activity.
