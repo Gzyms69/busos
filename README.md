@@ -66,35 +66,37 @@ To ensure 100% scalability, data integrity, and parallel processing capabilities
 
 ```mermaid
 flowchart TD
-    subgraph Ingestion["Faza 1: Ingestion & Parsing"]
-        GTFS["85+ Źródeł GTFS (Rozkłady & Trasy)"]
-        OSM["OpenStreetMap (OSM PBF - Drogi/Chodniki)"]
-        GUS["GUS Siatka Populacyjna 250m × 250m"]
+    subgraph Ingestion["1. Ingestion & Normalizacja Źródeł (Krajowa Skala)"]
+        GTFS["85+ Przewoźników GTFS (Rozkłady & Kursy)"]
+        OSM["OpenStreetMap PBF (1.9 GB Geofabrik)"]
+        GUS["GUS Siatka Populacji 250m × 250m"]
+        RCN["222 102 Transakcji RCN (GUGiK WFS + GML 3.2)"]
     end
 
-    subgraph Spatial_Processing["Faza 2: C-GEOS Wektoryzacja & Klastrowanie"]
-        Osmium["PyOsmium (C++ Parser Sieci Pieszej)"]
-        GeoP["GeoPandas + Shapely (Wektoryzacja C-GEOS)"]
-        ClusterA["Faza A: Complete Linkage (Promień 150m)"]
-        ClusterB["Faza B: Single Linkage Centroid Stitching (100m)"]
+    subgraph Spatial_Core["2. Potok Przestrzenny C-GEOS & Silnik Grawitacji (Autonomous Hub)"]
+        Osmium["osmium-tool & ogr2ogr (Strumieniowy C++ BBOX Clip <200MB RAM)"]
+        Dissolve["Spatial Dissolve T0/T1 (Unifikacja Kampusów -15x Inflacji)"]
+        Cluster["Klastrowanie Hybrydowe (Complete 150m + Centroid Stitching 100m)"]
+        Huff["Model Grawitacji Huffa (K=0.005, In-Place .transform('sum') -60% RAM)"]
+        Shannon["Entropia Shannona (Różnorodność 6 Domen POI) + Z-Score"]
     end
 
-    subgraph Mathematical_Model["Faza 3: Model Grawitacji & Entropia Shannona"]
-        Isochrones["Dynamiczne Izochrony Dostępności Pieszej"]
-        Huff["Model Grawitacji Huffa (Współczynnik K=0.005)"]
-        Shannon["Entropia Shannona (Różnorodność Usług POI)"]
+    subgraph Serving["3. Warstwa Serwerowa Next.js 16 (Zero-Heap Overhead)"]
+        GPKG["SQLite GeoPackage (WKB Deserialization przez better-sqlite3)"]
+        DuckDB["DuckDB-Async (SQL Haversine Radius 500m po Parquet)"]
+        API["Route Handlers (/api/hubs, /api/transactions, /api/population)"]
     end
 
-    subgraph Storage["Faza 4: Dystrybucja & Indeksacja"]
-        SQLite["SQLite (journal_mode=WAL + FTS5)"]
-        RAM_Opt["Optymalizacja RAM: transform('sum') -> del/gc.collect() [-60% RAM]"]
+    subgraph Presentation["4. Wizualizacja GPU 60 FPS (Klient WebGL)"]
+        DeckGL["Deck.gl v9 (Instanced GPU Scatterplot & H3 Hexagons)"]
+        MapLibre["MapLibre GL (Wektorowy Podkład Mapowy)"]
+        Store["Zustand Store (Filtry Z-Score & Dekompozycja Stop DNA)"]
     end
 
-    GTFS & OSM --> Osmium --> GeoP
-    GUS --> GeoP
-    GeoP --> ClusterA --> ClusterB --> Isochrones
-    Isochrones --> Huff & Shannon --> SQLite
-    GeoP -.-> RAM_Opt
+    GTFS & OSM --> Osmium --> Dissolve --> Cluster --> Huff --> Shannon
+    GUS & RCN --> Cluster
+    Shannon --> GPKG & DuckDB
+    GPKG & DuckDB --> API --> Store --> DeckGL & MapLibre
 ```
 
 The system is fully automated and orchestrated via `orchestrator.py` (The "Pancerny" fault-tolerant runner). To rebuild the national dataset from scratch, the Orchestrator executes these numbered scripts sequentially from `scripts/pipeline/`.
