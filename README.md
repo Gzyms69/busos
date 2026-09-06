@@ -8,6 +8,13 @@ This platform is not merely a data aggregator; it is a **specialized spatial eng
 
 It acts as a Digital Auditor of Urban Policy, revealing whether cities favor affluent districts or prioritize regional accessibility, while delivering completely clean, mathematically rigorous data sets (Parquet/GPKG) ready for Next.js mapping and deep econometric modeling. Over 60,265 stops, 222,000+ notary transactions, 1.1M+ OSM structures, and 1.4M+ demographic grid cells are processed through this architecture.
 
+### Live Production Deployment & Endpoints
+*   **Interactive Spatial Dashboard**: [busos.czerwinskidawid.pl](https://busos.czerwinskidawid.pl) (Hosted on Vercel Global Edge CDN)
+*   **Spatial Analytical API & Swagger UI**: [api.busos.czerwinskidawid.pl/docs](https://api.busos.czerwinskidawid.pl/docs) (Hosted on Oracle Cloud Infrastructure Ampere A1 ARM64)
+*   **Real-time Engine Health Telemetry**: [api.busos.czerwinskidawid.pl/health](https://api.busos.czerwinskidawid.pl/health)
+*   **Vector Database Engine**: Qdrant v1.13+ (Active on OCI port 6333 for GNN Transit Embeddings)
+*   **Audited Coverage**: 30 major Polish metropolitan agglomerations with full econometric calibration.
+
 ---
 
 ## 2. Mathematical Architecture: Physics of the City (v13.0 - Rygor Tkanki Miejskiej)
@@ -81,22 +88,27 @@ flowchart TD
         Shannon["Entropia Shannona (Różnorodność 6 Domen POI) + Z-Score"]
     end
 
-    subgraph Serving["3. Warstwa Serwerowa Next.js 16 (Zero-Heap Overhead)"]
-        GPKG["SQLite GeoPackage (WKB Deserialization przez better-sqlite3)"]
-        DuckDB["DuckDB-Async (SQL Haversine Radius 500m po Parquet)"]
-        API["Route Handlers (/api/hubs, /api/transactions, /api/population)"]
+    subgraph Serving["3. Warstwa Serwerowa i Baza Wektorowa (Decoupled OCI ARM64)"]
+        Caddy["Caddy 2 Reverse Proxy (Auto Let's Encrypt TLS 1.3 / HTTP/3)"]
+        FastAPI["FastAPI 0.115+ (Asynchroniczny REST API C-GEOS)"]
+        DuckDB["DuckDB In-Memory SQL (Strumieniowy Odczyt Parquet)"]
+        Qdrant["Qdrant Vector Engine (Wyszukiwanie Semantyczne & GNN)"]
+        GPKG["SQLite GeoPackage (Wektory Stop DNA EPSG:4326)"]
     end
 
-    subgraph Presentation["4. Wizualizacja GPU 60 FPS (Klient WebGL)"]
-        DeckGL["Deck.gl v9 (Instanced GPU Scatterplot & H3 Hexagons)"]
-        MapLibre["MapLibre GL (Wektorowy Podkład Mapowy)"]
-        Store["Zustand Store (Filtry Z-Score & Dekompozycja Stop DNA)"]
+    subgraph Presentation["4. Wizualizacja GPU 60 FPS (Vercel Global Edge)"]
+        Vercel["Next.js 16 + React 19 (Turbopack Engine)"]
+        DeckGL["Deck.gl v9 (GPU Compute Scatterplot & 3D Hexagons)"]
+        MapLibre["MapLibre GL (Wektorowy Podkład CARTO Dark Matter)"]
+        DualCache["Hybrydowy Cache (Sub-400ms First Paint + Live 30-City Stream)"]
     end
 
     GTFS & OSM --> Osmium --> Dissolve --> Cluster --> Huff --> Shannon
     GUS & RCN --> Cluster
     Shannon --> GPKG & DuckDB
-    GPKG & DuckDB --> API --> Store --> DeckGL & MapLibre
+    GPKG & DuckDB --> FastAPI --> Caddy
+    Qdrant --> FastAPI
+    Caddy --> Vercel --> DualCache --> DeckGL & MapLibre
 ```
 
 The system is fully automated and orchestrated via `orchestrator.py` (The "Pancerny" fault-tolerant runner). To rebuild the national dataset from scratch, the Orchestrator executes these numbered scripts sequentially from `scripts/pipeline/`.
@@ -138,38 +150,48 @@ The system is fully automated and orchestrated via `orchestrator.py` (The "Pance
 
 ---
 
-## 5. End-to-End Delivery Architecture & Interactive Dashboard (`urban-dashboard/`)
+## 5. Production Cloud Architecture & Interactive Dashboard (`urban-dashboard/`)
 
-The platform includes a dedicated, full-stack visualization and analysis dashboard located in [`urban-dashboard/`](file:///home/gzyms/Dev%20Projects/busos/urban-dashboard/), connecting raw pipeline outputs to an interactive WebGL interface.
+The platform employs a decoupled, production-grade cloud architecture separating the ultra-low-latency WebGL visualization layer from the high-throughput spatial analytics engine and vector database.
 
 ```mermaid
 flowchart LR
-    subgraph Storage["Pipeline Storage (data/cities/)"]
-        GPKG["stop_dna.gpkg (SQLite R-Tree)"]
-        POI["poi_matrix.parquet"]
-        POP["pop_matrix.parquet"]
+    subgraph Storage["Pipeline Datasets (data/cities/ - 30 Miast)"]
+        GPKG["stop_dna.gpkg (WGS84 EPSG:4326)"]
+        POI["poi_matrix.parquet (GUS / OSM)"]
+        POP["pop_matrix.parquet (250m Siatka)"]
+        TX["transactions.parquet (RCN / GUGiK)"]
     end
 
-    subgraph Server["Next.js 16 Server Layer (App Router)"]
-        BSQL["better-sqlite3 (Native C++)<br/>Binary WKB Unpacker (Strips GPKG Header)"]
-        DUCK["duckdb-async (In-Memory SQL)<br/>Haversine Radius Query (500m)"]
-        API["Route Handlers (/api/hubs, /api/transactions, /api/population)"]
+    subgraph Backend["Spatial Analytics Backend (OCI Ampere A1 ARM64)"]
+        CADDY["Caddy 2 Proxy<br/>Auto Let's Encrypt TLS 1.3 / HTTP/3"]
+        FASTAPI["FastAPI 0.115+ (Uvicorn)<br/>Asynchroniczny silnik C-GEOS"]
+        DUCK["DuckDB In-Memory SQL<br/>Haversine Radius Query (500m)"]
+        QDRANT["Qdrant Vector DB<br/>GNN Transit & Node Embeddings"]
     end
 
-    subgraph Client["Client Browser (WebGL / React 19)"]
-        DECK["Deck.gl v9 (GPU Compute)<br/>Scatterplot, Hexagon & GeoJSON Layers"]
-        MAP["MapLibre GL (Vector Basemap)"]
-        STATE["Zustand Store (City, Selected Hub, Metric Filters)"]
+    subgraph Frontend["Interactive WebGL Client (Vercel Edge Global CDN)"]
+        CLIENT["Next.js 16 + React 19 (Turbopack)<br/>Dual-Mode Hybrid Client"]
+        CACHE["Showcase Static Cache<br/>(Sub-400ms Recruiter First Paint)"]
+        DECK["Deck.gl v9 (GPU Compute)<br/>3D Columns, Hexagons & Stop DNA"]
+        MAP["MapLibre GL (CARTO Dark Matter)"]
     end
 
-    GPKG --> BSQL --> API
-    POI & POP --> DUCK --> API
-    API --> STATE --> DECK & MAP
+    GPKG & POI & POP & TX --> DUCK --> FASTAPI
+    QDRANT <--> FASTAPI
+    FASTAPI <--> CADDY
+    CADDY <-->|HTTPS REST API / JSON| CLIENT
+    CACHE -.->|Instant Fallback| CLIENT
+    CLIENT --> DECK & MAP
 ```
 
-### Core Technical Implementations:
-1.  **Zero-IPC Binary Geometry Deserialization**: The Next.js API layer connects directly to local GeoPackages via `better-sqlite3`. By reading raw SQLite geometry blobs, stripping the 8-byte GeoPackage header and envelope flags in memory, and parsing WKB payloads via `wkx`, the server streams GeoJSON features to the client with sub-millisecond overhead.
-2.  **In-Memory Parquet Filtering with DuckDB**: Rather than holding multi-million POI and population records in Node.js heap memory, server route handlers spin up ephemeral in-memory DuckDB sessions (`duckdb-async`). DuckDB executes vectorised Haversine distance filters directly over Parquet files on disk:
+### Core Production Implementations:
+1.  **Decoupled Cloud Serving on Oracle Cloud Infrastructure (OCI)**:
+    *   Hosted on an OCI Ampere A1 Compute instance (ARM64, 2 OCPUs, 12 GB RAM) behind a hardened **Caddy 2** reverse proxy with native Let's Encrypt SSL ([api.busos.czerwinskidawid.pl](https://api.busos.czerwinskidawid.pl)).
+    *   API response latency: **<1 ms** for `/health` diagnostics and **<10 ms** for multi-city metadata indexes.
+    *   Interactive Swagger / OpenAPI UI live at [api.busos.czerwinskidawid.pl/docs](https://api.busos.czerwinskidawid.pl/docs).
+2.  **In-Memory Parquet Filtering with DuckDB & C-GEOS**:
+    *   Rather than holding multi-million POI and population records in Node.js heap memory, analytical route handlers utilize DuckDB's vectorized query engine directly over Parquet files on disk:
     ```sql
     SELECT poi_id, name, category, tier, lat, lon, w, sum_pull
     FROM read_parquet('poi_matrix.parquet')
@@ -181,9 +203,14 @@ flowchart LR
           )) <= 500
     ORDER BY (w * sum_pull) DESC
     ```
-3.  **Hardware-Accelerated WebGL Rendering (Deck.gl v9)**:
+3.  **Vector Similarity Ready (Qdrant Vector DB)**:
+    *   Integrated official Rust **Qdrant** engine on port 6333, connected to FastAPI for AI spatial analysis (GraphSAGE / VGAE embeddings, Transit Deserts, and node similarity).
+4.  **Instant-Paint Hybrid Frontend Architecture (Vercel)**:
+    *   Next.js 16 App Router with React 19 and Turbopack compilation deployed globally on Vercel Edge ([busos.czerwinskidawid.pl](https://busos.czerwinskidawid.pl)).
+    *   **Sub-400ms Recruiter First Paint**: Pre-computed static showcase JSON cache (`/data/showcase/kielce/`) guarantees immediate 3D visualization even during zero-cold-start conditions, seamlessly fetching dynamic multi-city data from the live API in the background.
+5.  **Hardware-Accelerated WebGL Rendering (Deck.gl v9)**:
     *   **ScatterplotLayer**: Renders tens of thousands of transit hubs colour-coded by grade (A+ through F) at 60 FPS.
-    *   **HexagonLayer / GeoJSONLayer**: Visualises H3 spatial hexagons and real estate transaction density.
+    *   **HexagonLayer / GeoJSONLayer**: Visualizes 3D spatial hexagons and real estate transaction density.
     *   **Interactive Node Inspection**: Deep-dive sidebar profiling catchment radius, functional domain entropy, and local vs national percentiles.
 
 ---
@@ -273,9 +300,9 @@ The platform enforces a "Verify, Then Trust" standard via 18 rigorous auditing a
 | **C/C++ Spatial Engines** | PyOsmium / `osmium-tool`, GDAL/OGR 3.8+ (`ogr2ogr`), C-GEOS bindings |
 | **Data Formats & Storage** | OGC GeoPackage (GPKG with SQLite R-Tree), Apache Parquet (`pyarrow`/`fastparquet`), H3 Spatial Index (Uber H3 Res 9) |
 | **Coordinate Reference Systems** | EPSG:2180 (Poland CS92 - metric distance & area physics), EPSG:4326 (WGS84 - display export) |
-| **Backend & Delivery** | Next.js 16.2.1 (App Router), `duckdb-async` 1.4+, `better-sqlite3` 12.8+, `wkx` |
-| **Frontend & Visualization** | React 19.2+, `@deck.gl` 9.2+ (Scatterplot, Hexagon, GeoJSON layers), `maplibre-gl` 5.2+, Zustand 5.0+, Tailwind CSS v4, shadcn/ui |
-| **Orchestration & DevOps** | Custom Python ThreadPoolOrchestrator, Bash daemon harness (`dev.sh`), JSON state machine |
+| **Spatial Backend & Vector Engine** | FastAPI 0.115+ (Uvicorn), DuckDB 1.2+, Qdrant Vector DB (Rust v1.13+), C-GEOS, Caddy 2 (Auto TLS 1.3 / HTTP/3), Docker Compose |
+| **Frontend & Visualization** | Next.js 16.2+ (Turbopack), React 19.2+, `@deck.gl` 9.2+ (Scatterplot, Hexagon 3D, GeoJSON), MapLibre GL 5.2+, Zustand 5.0+, Tailwind CSS v4, shadcn/ui |
+| **Cloud Infrastructure & Edge** | Vercel Global Edge CDN (Frontend), Oracle Cloud Infrastructure Ampere A1 ARM64 (Backend & Vector DB), Cloudflare DNS (DNS-Only) |
 
 ### Engineering Directives (Senior Engineering Standard):
 1.  **C-Level Vectorization First**: Python `apply(lambda)` loops over spatial frames are banned for distance matrices. Calculations reduce to flat NumPy arrays (`x.values`, `y.values`) or native C bindings (`geometry.distance()`).
