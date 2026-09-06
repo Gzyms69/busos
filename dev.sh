@@ -182,26 +182,49 @@ start_app() {
     exit 1
   fi
 
-  # Allow overriding port via 2nd argument
+  # 1. Check if Urban Dashboard is ALREADY running
+  if [ -f "$PID_FILE" ]; then
+    local cur_pid=$(cat "$PID_FILE" 2>/dev/null)
+    local cur_port=$(get_actual_port)
+    if [ ! -z "$cur_pid" ] && ps -p "$cur_pid" >/dev/null 2>&1 && is_port_in_use "$cur_port"; then
+      log_success "Urban Dashboard is ALREADY RUNNING (PID: $cur_pid)"
+      log_info "Port: ${GREEN}$cur_port${NC}"
+      log_info "URL:  ${GREEN}http://localhost:$cur_port${NC}"
+      log_info "Use './dev.sh restart' to reload or './dev.sh stop' to shutdown."
+      return 0
+    fi
+  fi
+
+  # Also check if ANY port in dev range has a running instance of our dashboard
+  local test_p=3000
+  while [ $test_p -le 3050 ]; do
+    if is_port_in_use "$test_p"; then
+      local opp_pid=$(get_port_pid "$test_p")
+      if [ ! -z "$opp_pid" ] && is_our_dashboard_process "$opp_pid"; then
+        log_success "Urban Dashboard is ALREADY RUNNING on port ${GREEN}$test_p${NC} (PID: $opp_pid)"
+        log_info "URL:  ${GREEN}http://localhost:$test_p${NC}"
+        echo "$opp_pid" > "$PID_FILE"
+        echo "$test_p" > "$PORT_FILE"
+        log_info "Use './dev.sh restart' to reload or './dev.sh stop' to shutdown."
+        return 0
+      fi
+    fi
+    test_p=$((test_p + 1))
+  done
+
+  # 2. Allow overriding port via 2nd argument
   local requested_port=${2:-$DEFAULT_PORT}
   local target_port="$requested_port"
 
   if is_port_in_use "$requested_port"; then
     local occupant_pid=$(get_port_pid "$requested_port")
-    if [ ! -z "$occupant_pid" ] && is_our_dashboard_process "$occupant_pid"; then
-      log_warn "Port $requested_port is occupied by previous dashboard instance (PID: $occupant_pid). Restarting..."
-      stop_app
-      sleep 1
-      target_port="$requested_port"
-    else
-      log_warn "Port $requested_port is in use by external process (PID: ${occupant_pid:-unknown})."
-      target_port=$(find_available_port "$((requested_port + 1))")
-      if [ -z "$target_port" ]; then
-        log_error "Failed to find available port."
-        exit 1
-      fi
-      log_info "Automatically selected free port: ${GREEN}$target_port${NC}"
+    log_warn "Port $requested_port is in use by external process (PID: ${occupant_pid:-unknown})."
+    target_port=$(find_available_port "$((requested_port + 1))")
+    if [ -z "$target_port" ]; then
+      log_error "Failed to find available port."
+      exit 1
     fi
+    log_info "Automatically selected free port: ${GREEN}$target_port${NC}"
   fi
 
   # Clear logs
@@ -223,15 +246,28 @@ start_app() {
   local actual_port=""
 
   while [ $elapsed -lt $timeout ]; do
-    # Check for Ready message in log (Next.js 14/15+)
-    if grep -Ei "Ready in|Started server on|localhost:" "$LOG_FILE" > /dev/null; then
-      actual_port=$(get_actual_port)
+    # Check for fatal error messages in log first
+    if grep -q "Another next dev server is already running" "$LOG_FILE" 2>/dev/null; then
+      echo ""
+      log_error "Another Next.js dev server is already running in $APP_DIR."
+      stop_app
+      exit 1
+    fi
+    if grep -q "EADDRINUSE" "$LOG_FILE" 2>/dev/null; then
+      echo ""
+      log_error "Port $target_port is already in use (EADDRINUSE)."
+      stop_app
+      exit 1
+    fi
+
+    # Check if port is actually listening and owned by our process
+    if is_port_in_use "$target_port"; then
       local listening_pid=$(get_port_pid "$target_port")
       if [ ! -z "$listening_pid" ]; then
         echo "$listening_pid" > "$PID_FILE"
+        echo "$target_port" > "$PORT_FILE"
+        actual_port="$target_port"
         new_pid="$listening_pid"
-      fi
-      if [ ! -z "$actual_port" ]; then
         break
       fi
     fi
@@ -250,6 +286,8 @@ start_app() {
   else
     log_error "Timeout: App started but did not report port in $timeout seconds."
     log_warn "Check $LOG_FILE for errors."
+    stop_app
+    exit 1
   fi
 }
 
