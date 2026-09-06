@@ -37,6 +37,8 @@ scripts/archive_temp/
 entities.json
 .pytest_cache/
 .ruff_cache/
+.coverage
+*.egg-info/
 
 # GWARANCJA ŚLEDZENIA KODU I KONFIGURACJI
 !scripts/

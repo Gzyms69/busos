@@ -7,31 +7,86 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 
+interface PoiItem {
+  poi_id?: string | null;
+  name?: string;
+  category?: string;
+  tier?: string;
+  w: number;
+  sum_pull: number;
+}
+
+interface PopItem {
+  grid_id?: string | null;
+  pop_val?: number | string | null;
+}
+
+interface HubMetrics {
+  grade?: string;
+  local_percentile?: number | string;
+  local_score_raw?: number | string;
+  infra_score?: number;
+  transit_freq?: number;
+  market_val?: number;
+  pop_val?: number;
+  [key: string]: unknown;
+}
+
+interface HubDetailResponse {
+  pois: PoiItem[];
+  pop: PopItem[];
+  metrics?: HubMetrics | null;
+}
+
+interface AggregatedPoi {
+  category: string;
+  tier: string;
+  count: number;
+  gravity: number;
+}
+
 export default function RightPanel() {
   const { selectedCity, activeHubId, activeHubLat, activeHubLon } = useStore();
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<HubDetailResponse | null>(null);
   const [loading, setLoading] = useState(false);
+  const [prevHubKey, setPrevHubKey] = useState<string>('');
+
+  const currentHubKey = `${selectedCity}-${activeHubId}-${activeHubLat}-${activeHubLon}`;
+  if (currentHubKey !== prevHubKey) {
+    setPrevHubKey(currentHubKey);
+    setData(null);
+    setLoading(Boolean(selectedCity && activeHubId && activeHubLat && activeHubLon));
+  }
 
   useEffect(() => {
     if (!selectedCity || !activeHubId || !activeHubLat || !activeHubLon) {
-      setData(null);
       return;
     }
-    setLoading(true);
+    let ignore = false;
     fetch(`/api/hubs/details?city=${selectedCity}&hub_id=${activeHubId}&lat=${activeHubLat}&lon=${activeHubLon}`)
       .then(r => r.json())
       .then(d => {
-        setData(d);
-        setLoading(false);
+        if (!ignore) {
+          setData(d as HubDetailResponse);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (!ignore) {
+          setLoading(false);
+        }
       });
+    return () => {
+      ignore = true;
+    };
   }, [selectedCity, activeHubId, activeHubLat, activeHubLon]);
 
   const pois = useMemo(() => data?.pois || [], [data]);
-  const popCount = useMemo(() => data?.pop?.reduce((acc: number, p: any) => acc + Number(p.pop_val || 0), 0) || 0, [data]);
+  const popCount = useMemo(() => data?.pop?.reduce((acc: number, p: PopItem) => acc + Number(p.pop_val || 0), 0) || 0, [data]);
 
   const aggregatedPois = useMemo(() => {
-    const grouped: Record<string, any> = {};
-    pois.forEach((poi: any) => {
+    const grouped: Record<string, AggregatedPoi> = {};
+    pois.forEach((poi: PoiItem) => {
       const cat = poi.category || "Infrastruktura Lokalna";
       if (!grouped[cat]) {
         grouped[cat] = { category: cat, tier: poi.tier || 'T6', count: 0, gravity: 0 };
@@ -39,7 +94,7 @@ export default function RightPanel() {
       grouped[cat].count += 1;
       grouped[cat].gravity += (poi.w * poi.sum_pull);
     });
-    return Object.values(grouped).sort((a: any, b: any) => b.gravity - a.gravity);
+    return Object.values(grouped).sort((a: AggregatedPoi, b: AggregatedPoi) => b.gravity - a.gravity);
   }, [pois]);
 
   if (!activeHubId) return null;
@@ -134,7 +189,7 @@ export default function RightPanel() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {aggregatedPois.map((p: any, i: number) => (
+                      {aggregatedPois.map((p: AggregatedPoi, i: number) => (
                         <TableRow key={i}>
                           <TableCell className="font-medium text-[10px] font-mono text-primary">{p.category}</TableCell>
                           <TableCell className="text-[9px] text-muted-foreground">{p.tier}</TableCell>
@@ -159,7 +214,7 @@ export default function RightPanel() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {pois.map((poi: any, i: number) => {
+                      {pois.map((poi: PoiItem, i: number) => {
                         const name = poi.name || "Obiekty Specjalne";
                         const type = poi.category || "Infrastruktura Lokalna";
                         return (

@@ -8,14 +8,15 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useTheme } from 'next-themes';
 
+const emptySubscribe = () => () => {};
+
 export default function LeftSidebar() {
   const { selectedCity, setCity, mapType, setMapType, show3DBuildings, setShow3DBuildings } = useStore();
   const [cities, setCities] = useState<string[]>([]);
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+  const mounted = React.useSyncExternalStore(emptySubscribe, () => true, () => false);
 
   useEffect(() => {
-    setMounted(true);
     fetch('/api/cities').then(r => r.json()).then(d => setCities(d.cities || []));
   }, []);
 

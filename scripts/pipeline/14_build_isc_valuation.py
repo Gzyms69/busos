@@ -107,11 +107,19 @@ TAG_WHITELIST = {
     "place_of_worship": ("place_of_worship", "T6_MICRO_INFRA")
 }
 
-def parse_hstore(hstore_str):
-    if not hstore_str or pd.isna(hstore_str): return {}
-    # Standardowy parser HSTORE OpenStreetMap
-    pattern = r'"?([^"=>]+)"?=>"?([^",]+)"?'
-    return dict(re.findall(pattern, hstore_str))
+# Dodaj project root do sys.path dla importów SSOT
+import sys
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+try:
+    from scripts.utils.geo import parse_hstore
+except ImportError:
+    def parse_hstore(hstore_str):
+        if not hstore_str or pd.isna(hstore_str): return {}
+        pattern = r'"?([^"=>]+)"?=>"?([^",]+)"?'
+        return dict(re.findall(pattern, str(hstore_str)))
 
 def spatial_dissolve_strategic(gdf):
     """Scalamy obiekty T0 i T1 o tej samej nazwie, aby nie dublować wag (np. pawilony szpitala)."""

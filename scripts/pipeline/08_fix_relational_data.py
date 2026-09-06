@@ -1,3 +1,15 @@
+"""
+Offline / Fallback Cadastral Relational Parser (GML 3.2 + XLink).
+
+Rola modułu:
+Ten skrypt służy jako dedykowany parser awaryjny (offline fallback) dla miast,
+które posiadają surowe paczki katastralne GML 3.2 z relacjami XLink (np. Łódź, Giżycko)
+umieszczone bezpośrednio w katalogu data/cities/{city}/rcn/*.gml.
+
+W standardowym automatycznym potoku zadanie to realizuje Krok 07 (WFS Harvester).
+Moduł ten jest zachowany jako narzędzie specjalistyczne do przetwarzania danych offline.
+"""
+
 import geopandas as gpd
 import pandas as pd
 from lxml import etree

@@ -5,29 +5,55 @@ import { ScatterplotLayer, GeoJsonLayer } from '@deck.gl/layers';
 import { HexagonLayer } from '@deck.gl/aggregation-layers';
 import { Map, Layer } from 'react-map-gl/maplibre';
 import { useTheme } from 'next-themes';
-import { useStore } from '@/lib/store';
+import { useStore, ViewState } from '@/lib/store';
+import type { PickingInfo } from '@deck.gl/core';
+import type { Feature, FeatureCollection, Geometry } from 'geojson';
 import 'maplibre-gl/dist/maplibre-gl.css';
+
+interface HubProperties {
+  hub_id: number | string;
+  stop_name: string;
+  grade: string;
+  local_score_raw: number | string;
+  [key: string]: unknown;
+}
+
+interface PopProperties {
+  TOT?: number;
+  [key: string]: unknown;
+}
+
+interface TxProperties {
+  price_m2?: number | string;
+  [key: string]: unknown;
+}
+
+interface TxPoint {
+  position: [number, number];
+  price_m2: number;
+}
+
+const emptySubscribe = () => () => {};
 
 export default function MapContainer() {
   const { selectedCity, mapViewState, setMapViewState, setActiveHub, mapType, show3DBuildings } = useStore();
-  const [hubs, setHubs] = useState<any>(null);
-  const [pop, setPop] = useState<any>(null);
-  const [transactions, setTransactions] = useState<any>(null);
+  const [hubs, setHubs] = useState<FeatureCollection<Geometry, HubProperties> | null>(null);
+  const [pop, setPop] = useState<FeatureCollection<Geometry, PopProperties> | null>(null);
+  const [transactions, setTransactions] = useState<FeatureCollection<Geometry, TxProperties> | null>(null);
   const { theme, resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  const [hoverInfo, setHoverInfo] = useState<any>(null);
+  const mounted = React.useSyncExternalStore(emptySubscribe, () => true, () => false);
+  const [hoverInfo, setHoverInfo] = useState<PickingInfo<Feature<Geometry, HubProperties>> | null>(null);
 
   useEffect(() => {
-    setMounted(true);
     if (!selectedCity) return;
     fetch(`/api/hubs?city=${selectedCity}`).then(r => r.json()).then(setHubs);
     fetch(`/api/population?city=${selectedCity}`).then(r => r.json()).then(setPop);
     fetch(`/api/transactions?city=${selectedCity}`).then(r => r.json()).then(setTransactions);
   }, [selectedCity]);
 
-  const txData = transactions?.features?.map((f: any) => {
-    let pos = f.geometry?.coordinates;
-    while (pos && Array.isArray(pos[0])) {
+  const txData: TxPoint[] = transactions?.features?.map((f) => {
+    let pos: unknown = f.geometry && 'coordinates' in f.geometry ? f.geometry.coordinates : null;
+    while (pos && Array.isArray(pos) && Array.isArray(pos[0])) {
       pos = pos[0];
     }
     // Validation: must be [lng, lat] and valid numbers
@@ -35,10 +61,10 @@ export default function MapContainer() {
       return null;
     }
     return {
-      position: pos,
+      position: [pos[0], pos[1]] as [number, number],
       price_m2: Number(f.properties?.price_m2 || 0)
     };
-  }).filter(Boolean) || [];
+  }).filter((item): item is TxPoint => item !== null) || [];
 
   const gradeColors: Record<string, [number, number, number]> = {
     'A+': [0, 255, 128], 'A': [0, 200, 100], 'B': [100, 150, 255],
@@ -54,48 +80,56 @@ export default function MapContainer() {
       pickable: false,
       stroked: true,
       filled: true,
-      getFillColor: (f: any) => [200, 200, 200, f.properties.TOT > 0 ? (isDark ? 30 : 60) : 0],
+      getFillColor: (f) => {
+        const props = (f as Feature<Geometry, PopProperties>).properties;
+        return [200, 200, 200, (props?.TOT ?? 0) > 0 ? (isDark ? 30 : 60) : 0];
+      },
       getLineColor: isDark ? [50, 50, 50, 100] : [200, 200, 200, 150],
       lineWidthMinPixels: 1
     }),
-    new HexagonLayer({
+    new HexagonLayer<TxPoint>({
       id: 'tx-hex',
       data: txData,
       pickable: true,
       extruded: true,
       radius: 150,
       elevationScale: 5,
-      getPosition: (d: any) => d.position,
-      getColorValue: (points: any[]) => {
+      getPosition: (d: TxPoint) => d.position,
+      getColorValue: (points: TxPoint[]) => {
         if (!points.length) return 0;
         return points.reduce((acc, p) => acc + p.price_m2, 0) / points.length;
       },
-      getElevationValue: (points: any[]) => points.length,
+      getElevationValue: (points: TxPoint[]) => points.length,
       colorRange: isDark ? [
         [30, 41, 59], [49, 63, 85], [69, 87, 114], [90, 113, 145], [113, 140, 178], [137, 169, 214]
       ] : [
         [240, 244, 250], [210, 222, 238], [180, 200, 226], [150, 178, 214], [120, 156, 202], [90, 134, 190]
       ]
     }),
-    new ScatterplotLayer({
+    new ScatterplotLayer<Feature<Geometry, HubProperties>>({
       id: 'hubs',
       data: hubs?.features || [],
       pickable: true,
       radiusScale: 1,
       radiusMinPixels: 6,
-      getPosition: (d: any) => d.geometry.coordinates,
-      getFillColor: (d: any) => gradeColors[d.properties.grade] || [128, 128, 128],
-      onHover: (info) => setHoverInfo(info),
+      getPosition: (d) => {
+        const coords = d.geometry && 'coordinates' in d.geometry ? (d.geometry.coordinates as [number, number]) : [0, 0];
+        return [coords[0], coords[1]];
+      },
+      getFillColor: (d) => gradeColors[d.properties.grade] || [128, 128, 128],
+      onHover: (info) => setHoverInfo(info as PickingInfo<Feature<Geometry, HubProperties>>),
       onClick: (info) => {
-        if (info.object) {
-          setActiveHub(info.object.properties.hub_id, info.object.geometry.coordinates[1], info.object.geometry.coordinates[0]);
+        if (info.object && info.object.geometry && 'coordinates' in info.object.geometry) {
+          const coords = info.object.geometry.coordinates as [number, number];
+          setActiveHub(info.object.properties.hub_id, coords[1], coords[0]);
           setMapViewState({
             ...mapViewState,
-            longitude: info.object.geometry.coordinates[0],
-            latitude: info.object.geometry.coordinates[1],
+            longitude: coords[0],
+            latitude: coords[1],
             zoom: 15,
-            transitionDuration: 800
-          } as any);
+            pitch: mapViewState.pitch,
+            bearing: mapViewState.bearing
+          });
         }
       }
     })
@@ -109,13 +143,13 @@ export default function MapContainer() {
     version: 8 as const,
     sources: {
       satellite: {
-        type: "raster",
+        type: "raster" as const,
         tiles: ["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],
         tileSize: 256,
         attribution: "Esri"
       },
       carto: {
-        type: "vector",
+        type: "vector" as const,
         tiles: [isDark 
           ? "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json" 
           : "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"]
@@ -123,7 +157,7 @@ export default function MapContainer() {
     },
     layers: [{
       id: "satellite",
-      type: "raster",
+      type: "raster" as const,
       source: "satellite"
     }]
   };
@@ -139,9 +173,9 @@ export default function MapContainer() {
         viewState={mapViewState}
         controller={true}
         layers={layers}
-        onViewStateChange={({ viewState }) => setMapViewState(viewState as any)}
+        onViewStateChange={({ viewState }) => setMapViewState(viewState as ViewState)}
       >
-        <Map mapStyle={currentStyle as any}>
+        <Map mapStyle={currentStyle}>
           {show3DBuildings && mapType === 'flat' && (
             <Layer
               id="3d-buildings"

@@ -112,7 +112,7 @@ The system is fully automated and orchestrated via `orchestrator.py` (The "Pance
 
 ### Phase 2: Real Estate Hardening (RCN)
 *   **`07_harvest_rcn_omnibus.py`**: Connects to the national WFS (GUGiK) and county registries to download vast XML/GML troves of local real estate transactions. Ingests flat WFS features and handles GML 3.2 multi-layer relational data.
-*   **`08_fix_relational_data.py`** *(Decommissioned / Integrated)*: Relational XLink pointer resolution formerly in Step 08 was hardened directly into Step 07 and Step 09, leaving this step bypassed in orchestrator execution.
+*   **`08_fix_relational_data.py`** *(Dedicated Offline/Rescue Parser)*: Dedicated parser for raw cadastral GML 3.2 packages requiring direct relational XLink pointer resolution, retained for offline extraction and edge-case county cadastral rescues.
 *   **`09_fix_suwalki_geometry.py`**: Global fallback algorithm restoring valid Point geometries for non-standard real estate multipolygons and cadastral parcel/building centroids (covering edge cases like Suwałki and Łódź).
 *   **`10_unify_schemas.py`**: Aggressive standardization of thousands of disjointed local RCN columns into a strict, unified economic format (`price_m2`, `lok_pow_uzyt`, date) with IQR boundary cleaning.
 *   **`11_build_master_db.py`**: Concatenates all verified property records into the National Master Database (over 222,000 verified transactions).
@@ -235,14 +235,20 @@ The [`dev.sh`](file:///home/gzyms/Dev%20Projects/busos/dev.sh) script provides p
 
 ### Running Audits and Tests
 ```bash
-# Run unit tests
-pytest tests/ -v
+# Run unit tests via uv or pytest
+uv run pytest tests/ -v
+
+# Run Python linting and code style checks
+uv run ruff check scripts/ tests/
+
+# Run ESLint and TypeScript type-safety checks on dashboard
+cd urban-dashboard
+npm run lint
+npx tsc --noEmit
+cd ..
 
 # Run the Golden Auditor across all generated Stop DNA files
 python3 scripts/tools/100_percent_dna_validator.py
-
-# Verify TypeScript type-safety in dashboard
-cd urban-dashboard && npx tsc --noEmit && cd ..
 ```
 
 ---
@@ -277,3 +283,4 @@ The platform enforces a "Verify, Then Trust" standard via 18 rigorous auditing a
 3.  **Absolute Root Cause Analysis (RCA)**: Every system failure undergoes root-cause remediation. Inconsistencies are addressed at their origin (e.g. normalizing stop names at ingestion in Step 02) rather than patched symptomatically downstream.
 4.  **Idempotency & Fault Tolerance**: Pipeline stages skip pre-computed, valid data blocks to allow immediate resumption upon restart. State is tracked deterministically in `.pipeline_state.json`.
 5.  **Zero Data Fabrication**: Broken or non-geocoded records are quarantined or reconstructed via deterministic spatial geometric fallbacks (e.g. parcel/building centroid derivation), never filled with synthetic approximations.
+6.  **Single Source of Truth (SSOT) Architecture**: Core geospatial normalizers (`parse_hstore`, `normalize_name`) and business constants (`CITY_BASELINES`, `TAG_WHITELIST`, `TIER_POINTS`) reside strictly in `scripts/utils/` to eliminate duplicate logic and guarantee 100% unit test coverage.

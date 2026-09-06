@@ -28,12 +28,23 @@ STRATEGIC_NODES = [
     {"name": "Jasionka Airport", "lon": 22.01, "lat": 50.11, "city": "rzeszow"}
 ]
 
-def normalize_name(name):
-    n = str(name).lower()
-    n = ''.join(c for c in unicodedata.normalize('NFD', n) if unicodedata.category(c) != 'Mn')
-    n = re.sub(r'glown[ya]', '', n)
-    n = re.sub(r'osobow[ya]', '', n)
-    return re.sub(r'[^a-z0-9]', '', n).strip()
+# Dodaj project root do sys.path dla importów SSOT
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+try:
+    from scripts.utils.geo import normalize_name as _canonical_normalize_name
+
+    def normalize_name(name):
+        return _canonical_normalize_name(name, strip_rail_suffixes=True)
+except ImportError:
+    def normalize_name(name):
+        n = str(name).lower()
+        n = ''.join(c for c in unicodedata.normalize('NFD', n) if unicodedata.category(c) != 'Mn')
+        n = re.sub(r'glown[ya]', '', n)
+        n = re.sub(r'osobow[ya]', '', n)
+        return re.sub(r'[^a-z0-9]', '', n).strip()
 
 def load_national_rail():
     NATIONAL_RAIL_ROOT = get_data_dir() / "poland" / "gtfs_national"
