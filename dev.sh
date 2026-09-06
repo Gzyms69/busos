@@ -60,9 +60,10 @@ stop_app() {
   local port=$(get_actual_port)
   port=${port:-$DEFAULT_PORT}
   
-  local port_pid=$(lsof -t -i:"$port" 2>/dev/null)
+  local port_pid=$(lsof -t -iTCP:"$port" -sTCP:LISTEN 2>/dev/null)
   if [ ! -z "$port_pid" ]; then
     kill -9 "$port_pid" 2>/dev/null
+    sleep 1
     log_warn "Force-cleared orphaned port $port (PID: $port_pid)"
   fi
 }
@@ -103,10 +104,11 @@ start_app() {
   local target_port=${2:-$DEFAULT_PORT}
 
   # Ensure app is stopped before starting
-  local current_port_pid=$(lsof -t -i:"$target_port" 2>/dev/null)
+  local current_port_pid=$(lsof -t -iTCP:"$target_port" -sTCP:LISTEN 2>/dev/null)
   if [ ! -z "$current_port_pid" ]; then
     log_warn "Port $target_port is busy. Stopping previous instance..."
     stop_app
+    sleep 1
   fi
 
   # Clear logs
@@ -116,6 +118,7 @@ start_app() {
   # nohup & disown to detach properly
   nohup npm run dev -- -p "$target_port" > "dev.log" 2>&1 &
   local new_pid=$!
+  disown "$new_pid" 2>/dev/null
   echo "$new_pid" > ".dev.pid"
   cd ..
 
