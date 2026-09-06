@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
-import { getHubDetails } from '@/lib/db';
+import { fetchHubDetails } from '@/lib/api-client';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -14,7 +14,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    const details = await getHubDetails(city, parseFloat(lat), parseFloat(lon), hubId || undefined);
+    const details = await fetchHubDetails(city, hubId || '', parseFloat(lat), parseFloat(lon));
     return NextResponse.json(details);
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);

@@ -16,6 +16,7 @@ logs/
 # pliki sieci drogowych (.graphml) oraz lokalne zrzuty JSON.
 # Żadne dane przetwarzane nie mają prawa trafić do repozytorium kodu.
 data/
+!urban-dashboard/public/data/
 
 # RAPORTY
 # Ignorujemy archiwum, ale śledzimy ostateczne pliki audytowe

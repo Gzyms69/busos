@@ -6,6 +6,7 @@ import { HexagonLayer } from '@deck.gl/aggregation-layers';
 import { Map, Layer } from 'react-map-gl/maplibre';
 import { useTheme } from 'next-themes';
 import { useStore, ViewState } from '@/lib/store';
+import { fetchHubs, fetchPopulation, fetchTransactions } from '@/lib/api-client';
 import type { PickingInfo } from '@deck.gl/core';
 import type { Feature, FeatureCollection, Geometry } from 'geojson';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -46,9 +47,9 @@ export default function MapContainer() {
 
   useEffect(() => {
     if (!selectedCity) return;
-    fetch(`/api/hubs?city=${selectedCity}`).then(r => r.json()).then(setHubs);
-    fetch(`/api/population?city=${selectedCity}`).then(r => r.json()).then(setPop);
-    fetch(`/api/transactions?city=${selectedCity}`).then(r => r.json()).then(setTransactions);
+    fetchHubs(selectedCity).then(setHubs);
+    fetchPopulation(selectedCity).then(setPop);
+    fetchTransactions(selectedCity).then(setTransactions);
   }, [selectedCity]);
 
   const txData: TxPoint[] = transactions?.features?.map((f) => {

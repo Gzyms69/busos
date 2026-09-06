@@ -6,6 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { fetchHubDetails } from '@/lib/api-client';
 
 interface PoiItem {
   poi_id?: string | null;
@@ -63,8 +64,7 @@ export default function RightPanel() {
       return;
     }
     let ignore = false;
-    fetch(`/api/hubs/details?city=${selectedCity}&hub_id=${activeHubId}&lat=${activeHubLat}&lon=${activeHubLon}`)
-      .then(r => r.json())
+    fetchHubDetails(selectedCity, activeHubId, activeHubLat, activeHubLon)
       .then(d => {
         if (!ignore) {
           setData(d as HubDetailResponse);

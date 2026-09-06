@@ -1,0 +1,18 @@
+# BusOS Spatial Platform — Caddyfile
+# Auto-SSL via Let's Encrypt for custom domain, nip.io wildcard, and direct HTTP
+
+api.busos.czerwinskidawid.pl, busos.duckdns.org, 141.147.13.101.nip.io, :80 {
+    reverse_proxy busos-api:8000
+
+    header {
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        Referrer-Policy strict-origin-when-cross-origin
+        Access-Control-Allow-Origin *
+    }
+
+    log {
+        output stdout
+        format console
+    }
+}

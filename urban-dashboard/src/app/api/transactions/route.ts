@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
-import { getLayerFromGpkg } from '@/lib/db';
+import { fetchTransactions } from '@/lib/api-client';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -8,7 +8,7 @@ export async function GET(request: Request) {
   if (!city) return NextResponse.json({ error: 'City is required' }, { status: 400 });
 
   try {
-    const data = getLayerFromGpkg(city, 'transactions.gpkg');
+    const data = await fetchTransactions(city);
     return NextResponse.json(data);
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);

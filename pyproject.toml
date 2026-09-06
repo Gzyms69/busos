@@ -29,7 +29,12 @@ dependencies = [
     "pyarrow",
     "fastparquet",
     "scikit-learn",
-    "matplotlib"
+    "matplotlib",
+    "fastapi>=0.141.1",
+    "uvicorn[standard]>=0.52.4",
+    "duckdb>=1.5.5",
+    "httpx>=0.28.1",
+    "qdrant-client>=1.19.0",
 ]
 
 [project.optional-dependencies]
