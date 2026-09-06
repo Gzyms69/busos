@@ -27,7 +27,7 @@ urban-dashboard/node_modules/
 urban-dashboard/.next/
 urban-dashboard/out/
 urban-dashboard/dev.log*
-urban-dashboard/.dev.pid
+urban-dashboard/.dev.*
 urban-dashboard/*.tsbuildinfo
 urban-dashboard/next-env.d.ts
 
