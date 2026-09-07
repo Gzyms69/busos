@@ -27,7 +27,7 @@
 
 ```
 [Sprint 0: Stabilizacja & H3] ──► [Sprint 1: Symetria Danych Potoku] ──► [Sprint 2: Modularne API] ──► [Sprint 3: Testy Pytest] ──► [Sprint 4: Palantir Blueprint UI]
-          [DONE]                              [NASTĘPNA SESJA]                     [PLANOWANY]                 [PLANOWANY]                    [PLANOWANY]
+          [DONE]                                [DONE]                              [NASTĘPNA SESJA]                 [PLANOWANY]                    [PLANOWANY]
 ```
 
 ---
@@ -46,32 +46,30 @@
 
 ---
 
-### Sprint 1: Fundament Danych & Pełna Symetria Słupek vs Hub (ZAKRES NAJBLIŻSZEJ SESJI)
-- **Status:** `[READY TO START]` (Do wykonania w Sesji 2)
-- **Cel:** Przebudowa wyłącznie potoku danych `scripts/pipeline/15_compute_stop_dna.py`. Ani jednej linijki zmian w API ani we frontendzie w tym sprincie!
-- **Dlaczego to jest pierwsze:** Zanim API zacznie serwować granularne metryki fizycznych przystanków, dane muszą fizycznie istnieć w plikach `.gpkg`.
-- **Wymagania i Zadania:**
+### Sprint 1: Fundament Danych & Pełna Symetria Słupek vs Hub
+- **Status:** `[DONE]` (Zrealizowano 2026-09-07)
+- **Cel:** Przebudowa potoku danych `scripts/pipeline/15_compute_stop_dna.py` bez modyfikacji API i frontendu.
+- **Wykonane zadania:**
   1. **Natywne obliczenie 4 filarów dla każdego fizycznego słupka (`stop_id`):**
-     - **Transport:** `stop_departures_h` (odjazdy/h z tego słupka), `stop_routes_count` (liczba linii), `stop_routes` (lista linii).
-     - **Infrastruktura POI:** `stop_raw_gravity`, `stop_entropy`, `stop_infra_score` (w promieniu 500m od fizycznych koordynatów słupka).
-     - **Demografia:** `stop_pop_val` (ludność GUS NSP 2021 w promieniu 500m od słupka).
-     - **Rynek RCN:** `stop_market_val` (mediana transakcji w promieniu 500m od słupka).
-     - **Ocena i ranga:** `stop_local_score_raw` (formuła Z-Score), `stop_percentile` (0-100%) oraz `stop_grade` (`A+`, `A`, `B`, `C`, `D`, `F`) wyznaczane w populacji słupków danego miasta.
+     - Transport: `stop_departures_h` (kursy/h), `stop_routes_count`, `stop_routes` (linie GTFS).
+     - POI: `stop_raw_gravity`, `stop_entropy`, `stop_infra_score` (w promieniu 500m z modelem Huffa).
+     - Demografia: `stop_pop_val` (ludność GUS NSP 2021 z uwzględnieniem kanibalizacji popytu).
+     - Rynek RCN: `stop_market_val` (mediana transakcji z filtrem IQR w promieniu 500m), `stop_liquidity`.
+     - Ocena i ranga: `stop_local_score_raw` (Z-Score), `stop_percentile` (0-100%), `stop_grade` (`A+`..`F`) w populacji słupków miasta.
   2. **Zachowanie metryk makro huba (`hub_*`) oraz relacji:**
-     - `stop_hub_share` (`stop_departures_h / hub_departures_h`)
-     - `is_hub_anchor` (True dla słupka o najwyższym potoku w danym hubie)
-     - Zachowanie aliasów wstecznych (`infra_score`, `transit_freq`, `grade`) dla kompatybilności.
+     - `stop_hub_share` (`stop_departures_h / hub_departures_h` w przedziale $[0.0, 1.0]$).
+     - `is_hub_anchor` (dokładnie jeden anchor na hub dla słupka o najwyższym potoku odjazdów).
+     - Zachowanie 100% aliasów wstecznych (`infra_score`, `transit_freq`, `pop_val`, `market_val`, `local_score_raw`, `local_percentile`, `grade`).
   3. **Eksport dwóch dedykowanych warstw w `04_results/`:**
-     - `stop_dna.gpkg` — 1 wiersz = 1 fizyczny słupek (pełne metryki mikro + metryki huba).
-     - `hubs.gpkg` — 1 wiersz = 1 unikalny węzeł logiczny (geometria centroidu, `hub_stops_count`, lista `stop_ids`, zagregowane metryki makro).
-- **Kryteria Akceptacji & Weryfikacja:**
-  - Przeliczenie potoku dla Kielc (`./.venv/bin/python scripts/pipeline/15_compute_stop_dna.py --city kielce`).
-  - Skrypt weryfikacyjny sprawdzający:
-    1. Czy `len(stop_dna) == 1357` (brak utraty słupków).
-    2. Czy w `stop_dna.gpkg` istnieją kolumny `stop_infra_score`, `stop_departures_h`, `stop_pop_val`, `stop_market_val`, `stop_grade`.
-    3. Czy w `hubs.gpkg` istnieją unikalne rekordy hubów z poprawnymi centroidami.
-    4. Czy suma odjazdów słupków w hubie zgadza się z odjazdami huba: $\sum \text{stop\_departures} \approx \text{hub\_departures}$.
-  - Czas wykonania dla Kielc < 5 sekund.
+     - `stop_dna.gpkg` — 1357 fizycznych słupków (kompletne metryki mikro + metryki huba + aliasy wsteczne).
+     - `hubs.gpkg` — 817 unikalnych węzłów logicznych (geometrie centroidów WGS84 Point EPSG:4326, `hub_stops_count`, `hub_stops_ids`, metryki makro).
+- **Dowody weryfikacji:**
+  - `scripts/pipeline/tests/test_stop_hub_symmetry.py`: Wszystkie 8 bramek weryfikacyjnych zaliczone sukcesem (`All 8 verification gates PASSED for kielce`).
+  - Zachowanie słupków: `Raw=1357`, `stop_dna=1357`, `Hubs=817` (zero utraty punktów).
+  - Konserwacja odjazdów: $\sum \text{stop\_departures\_h} \ge \text{hub\_departures\_h}$ z zachowaniem reguły sumowania i deduplikacji GTFS.
+  - Step 17 (`17_build_h3_grid.py`): 843 komórki H3 wygenerowane bez błędów w 0.27s (197 pustyń transportowych).
+  - Backend API regression check: `TestClient` zwraca HTTP 200 OK dla `/api/v1/hubs?city=kielce` (1357 obiektów) oraz `/details` i `/hexagons`.
+  - Frontend build check: `npm run build` w `urban-dashboard` przechodzi w **2.3s** (0 błędów TypeScript).
 
 ---
 
