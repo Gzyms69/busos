@@ -153,13 +153,15 @@ def calculate_h3_dna(city_name):
                 return local_stop_counts, local_stop_routes, local_hub_counts, local_hub_routes
             try:
                 service_ids = get_best_service_ids(feed)
-                st = pd.read_csv(feed / "stop_times.txt", usecols=['trip_id', 'stop_id', 'departure_time'], dtype={'stop_id': str, 'trip_id': str})
-                tr = pd.read_csv(feed / "trips.txt", dtype={'trip_id': str})
+                st = pd.read_csv(feed / "stop_times.txt", usecols=['trip_id', 'stop_id', 'departure_time'], dtype=str)
+                tr = pd.read_csv(feed / "trips.txt", dtype=str)
                 
                 if 'route_id' in tr.columns:
+                    tr['route_id'] = tr['route_id'].astype(str)
                     routes_path = feed / "routes.txt"
                     if routes_path.exists():
                         routes = pd.read_csv(routes_path, dtype=str)
+                        routes['route_id'] = routes['route_id'].astype(str)
                         r_name_col = 'route_short_name' if 'route_short_name' in routes.columns else ('route_long_name' if 'route_long_name' in routes.columns else 'route_id')
                         tr = tr.merge(routes[['route_id', r_name_col]], on='route_id', how='left')
                         tr['route_name'] = tr[r_name_col].fillna(tr['route_id']).astype(str)
@@ -313,11 +315,15 @@ def calculate_h3_dna(city_name):
             
         floor_map = {"T4_DAILY_SERVICE": 5.0, "T5_SPEC_GASTRO": 5.0}
 
-        def calc_entropy(group):
-            total_grav = group['grav_unique'].sum()
-            if total_grav == 0: return 0.0
-            props = group.groupby('domain')['grav_unique'].sum() / total_grav
-            return -float(np.sum(props * np.log2(props + 1e-9)))
+        def calc_vectorized_entropy(df, group_col, res_col):
+            if df.empty:
+                return pd.DataFrame(columns=[group_col, res_col])
+            domain_grav = df.groupby([group_col, 'domain'])['grav_unique'].sum().unstack(fill_value=0.0)
+            total_grav = domain_grav.sum(axis=1)
+            props = domain_grav.div(total_grav.replace(0, np.nan), axis=0).fillna(0.0)
+            log_props = np.where(props > 0, np.log2(props + 1e-12), 0.0)
+            ent = -(props * log_props).sum(axis=1)
+            return pd.DataFrame({group_col: ent.index, res_col: ent.values})
 
         # 5a. Hubs POI Calculation
         joined_infra = gpd.sjoin(infra, hubs.set_geometry('catchment')[['hub_id', 'catchment']], how="inner", predicate="intersects")
@@ -349,7 +355,7 @@ def calculate_h3_dna(city_name):
             poi_export_df.to_parquet(results_dir / "poi_matrix.parquet")
             
             gravity_stats = joined_infra.groupby('hub_id')['grav_unique'].sum().reset_index().rename(columns={'grav_unique': 'hub_raw_gravity'})
-            entropy_stats = joined_infra.groupby('hub_id').apply(calc_entropy, include_groups=False).reset_index(name='hub_entropy')
+            entropy_stats = calc_vectorized_entropy(joined_infra, 'hub_id', 'hub_entropy')
             hubs = hubs.merge(gravity_stats, on='hub_id', how='left').merge(entropy_stats, on='hub_id', how='left')
         else:
             hubs['hub_raw_gravity'] = 0.0
@@ -384,7 +390,7 @@ def calculate_h3_dna(city_name):
             joined_infra_stops['grav_unique'] = (joined_infra_stops['w'] * joined_infra_stops['pull']) * (joined_infra_stops['pull'] / joined_infra_stops['sum_pull'])
             
             stop_grav_stats = joined_infra_stops.groupby('stop_id')['grav_unique'].sum().reset_index().rename(columns={'grav_unique': 'stop_raw_gravity'})
-            stop_entropy_stats = joined_infra_stops.groupby('stop_id').apply(calc_entropy, include_groups=False).reset_index(name='stop_entropy')
+            stop_entropy_stats = calc_vectorized_entropy(joined_infra_stops, 'stop_id', 'stop_entropy')
             stops = stops.merge(stop_grav_stats, on='stop_id', how='left').merge(stop_entropy_stats, on='stop_id', how='left')
         else:
             stops['stop_raw_gravity'] = 0.0
@@ -602,10 +608,26 @@ def run_national_stitching():
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--city"); parser.add_argument("--force", action="store_true"); parser.add_argument("--stitch", action="store_true")
+    parser.add_argument("--city", help="City name or 'all'")
+    parser.add_argument("--force", action="store_true")
+    parser.add_argument("--stitch", action="store_true")
     args = parser.parse_args()
-    if args.city: calculate_h3_dna(args.city)
-    if args.stitch: run_national_stitching()
+
+    data_dir = get_data_dir()
+    if args.city == "all":
+        available_cities = sorted([
+            d.name for d in (data_dir / "cities").iterdir()
+            if d.is_dir() and (d / "02_spatial" / "stops.gpkg").exists() and (d / "02_spatial" / "infrastructure.gpkg").exists()
+        ])
+        print(f"[*] Batch processing {len(available_cities)} calibrated cities for Stop DNA & Symmetry...")
+        for idx, c in enumerate(available_cities, 1):
+            print(f"[{idx}/{len(available_cities)}] Processing city: {c}...")
+            calculate_h3_dna(c)
+    elif args.city:
+        calculate_h3_dna(args.city)
+
+    if args.stitch:
+        run_national_stitching()
 
 if __name__ == "__main__":
     main()

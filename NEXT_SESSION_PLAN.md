@@ -63,38 +63,56 @@
   - Frontend `npm run build`: kompilacja w **2.3s** (0 błędów TS).
   - Commit `9fe7dc5` wypchnięty do `origin/main`.
 
+### Task 5 (Sprint 2): Ogólnopolski Potok Danych (30 Miast) & Modularne API (`backend/app/routers/`)
+- **Pełna Skala Ogólnopolska (30 Miast)**:
+  - Przeliczono potok `scripts/pipeline/15_compute_stop_dna.py --city all --stitch` dla wszystkich 30 skalibrowanych aglomeracji.
+  - Wygenerowano zunifikowaną bazę ogólnopolską: `data/database/master_stop_dna_poland.gpkg` (30 MB) oraz `.csv` (38 MB) z percentylami i rangami krajowymi.
+  - Wygenerowano siatkę Uber H3 Res 8 dla całej Polski: `17_build_h3_grid.py --city all` (**36 784 komórki H3** we wszystkich 30 miastach).
+- **Weryfikacja Symetrii (0 Stop Loss)**:
+  - `scripts/pipeline/tests/test_stop_hub_symmetry.py --all`: **30/30 miast zaliczyło 8/8 bramek weryfikacyjnych** (np. Warszawa: 10 393 słupki / 4 714 hubów, GZM: 10 253 słupki / 4 806 hubów, Kielce: 1 357 słupków / 817 hubów).
+- **Modularna Architektura API**:
+  - `backend/app/routers/stops.py`: `GET /api/v1/stops`, `GET /api/v1/stops/{stop_id}` (profil słupka).
+  - `backend/app/routers/hubs.py`: `GET /api/v1/hubs`, `GET /api/v1/hubs/{hub_id}` (karta huba z `hub_stops_ids`), `GET /api/v1/hubs/{hub_id}/details`, `/full`.
+  - `backend/app/routers/hexagons.py`: `GET /api/v1/hexagons`, `GET /api/v1/hexagons/{hex_index}`, `GET /api/v1/hexagons/{hex_index}/stops`.
+  - `backend/app/routers/market.py`: `GET /api/v1/market/summary`, `GET /api/v1/market/transactions`, alias `/api/v1/transactions`.
+  - `backend/app/routers/analytics.py`: `GET /api/v1/analytics/axe-list` (TCRP 100), `GET /api/v1/analytics/transit-deserts` (The Investment List).
+  - `backend/app/routers/ai.py`: `POST /api/v1/ai/similar-hubs` (wektorowe podobieństwo Stop DNA w skali kraju).
+- **6-Poziomowa Drabina Testowa Pytest (`backend/tests/test_api_v1.py`)**:
+  - **9/9 testów PASSED w 10.25s**:
+    * Tier 0: Global Poland & Pętla Sanity 30/30 miast dla wszystkich tras.
+    * Tier 1: Warszawa (Mega Metropolia, >10k słupków, >4k heksów).
+    * Tier 2: Wrocław (Duże Miasto Regionalne, dynamiczny schemat POI, fuzja RCN).
+    * Tier 3: GZM (Aglomeracja Policentryczna, 10 253 słupki, 4 806 hubów).
+    * Tier 4: Kielce (Średnie Miasto Wzorcowe, 1357 słupków, 817 hubów, 843 heksy).
+    * Tier 5: Suwałki (Miasto Brzegowe, odporność na małe próby, AI similarities).
+    * Backward Compatibility: 100% zgodności wstecznej dla tras legacy.
+- **Frontend & Git Mandate**:
+  - `npm run build` w `urban-dashboard` przechodzi w **2.3s** (0 błędów TypeScript).
+
 ---
 
 ## 3. Decyzje Architektoniczne z Sesji Grill-Me & PLAN.md (LOCKED)
 
 1. **Jeden Sprint na Sesję**: Działamy w ścisłej izolacji celów zgodnie z `PLAN.md`.
-2. **Modularyzacja API & Maksymalizacja Danych (Sprint 2)**:
-   - Rozbicie monolitycznego `main.py` na dedykowane routery domenowe:
-     - `app/routers/stops.py` (fizyczne słupki mikro, GeoJSON, profile `/api/v1/stops/{id}`)
-     - `app/routers/hubs.py` (węzły makro, GeoJSON, karta huba z listą słupków, widok composite `/full`)
-     - `app/routers/hexagons.py` (siatka H3 Res 8, profil komórki)
-     - `app/routers/market.py` (statystyki z `rcn_stats.json`, transakcje)
-     - `app/routers/analytics.py` (The Axe List - TCRP 100 cannibalization, The Investment List - TDI, wyceny POI)
-     - `app/routers/ai.py` (wektorowe podobieństwo Qdrant)
-3. **100% Kompatybilności Wstecznej**:
-   - Wszystkie dotychczasowe endpointy (`/api/v1/hubs`, `/details`, `/hexagons`, `/population`, `/transactions`, `/health`) działają identycznie jak przed podziałem na routery.
+2. **Modularyzacja API & Maksymalizacja Danych (Sprint 2 - ZREALIZOWANO)**:
+   - Wszystkie routery domenowe wdrożone w `backend/app/routers/`.
+3. **100% Kompatybilności Wstecznej (ZREALIZOWANO)**:
+   - Wszystkie dotychczasowe endpointy (`/api/v1/hubs`, `/details`, `/hexagons`, `/population`, `/transactions`, `/health`) działają identycznie.
 4. **Zautomatyzowany Test Suite przez Tier-2 Sub-Worker (Sprint 3)**:
-   - Wygenerowanie testów `pytest` przez FastMCP `chinese-worker` (`worker_generate_tests`).
+   - Wygenerowanie rozszerzonych testów `pytest` przez FastMCP `chinese-worker` (`worker_generate_tests`).
 5. **Mandat Gita**:
    - Każdy sprint kończy się aktualizacją `PLAN.md`, `NEXT_SESSION_PLAN.md` oraz `git commit && git push origin main`.
 
 ---
 
-## 4. Action Items dla Kolejnej Sesji (Sprint 2)
+## 4. Action Items dla Kolejnej Sesji (Sprint 3)
 
-1. **Krok 1: Implementacja routerów domenowych w `backend/app/routers/`**:
-   - `stops.py`, `hubs.py`, `hexagons.py`, `market.py`, `analytics.py`, `ai.py`.
-2. **Krok 2: Podpięcie warstwy `hubs.gpkg` i nowych źródeł**:
-   - Odczyt `hubs.gpkg` w `hubs.py` oraz `stop_dna.gpkg` w `stops.py`.
-   - Podpięcie `rcn_stats.json` w `market.py` (`/api/v1/market/summary`).
-   - Implementacja audytu kanibalizacji TCRP Report 100 w `analytics.py` (`/api/v1/analytics/axe-list`).
-3. **Krok 3: Weryfikacja jakościowa**:
-   - Zero regresji: `TestClient` HTTP 200 OK dla wszystkich tras.
+1. **Krok 1: Rozszerzenie testów integracyjnych z Tier-2 Sub-Workerem (`chinese-worker`)**:
+   - Uruchomienie `worker_generate_tests` dla `spatial_engine.py` (testy izolowane algorytmów Huffa, TCRP 100, dynamicznej introspekcji DuckDB).
+2. **Krok 2: Weryfikacja odporności na błędy brzegowe**:
+   - Testy ujemnych współrzędnych, nieistniejących slugów miast, brakujących plików Parquet.
+3. **Krok 3: Weryfikacja jakościowa & Git Mandate**:
+   - `uv run pytest` 100% zielony.
    - Frontend `npm run build` w `urban-dashboard` (<3s, 0 błędów TS).
    - Git commit & push.
 
@@ -107,23 +125,17 @@ Kontynuujemy rozwój BusOS w NOWEJ SESJI zgodnie z protokołem PLAN.md.
 
 1. Załaduj wymagane skille: `spec-driven-development`, `skill-backend-architect`, `skill-qa-engineer`, `skill-codebase-onboarding`.
 2. Przeczytaj pliki SSOT: `PLAN.md`, `NEXT_SESSION_PLAN.md` oraz `docs/contracts/DATA_DICTIONARY_AND_API_SSOT.md`.
-3. Stan bazowy po Sprincie 1:
-   - Potok `scripts/pipeline/15_compute_stop_dna.py` generuje pełną symetrię metryk mikro (`stop_*`) i makro (`hub_*`).
-   - Wyeksportowano dwie warstwy GeoPackage: `stop_dna.gpkg` (1357 słupków w Kielcach) i `hubs.gpkg` (817 węzłów z centroidami WGS84 Point).
-   - Test `scripts/pipeline/tests/test_stop_hub_symmetry.py` zalicza wszystkie 8 bramek weryfikacyjnych.
-   - Step 17 (`17_build_h3_grid.py`) i endpoint `/api/v1/hexagons` działają bezbłędnie (843 hexy w Kielcach, 0.27s).
-   - Backend `TestClient` i Frontend `npm run build` (2.3s, 0 błędów TS) są zielone.
-   - Ostatni commit: `9fe7dc5` na `origin/main`.
-4. Cel nowej sesji: Realizacja SPRINTU 2 z PLAN.md (Granularne, Inteligentne API w `backend/app/routers/`):
-   - Rozbicie monolitycznego `main.py` na czyste routery domenowe: `stops.py`, `hubs.py`, `hexagons.py`, `market.py`, `analytics.py`, `ai.py`.
-   - Nowe endpointy:
-     * `GET /api/v1/stops?city={city}` oraz `GET /api/v1/stops/{id}?city={city}` (profil słupka z `stop_dna.gpkg`)
-     * `GET /api/v1/hubs?city={city}` (z `hubs.gpkg`) oraz `GET /api/v1/hubs/{id}?city={city}` (karta huba + tablica przypisanych `hub_stops_ids`)
-     * `GET /api/v1/market/summary?city={city}` (dane z `rcn_stats.json`)
-     * `GET /api/v1/analytics/axe-list?city={city}` (audyt kanibalizacji TCRP Report 100 na poziomie fizycznych słupków)
-     * `GET /api/v1/analytics/transit-deserts?city={city}` (The Investment List z siatki H3)
-   - 100% kompatybilności wstecznej dla wszystkich dotychczasowych tras.
-   - Rygor: zakaz modyfikacji frontendu w tym sprincie. Weryfikacja przez `TestClient` / `pytest`.
+3. Stan bazowy po Sprincie 2:
+   - Zszyto bazę ogólnopolską: `data/database/master_stop_dna_poland.gpkg` (30 MB) i `.csv` (38 MB) dla wszystkich 30 miast.
+   - Przeliczono siatkę H3 Res 8 dla całej Polski: 36 784 komórek H3 w 30 miastach.
+   - Zrealizowano Sprint 2 z PLAN.md: rozbicie monolitu na czyste routery domenowe w `backend/app/routers/` (`stops.py`, `hubs.py`, `hexagons.py`, `market.py`, `analytics.py`, `ai.py`).
+   - Wdrożono i zweryfikowano 6-poziomową drabinę testową `backend/tests/test_api_v1.py` (9/9 passed w 10.25s od Tier 0 do Tier 5).
+   - Wszystkie 30 miast zalicza 8/8 bramek weryfikacyjnych w `test_stop_hub_symmetry.py --all`.
+   - Backend `TestClient` i Frontend `npm run build` (2.3s, 0 błędów TS) są w 100% zielone.
+4. Cel nowej sesji: Realizacja SPRINTU 3 z PLAN.md (Zaawansowany Pakiet Testów Pytest):
+   - Użyj FastMCP `chinese-worker` (`worker_generate_tests`) do pokrycia testami jednostkowymi i integracyjnymi silnika DuckDB i algorytmów przestrzennych TCRP Report 100.
+   - Potwierdź przejście 100% testów.
 ```
+
 
 

@@ -54,9 +54,10 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
-pythonpath = ["."]
+testpaths = ["tests", "backend/tests", "scripts/pipeline/tests"]
+pythonpath = [".", "backend"]
 addopts = "-v"
+
 
 [tool.ruff]
 line-length = 120

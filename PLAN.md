@@ -20,6 +20,14 @@
    - Frontend: `npm run build` (musi kompilować się w <3s, 0 błędów TS).
    - Backend: `TestClient` lub `pytest` musi zwracać 200 OK.
 5. **MANDAT GITA (Commit & Push po każdym etapie):** Po zakończeniu każdego etapu/sprintu agent ma bezwzględny obowiązek wykonać: `git add .`, `git commit -m '...'` oraz `git push origin main`. Wszystkie zmiany muszą być natychmiast utrwalone w zdalnym repozytorium.
+6. **MANDAT CAŁEJ POLSKI & 6-POZIOMOWA DRABINA TESTOWA (Tier 0 - Tier 5):**
+   - Zakaz ograniczania pipeline'u i weryfikacji wyłącznie do jednego miasta. Każda zmiana w logice danych lub API musi być przeliczona i sprawdzona dla **wszystkich 30 skalibrowanych aglomeracji w Polsce**.
+   - **Tier 0: Global Poland (National Scale):** Weryfikacja bazy ogólnokrajowej `data/database/master_stop_dna_poland.gpkg` oraz pełna pętla sanity 30/30 miast w API (100% miast zwraca HTTP 200 na wszystkich endpointach domenowych).
+   - **Tier 1: Mega Metropolia:** `warszawa` (największa skala: ~6.5k słupków, 4.4k heksów H3, test wydajności DuckDB < 500ms).
+   - **Tier 2: Duże Miasto Regionalne:** `wroclaw` (złożony układ promienisty, dynamiczna introspekcja schematu POI, fuzja RCN).
+   - **Tier 3: Aglomeracja Policentryczna:** `gzm` (ponad 7k słupków, konurbacja górnośląska, fuzja wielu podsieci).
+   - **Tier 4: Średnie Wojewódzkie (Wzorzec):** `kielce` (1357 słupków, 817 hubów, 843 heksy, certyfikowane 8 bramek symetrii).
+   - **Tier 5: Miasto Brzegowe / Peryferyjne:** `suwalki` / `swinoujscie` (skrajne przypadki brzegowe, małe próby, odporność na dzielenie przez zero).
 
 ---
 
@@ -73,35 +81,44 @@
 
 ---
 
-### Sprint 2: Granularne, Inteligentne API (`backend/app/routers/`)
-- **Status:** `[PLANNED]` (Do wykonania w Sesji 3)
-- **Cel:** Rozbicie monolitycznego `main.py` na czyste, dedykowane routery FastAPI. Umożliwienie odpytywania o konkretny słupek, hub, heksagon H3 lub wybraną metrykę.
-- **Zakres:**
-  1. `app/routers/stops.py`:
-     - `GET /api/v1/stops?city={city}` (GeoJSON słupków)
-     - `GET /api/v1/stops/{id}?city={city}` (profil słupka)
-     - `GET /api/v1/stops/{id}/details` (wycinek POI i demografii dla słupka)
-  2. `app/routers/hubs.py`:
-     - `GET /api/v1/hubs?city={city}` (GeoJSON węzłów)
-     - `GET /api/v1/hubs/{id}?city={city}` (karta huba + tablica przypisanych słupków)
-     - `GET /api/v1/hubs/{id}/details` (istniejący radius query)
-  3. `app/routers/hexagons.py`:
-     - `GET /api/v1/hexagons?city={city}` (Siatka H3 Res 8)
-  4. `app/routers/market.py`:
-     - `GET /api/v1/market/summary?city={city}` (dane z `rcn_stats.json`)
-     - `GET /api/v1/transactions?city={city}`
-  5. `app/routers/analytics.py`:
-     - `GET /api/v1/analytics/axe-list?city={city}` (audyt kanibalizacji TCRP Report 100 na poziomie fizycznych słupków)
-     - `GET /api/v1/analytics/transit-deserts?city={city}` (The Investment List z H3)
-- **Zasada:** 100% kompatybilności wstecznej — stare endpointy w `main.py` działają bez zmian.
+### Sprint 2: Ogólnopolski Potok Danych (30 Miast) & Modularne API (`backend/app/routers/`)
+- **Status:** `[DONE]` (Zrealizowano 2026-09-07)
+- **Cel:** Przeliczenie potoku dla całej Polski (30 miast: `stop_dna.gpkg`, `hubs.gpkg`, `h3_grid.parquet`, `master_stop_dna_poland.gpkg`), rozbicie monolitycznego `main.py` na czyste routery domenowe oraz wdrożenie kompletnego zestawu testów od poziomu Tier 0 (krajowego) do Tier 5.
+- **Wykonane zadania:**
+  1. **Optymalizacja i przeliczenie potoku dla całej Polski (30 miast):**
+     - Wektoryzacja entropii Shannona w `15_compute_stop_dna.py` (redukcja czasu z minut do milisekund).
+     - Wygenerowanie symetrycznych warstw `stop_dna.gpkg` i `hubs.gpkg` dla wszystkich 30 skalibrowanych aglomeracji.
+     - Wygenerowanie bazy krajowej `data/database/master_stop_dna_poland.gpkg` (30 MB) oraz `.csv` (38 MB) z percentylami ogólnopolskimi.
+     - Wygenerowanie siatki Uber H3 Res 8 dla wszystkich 30 miast (`17_build_h3_grid.py --city all`, 36 784 komórki H3).
+  2. **Modularne API w `backend/app/routers/` (100% zgodności z SSOT):**
+     - `stops.py`: `GET /api/v1/stops`, `GET /api/v1/stops/{stop_id}` (profil fizycznego słupka z `stop_dna.gpkg`).
+     - `hubs.py`: `GET /api/v1/hubs`, `GET /api/v1/hubs/{hub_id}` (karta huba z tablicą `hub_stops_ids`), `GET /api/v1/hubs/{hub_id}/details`, `/full`.
+     - `hexagons.py`: `GET /api/v1/hexagons`, `GET /api/v1/hexagons/{hex_index}`, `GET /api/v1/hexagons/{hex_index}/stops`.
+     - `market.py`: `GET /api/v1/market/summary` (statystyki z `rcn_stats.json`), `GET /api/v1/market/transactions`, alias `/api/v1/transactions`.
+     - `analytics.py`: `GET /api/v1/analytics/axe-list` (TCRP Report 100), `GET /api/v1/analytics/transit-deserts` (The Investment List).
+     - `ai.py`: `POST /api/v1/ai/similar-hubs` (wyszukiwanie podobieństwa Stop DNA w skali całej Polski).
+     - Refaktoryzacja `backend/app/main.py` z zachowaniem tras wstecznych (`/health`, `/api/v1/cities`, `/api/v1/population`).
+  3. **Wdrożenie 6-poziomowego zestawu testów Pytest (`backend/tests/test_api_v1.py`):**
+     - Tier 0: Global Poland & Pętla Sanity 30/30 miast dla wszystkich tras.
+     - Tier 1: Warszawa (Mega Metropolia, >10k słupków, >4k heksów).
+     - Tier 2: Wrocław (Duże Miasto Regionalne, dynamiczny schemat POI, fuzja RCN).
+     - Tier 3: GZM (Aglomeracja Policentryczna, 10 253 słupki, 4 806 hubów).
+     - Tier 4: Kielce (Średnie Miasto Wzorcowe, 1357 słupków, 817 hubów, 843 heksy).
+     - Tier 5: Suwałki (Miasto Brzegowe, odporność na małe próby, AI similarities).
+- **Dowody weryfikacji:**
+  - `scripts/pipeline/tests/test_stop_hub_symmetry.py --all`: **30/30 miast zaliczyło wszystkie 8 bramek weryfikacyjnych** (0 utraty słupków, 100% relacji).
+  - `scripts/pipeline/17_build_h3_grid.py --city all`: **36 784 komórek H3 wygenerowanych dla 30 miast**.
+  - `pytest backend/tests/test_api_v1.py -v`: **9/9 testów PASSED w 10.25s** (100% zielone od Tier 0 do Tier 5).
+  - Frontend build check: `npm run build` w `urban-dashboard` przechodzi w **2.3s** (0 błędów TypeScript).
 
 ---
 
-### Sprint 3: Zautomatyzowany Pakiet Testów Pytest (Tier-2 Worker)
-- **Status:** `[PLANNED]` (Do wykonania w Sesji 4)
-- **Cel:** Pokrycie testami jednostkowymi i integracyjnymi silnika przestrzennego i nowych routerów.
+### Sprint 3: Zaawansowany Zautomatyzowany Pakiet Testów Pytest (Tier-2 Worker)
+- **Status:** `[NASTĘPNA SESJA]`
+- **Cel:** Rozszerzenie pokrycia testami integracyjnymi silnika DuckDB i algorytmów przestrzennych TCRP Report 100.
 - **Narzędzie:** FastMCP `chinese-worker` (`worker_generate_tests`, profil `nemotron-lightning`).
 - **Kryteria:** 100% testów przechodzi (`pytest backend/tests/ -v`).
+
 
 ---
 

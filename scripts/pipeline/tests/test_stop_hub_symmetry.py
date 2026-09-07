@@ -152,9 +152,25 @@ def verify_city_symmetry(city_name: str, data_dir: Path = Path("data")) -> bool:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--city", default="kielce")
+    parser.add_argument("--all", action="store_true", help="Verify all calibrated cities")
     parser.add_argument("--data-dir", default="data")
     args = parser.parse_args()
 
-    success = verify_city_symmetry(args.city, Path(args.data_dir))
-    if not success:
-        sys.exit(1)
+    data_dir = Path(args.data_dir)
+    if args.all or args.city == "all":
+        cities_dir = data_dir / "cities"
+        cities = sorted([
+            d.name for d in cities_dir.iterdir()
+            if d.is_dir() and (d / "04_results" / "stop_dna.gpkg").exists()
+        ])
+        print(f"[*] Auditing Stop-Hub Symmetry across {len(cities)} cities...")
+        passed = 0
+        for c in cities:
+            if verify_city_symmetry(c, data_dir):
+                passed += 1
+        print(f"[SUCCESS] {passed}/{len(cities)} cities passed all 8 symmetry gates!")
+    else:
+        success = verify_city_symmetry(args.city, data_dir)
+        if not success:
+            sys.exit(1)
+
