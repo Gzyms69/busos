@@ -1,0 +1,39 @@
+name: Deploy Backend to OCI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+      - '.github/workflows/deploy-backend.yml'
+
+jobs:
+  deploy:
+    name: OCI Docker Compose Deployment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execute Remote SSH Deployment on OCI Instance
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.OCI_HOST }}
+          username: ${{ secrets.OCI_USER || 'ubuntu' }}
+          key: ${{ secrets.OCI_SSH_KEY }}
+          script: |
+            set -e
+            echo "[+] Navigating to BusOS repository on OCI..."
+            TARGET_DIR=$(test -d /home/${{ secrets.OCI_USER || 'ubuntu' }}/busos && echo /home/${{ secrets.OCI_USER || 'ubuntu' }}/busos || echo /root/busos)
+            cd "$TARGET_DIR"
+            
+            echo "[+] Pulling latest commits from GitHub..."
+            git pull origin main
+            
+            echo "[+] Rebuilding and restarting busos-api container..."
+            cd backend
+            docker compose build --no-cache busos-api
+            docker compose up -d busos-api
+            
+            echo "[+] Waiting for healthcheck..."
+            sleep 3
+            curl -f http://127.0.0.1:8000/health || exit 1
+            echo "[SUCCESS] Backend successfully deployed and healthy on OCI!"

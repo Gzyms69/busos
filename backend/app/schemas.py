@@ -68,3 +68,27 @@ class SimilarHubResponse(BaseModel):
     similarity_score: float = Field(..., description="Cosine similarity score (0.0 to 1.0)")
     grade: str
     local_score_raw: float
+
+
+class HexagonCell(BaseModel):
+    hex: str = Field(..., description="H3 cell index string")
+    lat: float
+    lon: float
+    stop_count: int
+    hub_count: int
+    total_departures_h: float
+    max_stop_grade: str
+    transport_score: float
+    pop_total: float
+    rcn_tx_count: int
+    rcn_median_price_m2: Optional[float] = None
+    poi_gravity_sum: float
+    transit_desert_index: float
+    is_transit_desert: bool
+
+
+class HexagonsResponse(BaseModel):
+    city: str
+    resolution: int
+    count: int
+    hexagons: List[HexagonCell] = Field(default_factory=list, description="Array of H3 analytical cells")

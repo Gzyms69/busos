@@ -3,10 +3,11 @@ import React, { useEffect, useState } from 'react';
 import DeckGL from '@deck.gl/react';
 import { ScatterplotLayer, GeoJsonLayer } from '@deck.gl/layers';
 import { HexagonLayer } from '@deck.gl/aggregation-layers';
+import { H3HexagonLayer } from '@deck.gl/geo-layers';
 import { Map, Layer } from 'react-map-gl/maplibre';
 import { useTheme } from 'next-themes';
 import { useStore, ViewState } from '@/lib/store';
-import { fetchHubs, fetchPopulation, fetchTransactions } from '@/lib/api-client';
+import { fetchHubs, fetchPopulation, fetchTransactions, fetchHexagons } from '@/lib/api-client';
 import type { PickingInfo } from '@deck.gl/core';
 import type { Feature, FeatureCollection, Geometry } from 'geojson';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -34,6 +35,23 @@ interface TxPoint {
   price_m2: number;
 }
 
+export interface H3CellData {
+  hex: string;
+  lat: number;
+  lon: number;
+  stop_count: number;
+  hub_count: number;
+  total_departures_h: number;
+  max_stop_grade: string;
+  transport_score: number;
+  pop_total: number;
+  rcn_tx_count: number;
+  rcn_median_price_m2: number | null;
+  poi_gravity_sum: number;
+  transit_desert_index: number;
+  is_transit_desert: boolean;
+}
+
 const emptySubscribe = () => () => {};
 
 export default function MapContainer() {
@@ -41,15 +59,33 @@ export default function MapContainer() {
   const [hubs, setHubs] = useState<FeatureCollection<Geometry, HubProperties> | null>(null);
   const [pop, setPop] = useState<FeatureCollection<Geometry, PopProperties> | null>(null);
   const [transactions, setTransactions] = useState<FeatureCollection<Geometry, TxProperties> | null>(null);
+  const [hexagons, setHexagons] = useState<H3CellData[]>([]);
   const { theme, resolvedTheme } = useTheme();
   const mounted = React.useSyncExternalStore(emptySubscribe, () => true, () => false);
   const [hoverInfo, setHoverInfo] = useState<PickingInfo<Feature<Geometry, HubProperties>> | null>(null);
+  const [hexHoverInfo, setHexHoverInfo] = useState<PickingInfo<H3CellData> | null>(null);
 
   useEffect(() => {
     if (!selectedCity) return;
-    fetchHubs(selectedCity).then(setHubs);
-    fetchPopulation(selectedCity).then(setPop);
-    fetchTransactions(selectedCity).then(setTransactions);
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    fetchHubs(selectedCity, signal).then((data) => {
+      if (!signal.aborted) setHubs(data);
+    });
+    fetchPopulation(selectedCity, signal).then((data) => {
+      if (!signal.aborted) setPop(data);
+    });
+    fetchTransactions(selectedCity, signal).then((data) => {
+      if (!signal.aborted) setTransactions(data);
+    });
+    fetchHexagons(selectedCity, 0, signal).then((data) => {
+      if (!signal.aborted && data?.hexagons) setHexagons(data.hexagons);
+    });
+
+    return () => {
+      controller.abort();
+    };
   }, [selectedCity]);
 
   const txData: TxPoint[] = transactions?.features?.map((f) => {
@@ -75,37 +111,28 @@ export default function MapContainer() {
   const isDark = (resolvedTheme === 'dark' || theme === 'dark') ?? true;
 
   const layers = [
-    new GeoJsonLayer({
-      id: 'pop-grid',
-      data: pop?.type === 'FeatureCollection' ? pop : { type: 'FeatureCollection', features: [] },
-      pickable: false,
-      stroked: true,
-      filled: true,
-      getFillColor: (f) => {
-        const props = (f as Feature<Geometry, PopProperties>).properties;
-        return [200, 200, 200, (props?.TOT ?? 0) > 0 ? (isDark ? 30 : 60) : 0];
-      },
-      getLineColor: isDark ? [50, 50, 50, 100] : [200, 200, 200, 150],
-      lineWidthMinPixels: 1
-    }),
-    new HexagonLayer<TxPoint>({
-      id: 'tx-hex',
-      data: txData,
+    // Native GPU H3 Spatial Analytical Grid (Fused GTFS, GUS, RCN)
+    new H3HexagonLayer<H3CellData>({
+      id: 'h3-grid',
+      data: hexagons,
       pickable: true,
+      wireframe: false,
+      filled: true,
       extruded: true,
-      radius: 150,
-      elevationScale: 5,
-      getPosition: (d: TxPoint) => d.position,
-      getColorValue: (points: TxPoint[]) => {
-        if (!points.length) return 0;
-        return points.reduce((acc, p) => acc + p.price_m2, 0) / points.length;
+      getHexagon: (d: H3CellData) => d.hex,
+      getElevation: (d: H3CellData) => Math.min(d.transport_score * 3.5, 350),
+      elevationScale: 1,
+      getFillColor: (d: H3CellData) => {
+        if (d.is_transit_desert) {
+          return [239, 68, 68, isDark ? 160 : 190]; // Red: Transit Desert Alert
+        }
+        const score = d.transport_score || 0;
+        if (score >= 70) return [16, 185, 129, isDark ? 130 : 160]; // Emerald
+        if (score >= 40) return [59, 130, 246, isDark ? 110 : 140]; // Blue
+        if (score >= 15) return [245, 158, 11, isDark ? 90 : 120]; // Amber
+        return [100, 116, 139, isDark ? 40 : 60]; // Muted slate
       },
-      getElevationValue: (points: TxPoint[]) => points.length,
-      colorRange: isDark ? [
-        [30, 41, 59], [49, 63, 85], [69, 87, 114], [90, 113, 145], [113, 140, 178], [137, 169, 214]
-      ] : [
-        [240, 244, 250], [210, 222, 238], [180, 200, 226], [150, 178, 214], [120, 156, 202], [90, 134, 190]
-      ]
+      onHover: (info) => setHexHoverInfo(info as PickingInfo<H3CellData>)
     }),
     new ScatterplotLayer<Feature<Geometry, HubProperties>>({
       id: 'hubs',
@@ -195,7 +222,7 @@ export default function MapContainer() {
         </Map>
       </DeckGL>
 
-      {/* Hover Tooltip */}
+      {/* Stop Hover Tooltip */}
       {hoverInfo && hoverInfo.object && (
         <div 
           className="absolute z-50 pointer-events-none bg-background/95 backdrop-blur-md border border-border px-3 py-2 rounded-lg shadow-xl text-sm"
@@ -205,6 +232,47 @@ export default function MapContainer() {
           <div className="text-[10px] text-muted-foreground mt-0.5 uppercase tracking-wide">
             Grade: <span className="font-mono text-primary mr-2">{hoverInfo.object.properties.grade}</span> 
             Score: <span className="font-mono">{Number(hoverInfo.object.properties.local_score_raw).toFixed(2)}</span>
+          </div>
+        </div>
+      )}
+
+      {/* H3 Hex Hover Tooltip */}
+      {(!hoverInfo || !hoverInfo.object) && hexHoverInfo && hexHoverInfo.object && (
+        <div 
+          className="absolute z-50 pointer-events-none bg-background/95 backdrop-blur-md border border-border px-3 py-2.5 rounded-lg shadow-xl text-xs max-w-xs"
+          style={{ left: hexHoverInfo.x + 10, top: hexHoverInfo.y + 10 }}
+        >
+          <div className="flex items-center justify-between gap-2 border-b border-border/50 pb-1 mb-1.5">
+            <span className="font-mono font-bold text-[11px]">{hexHoverInfo.object.hex}</span>
+            {hexHoverInfo.object.is_transit_desert ? (
+              <span className="bg-destructive/20 text-destructive text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">
+                Pustynia Transportowa
+              </span>
+            ) : (
+              <span className="bg-primary/20 text-primary text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">
+                Obszar Obsługiwany
+              </span>
+            )}
+          </div>
+          <div className="space-y-1 text-muted-foreground text-[11px]">
+            <div className="flex justify-between">
+              <span>Transport Score:</span>
+              <span className="font-mono font-bold text-foreground">{hexHoverInfo.object.transport_score.toFixed(1)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Odjazdy na godzinę:</span>
+              <span className="font-mono font-bold text-foreground">{hexHoverInfo.object.total_departures_h} kursów/h</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Populacja GUS:</span>
+              <span className="font-mono font-bold text-foreground">{Math.round(hexHoverInfo.object.pop_total).toLocaleString()} os.</span>
+            </div>
+            {hexHoverInfo.object.rcn_median_price_m2 && (
+              <div className="flex justify-between">
+                <span>Mediana cen RCN:</span>
+                <span className="font-mono font-bold text-foreground">{Math.round(hexHoverInfo.object.rcn_median_price_m2).toLocaleString()} zł/m²</span>
+              </div>
+            )}
           </div>
         </div>
       )}

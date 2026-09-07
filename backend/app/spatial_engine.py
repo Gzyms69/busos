@@ -260,9 +260,41 @@ def get_hub_details(city: str, lat: float, lon: float, hub_id: Optional[str] = N
 
     db = duckdb.connect(":memory:")
 
+    # Introspect schema to handle cities with optimized/reduced poi_matrix columns
+    cols_df = db.execute(f"DESCRIBE SELECT * FROM read_parquet('{poi_file}')").fetchall()
+    col_names = {r[0] for r in cols_df}
+    
+    name_col = "name" if "name" in col_names else "CAST(NULL AS VARCHAR) AS name"
+    
+    if "category" in col_names:
+        category_col = "category"
+    else:
+        category_col = """(CASE 
+            WHEN w >= 1000000 THEN 'Węzeł Strategiczny / Transport'
+            WHEN w >= 500000 THEN 'Szpital / Kampus Akademicki'
+            WHEN w >= 100000 THEN 'Centrum Handlowe / Usługi'
+            WHEN w >= 30000 THEN 'Szkoła / Edukacja / Kultura'
+            WHEN w >= 5000 THEN 'Usługi Codzienne / Apteka / Handel'
+            WHEN w >= 1000 THEN 'Gastronomia / Rozrywka'
+            ELSE 'Zieleń / Mikroinfrastruktura'
+        END) AS category"""
+
+    if "tier" in col_names:
+        tier_col = "tier"
+    else:
+        tier_col = """(CASE 
+            WHEN w >= 1000000 THEN 'T0'
+            WHEN w >= 500000 THEN 'T1'
+            WHEN w >= 100000 THEN 'T2'
+            WHEN w >= 30000 THEN 'T3'
+            WHEN w >= 5000 THEN 'T4'
+            WHEN w >= 1000 THEN 'T5'
+            ELSE 'T6'
+        END) AS tier"""
+
     # Query POIs within 500m
     poi_query = f"""
-        SELECT poi_id, name, category, tier, lat, lon, w, sum_pull
+        SELECT poi_id, {name_col}, {category_col}, {tier_col}, lat, lon, w, sum_pull
         FROM read_parquet('{poi_file}')
         WHERE lat BETWEEN {min_lat} AND {max_lat}
           AND lon BETWEEN {min_lon} AND {max_lon}
@@ -310,3 +342,58 @@ def get_hub_details(city: str, lat: float, lon: float, hub_id: Optional[str] = N
         "pop": pop,
         "metrics": hub_metrics
     }
+
+
+def get_hexagons(city: str, min_pop: float = 0.0) -> Dict[str, Any]:
+    """Reads h3_grid.parquet and returns structured H3 hexagonal cells for Deck.gl H3HexagonLayer."""
+    h3_file = os.path.join(DATA_DIR, city, "04_results", "h3_grid.parquet")
+    if not os.path.exists(h3_file):
+        raise FileNotFoundError(f"h3_grid.parquet not found for city '{city}' at {h3_file}")
+
+    db = duckdb.connect(":memory:")
+    query = f"""
+        SELECT 
+            h3_index as hex,
+            lat,
+            lon,
+            stop_count,
+            hub_count,
+            total_departures_h,
+            max_stop_grade,
+            transport_score,
+            pop_total,
+            rcn_tx_count,
+            rcn_median_price_m2,
+            poi_gravity_sum,
+            transit_desert_index,
+            is_transit_desert
+        FROM read_parquet('{h3_file}')
+        WHERE pop_total >= {min_pop} OR stop_count > 0 OR rcn_tx_count > 0
+        ORDER BY total_departures_h DESC
+    """
+    rows = db.execute(query).fetch_df().to_dict(orient="records")
+    db.close()
+
+    # Sanitize float / NaN values for JSON
+    for r in rows:
+        r["hex"] = str(r["hex"])
+        r["stop_count"] = int(r["stop_count"])
+        r["hub_count"] = int(r["hub_count"])
+        r["total_departures_h"] = float(r["total_departures_h"])
+        r["max_stop_grade"] = str(r.get("max_stop_grade") or "NONE")
+        r["transport_score"] = float(r["transport_score"])
+        r["pop_total"] = float(r["pop_total"])
+        r["rcn_tx_count"] = int(r["rcn_tx_count"])
+        price = r.get("rcn_median_price_m2")
+        r["rcn_median_price_m2"] = float(price) if (price is not None and not (isinstance(price, float) and math.isnan(price))) else None
+        r["poi_gravity_sum"] = float(r["poi_gravity_sum"])
+        r["transit_desert_index"] = float(r["transit_desert_index"])
+        r["is_transit_desert"] = bool(r["is_transit_desert"])
+
+    return {
+        "city": city,
+        "resolution": 8,
+        "count": len(rows),
+        "hexagons": rows
+    }
+

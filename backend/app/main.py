@@ -10,7 +10,8 @@ from app.schemas import (
     CitiesResponse,
     GeoJsonFeatureCollection,
     HubDetailsResponse,
-    SimilarHubResponse
+    SimilarHubResponse,
+    HexagonsResponse
 )
 from app import spatial_engine
 
@@ -119,3 +120,18 @@ async def get_hub_details(
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"DuckDB spatial aggregation error: {str(e)}")
+
+
+@app.get("/api/v1/hexagons", response_model=HexagonsResponse, tags=["H3 Analytical Grid"])
+async def get_hexagons(
+    city: str = Query(..., description="City slug"),
+    min_pop: float = Query(0.0, description="Minimum population filter")
+):
+    """Returns precomputed unified H3 spatial grid cells (Res 8) with fused transit, demographic, and real estate data."""
+    try:
+        return spatial_engine.get_hexagons(city=city, min_pop=min_pop)
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"H3 grid error: {str(e)}")
+
