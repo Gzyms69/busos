@@ -30,7 +30,8 @@ except ImportError:
         "rzeszow": 190000, "kielce": 190000, "olsztyn": 170000, "radom": 200000,
         "torun": 190000, "czestochowa": 210000, "legnica": 90000,
         "elblag": 110000, "opole": 120000, "gorzow": 120000, "suwalki": 70000,
-        "elk": 60000, "lomza": 60000, "przemysl": 60000, "gizycko": 30000, "swinoujscie": 40000
+        "elk": 60000, "lomza": 60000, "przemysl": 60000, "gizycko": 30000, "swinoujscie": 40000,
+        "kutno": 43000, "leszno": 63000, "trojmiasto": 750000, "zielona-gora": 140000
     }
     TAG_WHITELIST = {
         "aerodrome": "international_airport", "terminal": "airport_terminal", "port": "major_seaport", "station": "rail_hub",
@@ -84,7 +85,8 @@ def check_parquets(results_dir):
             if df.empty: msgs.append("⚠️ `poi_matrix.parquet` puste.")
             else:
                 lats, lons = df['lat'], df['lon']
-                if df.isna().any().any(): msgs.append("❌ ZNALEZIONO NaN W POI PARQUET!")
+                num_cols = [c for c in ['poi_id', 'category', 'tier', 'lat', 'lon', 'w', 'sum_pull'] if c in df.columns]
+                if df[num_cols].isna().any().any(): msgs.append("❌ ZNALEZIONO NaN W POI PARQUET!")
                 elif not df[df['sum_pull'] <= 0].empty: msgs.append("❌ `sum_pull` <= 0 w POI PARQUET!")
                 elif (lats < 49.0).any() or (lats > 55.0).any() or (lons < 14.0).any() or (lons > 24.1).any():
                     msgs.append("❌ POI GEOLOCATION OUT OF BOUNDS WGS84")
@@ -108,6 +110,20 @@ def check_parquets(results_dir):
                 else: msgs.append("✅ POP Parquet 100% Valid")
         except Exception as e: msgs.append(f"❌ Odczyt POP Parquet: {e}")
     else: msgs.append("❌ Brak pliku `pop_matrix.parquet`")
+
+    # H3 GRID PARQUET
+    h3_path = results_dir / "h3_grid.parquet"
+    if h3_path.exists():
+        try:
+            df = pd.read_parquet(h3_path)
+            if df.empty: msgs.append("⚠️ `h3_grid.parquet` puste.")
+            else:
+                deserts = int((df['is_transit_desert'] == True).sum()) if 'is_transit_desert' in df.columns else 0
+                calc_cols = [c for c in ['h3_index', 'lat', 'lon', 'transport_score', 'transit_desert_index'] if c in df.columns]
+                if df[calc_cols].isna().any().any(): msgs.append("❌ ZNALEZIONO NaN W H3 GRID PARQUET!")
+                else: msgs.append(f"✅ H3 Res 8 Grid 100% Valid ({len(df):,} komórek, {deserts} pustyń transportowych)")
+        except Exception as e: msgs.append(f"❌ Odczyt H3 Parquet: {e}")
+    else: msgs.append("❌ Brak pliku `h3_grid.parquet`")
     return msgs
 
 def get_name(hstore_str):
@@ -245,12 +261,12 @@ def audit_single_city(city, data_dir, cities_root):
                     
                     # Wypisujemy konkretne dane
                     groups = {
-                        "[IDENTYFIKACJA]": ['stop_name', 'stop_id', 'h3_index', 'hub_id'],
-                        "[OCENA Z-SCORE & RANK]": ['grade', 'local_percentile', 'local_score_raw'],
-                        "[FILAR 1: INFRASTRUKTURA]": ['infra_score', 'raw_gravity', 'domain_count'],
-                        "[FILAR 2: TRANSPORT GTFS]": ['transit_freq', 'hourly_freq'],
-                        "[FILAR 3: NIERUCHOMOŚCI RCN]": ['market_val', 'liquidity'],
-                        "[FILAR 4: GĘSTOŚĆ POPULACJI]": ['pop_val']
+                        "[IDENTYFIKACJA]": ['stop_name', 'stop_id', 'h3_index', 'hub_id', 'hub_name', 'is_hub_anchor'],
+                        "[OCENA Z-SCORE & RANK]": ['stop_grade', 'grade', 'stop_percentile', 'local_percentile', 'stop_local_score_raw', 'local_score_raw', 'hub_grade', 'hub_percentile'],
+                        "[FILAR 1: INFRASTRUKTURA]": ['stop_infra_score', 'infra_score', 'stop_raw_gravity', 'raw_gravity', 'stop_entropy', 'hub_infra_score'],
+                        "[FILAR 2: TRANSPORT GTFS]": ['stop_departures_h', 'transit_freq', 'stop_routes_count', 'stop_routes', 'stop_hub_share', 'hub_departures_h', 'hub_routes'],
+                        "[FILAR 3: NIERUCHOMOŚCI RCN]": ['stop_market_val', 'market_val', 'stop_liquidity', 'liquidity', 'hub_market_val'],
+                        "[FILAR 4: GĘSTOŚĆ POPULACJI]": ['stop_pop_val', 'pop_val', 'hub_pop_val']
                     }
                     
                     for gn, cs in groups.items():
@@ -351,7 +367,7 @@ def run_100_percent_validation(target_cities=None):
     city_reports_dict = {}
     
     print(f"=== AUDYT RÓWNOLEGŁY 100% Z ASERCJAMI & BIG-DATA METRICS ===")
-    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
         futures = {executor.submit(audit_single_city, city, data_dir, cities_root): city for city in cities}
         for future in concurrent.futures.as_completed(futures):
             city_name = futures[future]

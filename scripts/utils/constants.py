@@ -31,6 +31,10 @@ CITY_BASELINES = {
     "przemysl": 60000,
     "gizycko": 30000,
     "swinoujscie": 40000,
+    "kutno": 43000,
+    "leszno": 63000,
+    "trojmiasto": 750000,
+    "zielona-gora": 140000,
 }
 
 TAG_WHITELIST = {
