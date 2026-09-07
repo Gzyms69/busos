@@ -97,23 +97,51 @@
 2. **Modularyzacja API & Maksymalizacja Danych (Sprint 2 - ZREALIZOWANO)**:
    - Wszystkie routery domenowe wdrożone w `backend/app/routers/`.
 3. **100% Kompatybilności Wstecznej (ZREALIZOWANO)**:
-   - Wszystkie dotychczasowe endpointy (`/api/v1/hubs`, `/details`, `/hexagons`, `/population`, `/transactions`, `/health`) działają identycznie.
-4. **Zautomatyzowany Test Suite przez Tier-2 Sub-Worker (Sprint 3)**:
-   - Wygenerowanie rozszerzonych testów `pytest` przez FastMCP `chinese-worker` (`worker_generate_tests`).
-5. **Mandat Gita**:
+### Task 6 (Sprint 3): Zaawansowany Pakiet Testów Pytest & Audyt Domenowy (Golden DNA Standard)
+- **Rozszerzenie Zestawu Testowego (`backend/tests/`)**:
+  - `backend/tests/test_spatial_engine.py` (15 testów):
+    * Model Huffa (bufor 500m Haversine, ranking grawitacyjny $(w \cdot \text{sum\_pull})$ malejąco, agregacja demograficzna).
+    * Audyt TCRP Report 100 ($cKDTree$ w buforze 200m, monotoniczność zaniku Gaussa, wzór nakładania kół $r = 300\text{m}$, reguła asymetrii odjazdów).
+    * Dynamiczna introspekcja DuckDB (odporność na brak kolumn w Parquet, fallback T0–T6, sanityzacja NaN).
+    * Odporność brzegowa (nieistniejące slugi, brakujące pliki, ujemne/skrajne współrzędne, test 30 miast).
+  - `backend/tests/test_golden_dna_domain.py` (39 testów):
+    * Weryfikacja Standardu Złotego Audytu DNA (`GOLDEN DNA AUDIT`): Zero NaNs/Infs w stop_dna i hubs.
+    * Rozkład Gaussa Z-Score: $\mu \in [-0.5, 0.5]$, $\sigma \in [0.5, 1.5]$ w unikalnych hubach.
+    * Brak kompresji percentyli ($0\% - 100\%$) i równomierność rang $A+$ do $F$.
+    * Baza ogólnopolska `master_stop_dna_poland.gpkg` (30 miast, >50k słupków, 0 nulli w rangach).
+    * Granice geograficzne WGS84 dla Polski ($49.0 \le lat \le 55.0$, $14.0 \le lon \le 24.5$).
+    * Realizm ekonomiczny cen transakcyjnych RCN oraz demografii GUS 250m.
+    * Weryfikacja matematyczna wskaźnika TDI w komórkach Uber H3.
+- **Wyniki Weryfikacji (100% Green)**:
+  - `uv run pytest backend/tests/ -v`: **63/63 testów PASSED w 12.47s**.
+  - `npm run build --prefix urban-dashboard`: **sukces w 2.4s (0 błędów TypeScript)**.
+
+---
+
+## 3. Decyzje Architektoniczne z Sesji Grill-Me & PLAN.md (LOCKED)
+
+1. **Jeden Sprint na Sesję**: Działamy w ścisłej izolacji celów zgodnie z `PLAN.md`.
+2. **Standard Złotego Audytu DNA (Sprint 3 - ZREALIZOWANO)**:
+   - Wszystkie metryki transportowe i przestrzenne audytowane pod kątem sensu fizycznego, rozkładów statystycznych i praw geografii.
+3. **100% Kompatybilności Wstecznej (ZREALIZOWANO)**:
+   - Wszystkie routery domenowe i legacy endpointy działają w 100% spójnie.
+4. **Mandat Gita**:
    - Każdy sprint kończy się aktualizacją `PLAN.md`, `NEXT_SESSION_PLAN.md` oraz `git commit && git push origin main`.
 
 ---
 
-## 4. Action Items dla Kolejnej Sesji (Sprint 3)
+## 4. Action Items dla Kolejnej Sesji (Sprint 4: Palantir Foundry UI & Blueprint.js)
 
-1. **Krok 1: Rozszerzenie testów integracyjnych z Tier-2 Sub-Workerem (`chinese-worker`)**:
-   - Uruchomienie `worker_generate_tests` dla `spatial_engine.py` (testy izolowane algorytmów Huffa, TCRP 100, dynamicznej introspekcji DuckDB).
-2. **Krok 2: Weryfikacja odporności na błędy brzegowe**:
-   - Testy ujemnych współrzędnych, nieistniejących slugów miast, brakujących plików Parquet.
-3. **Krok 3: Weryfikacja jakościowa & Git Mandate**:
-   - `uv run pytest` 100% zielony.
-   - Frontend `npm run build` w `urban-dashboard` (<3s, 0 błędów TS).
+1. **Krok 1: Wdrożenie Blueprint.js w Next.js**:
+   - Instalacja i konfiguracja `@blueprintjs/core@^6.16.0` oraz `@blueprintjs/table` w `urban-dashboard`.
+2. **Krok 2: Foundry Split Layout**:
+   - Podział ekranu: Interaktywna mapa 3D Deck.gl + profesjonalny DataGrid.
+3. **Krok 3: Tabele Domenowe**:
+   - "The Axe List" (audyt redukcji słupków TCRP 100) z podglądem par przystanków.
+   - "The Investment List" (pustynie transportowe H3) z sortowaniem po TDI.
+4. **Krok 4: Weryfikacja jakościowa & Git Mandate**:
+   - `npm run build` w `urban-dashboard` (<3s, 0 błędów TS).
+   - `uv run pytest backend/tests/ -v` (63/63 passed).
    - Git commit & push.
 
 ---
@@ -121,20 +149,21 @@
 ## 5. Handoff Bootstrap Prompt (Kopiuj-Wklej do Nowej Sesji)
 
 ```markdown
-Kontynuujemy rozwój BusOS w NOWEJ SESJI zgodnie z protokołem PLAN.md.
+Kontynuujemy rozwój BusOS w NOWEJ SESJI zgodnie ze standardem PLAN.md (Sprint 4).
 
-1. Załaduj wymagane skille: `spec-driven-development`, `skill-backend-architect`, `skill-qa-engineer`, `skill-codebase-onboarding`.
+1. Załaduj wymagane skille: `spec-driven-development`, `skill-frontend-architect`, `skill-qa-engineer`, `skill-codebase-onboarding`.
 2. Przeczytaj pliki SSOT: `PLAN.md`, `NEXT_SESSION_PLAN.md` oraz `docs/contracts/DATA_DICTIONARY_AND_API_SSOT.md`.
-3. Stan bazowy po Sprincie 2:
-   - Zszyto bazę ogólnopolską: `data/database/master_stop_dna_poland.gpkg` (30 MB) i `.csv` (38 MB) dla wszystkich 30 miast.
-   - Przeliczono siatkę H3 Res 8 dla całej Polski: 36 784 komórek H3 w 30 miastach.
-   - Zrealizowano Sprint 2 z PLAN.md: rozbicie monolitu na czyste routery domenowe w `backend/app/routers/` (`stops.py`, `hubs.py`, `hexagons.py`, `market.py`, `analytics.py`, `ai.py`).
-   - Wdrożono i zweryfikowano 6-poziomową drabinę testową `backend/tests/test_api_v1.py` (9/9 passed w 10.25s od Tier 0 do Tier 5).
-   - Wszystkie 30 miast zalicza 8/8 bramek weryfikacyjnych w `test_stop_hub_symmetry.py --all`.
-   - Backend `TestClient` i Frontend `npm run build` (2.3s, 0 błędów TS) są w 100% zielone.
-4. Cel nowej sesji: Realizacja SPRINTU 3 z PLAN.md (Zaawansowany Pakiet Testów Pytest):
-   - Użyj FastMCP `chinese-worker` (`worker_generate_tests`) do pokrycia testami jednostkowymi i integracyjnymi silnika DuckDB i algorytmów przestrzennych TCRP Report 100.
-   - Potwierdź przejście 100% testów.
+3. Stan bazowy po Sprincie 3:
+   - Baza ogólnopolska i siatka H3: 30 miast, 36 784 komórek H3, certyfikowana symetria 8/8 w 30 miastach.
+   - Pełny pakiet testów Pytest: 63/63 PASSED w 12.47s (API v1, Spatial Engine, Golden DNA Domain Integrity).
+   - Frontend: Next.js 16.2.1 Turbopack, Deck.gl v9, H3HexagonLayer GPU compute, buduje się w 2.4s (0 błędów TS).
+4. Pre-Flight Verification Command:
+   `uv run pytest backend/tests/ -v && npm run build --prefix urban-dashboard`
+5. Cel sesji: Realizacja SPRINTU 4 z PLAN.md (Frontend Palantir Foundry UI & Blueprint.js):
+   - Wdrożenie `@blueprintjs/core` i `@blueprintjs/table` w layoutcie dwudzielnym (Foundry split).
+   - Zaawansowane widoki analityczne: "The Axe List" (TCRP 100) oraz "The Investment List" (Pustynie Transportowe H3).
+   - Weryfikacja: `npm run build` < 3s, 0 błędów TS.
+   - Git Mandate: commit i push do `origin/main`.
 ```
 
 

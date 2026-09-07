@@ -35,7 +35,7 @@
 
 ```
 [Sprint 0: Stabilizacja & H3] ──► [Sprint 1: Symetria Danych Potoku] ──► [Sprint 2: Modularne API] ──► [Sprint 3: Testy Pytest] ──► [Sprint 4: Palantir Blueprint UI]
-          [DONE]                                [DONE]                              [NASTĘPNA SESJA]                 [PLANOWANY]                    [PLANOWANY]
+          [DONE]                                [DONE]                              [DONE]                          [DONE]                    [NASTĘPNA SESJA]
 ```
 
 ---
@@ -113,11 +113,26 @@
 
 ---
 
-### Sprint 3: Zaawansowany Zautomatyzowany Pakiet Testów Pytest (Tier-2 Worker)
-- **Status:** `[NASTĘPNA SESJA]`
-- **Cel:** Rozszerzenie pokrycia testami integracyjnymi silnika DuckDB i algorytmów przestrzennych TCRP Report 100.
-- **Narzędzie:** FastMCP `chinese-worker` (`worker_generate_tests`, profil `nemotron-lightning`).
-- **Kryteria:** 100% testów przechodzi (`pytest backend/tests/ -v`).
+### Sprint 3: Zaawansowany Zautomatyzowany Pakiet Testów Pytest & Audyt Domenowy (Golden DNA Standard)
+- **Status:** `[DONE]` (Zrealizowano 2026-09-07)
+- **Cel:** Rozszerzenie pokrycia testami integracyjnymi silnika DuckDB i algorytmów przestrzennych TCRP Report 100 oraz wdrożenie rygorystycznego audytu jakości i rozkładów danych Stop DNA w oparciu o standard `GOLDEN DNA AUDIT`.
+- **Wykonane zadania:**
+  1. **Pakiet testów silnika przestrzennego (`backend/tests/test_spatial_engine.py` - 15 testów):**
+     - Model grawitacji Huffa: dokładność bufora 500m (Haversine), sortowanie malejące wg $(w \cdot \text{sum\_pull})$, agregacja komórek demograficznych GUS 250m.
+     - Audyt kanibalizacji TCRP Report 100: sąsiedztwo $\le 200\text{m}$ przez `cKDTree`, monotoniczny spadek zaniku Gaussa $s_{\text{spatial}}$, analityczne nakładanie kół strefy zlewni ($r = 300\text{m}$), reguła asymetrycznej redukcji ($departures_{dominant} \ge departures_{redundant}$).
+     - Odporność DuckDB na niekompletne schematy: dynamiczna introspekcja brakujących kolumn (`name`, `category`, `tier`) w `poi_matrix.parquet` z automatycznym mapowaniem progów $w$ (T0 do T6).
+     - Odporność brzegowa: obsługa nieistniejących miast (`FileNotFoundError`), brakujących ID słupków/hubów/heksów, skrajnych współrzędnych geograficznych.
+  2. **Pakiet testów Złotego Standardu DNA (`backend/tests/test_golden_dna_domain.py` - 39 testów):**
+     - Zero NaNs & Infs: 100% czystości danych we wszystkich metrykach Stop DNA.
+     - Rozkład Gaussa Z-Score: $\mu \in [-0.5, 0.5]$ oraz $\sigma \in [0.5, 1.5]$ w unikalnych hubach miast (brak zapaści statystycznej).
+     - Pełne pokrycie percentyli: brak ściśnięcia rozkładu (min $\le 2.0\%$, max $\ge 98.0\%$).
+     - Równomierność ocen Stop DNA: obecność wszystkich klas (A+, A, B, C, D, F) bez zapaści.
+     - Baza ogólnopolska `master_stop_dna_poland.gpkg`: 30 miast, >50k słupków, 0 nulli w rangach krajowych.
+     - Granice WGS84: 100% obiektów mieści się w granicach Polski ($49.0 \le lat \le 55.0$, $14.0 \le lon \le 24.5$).
+     - Realizm ekonomiczny i demograficzny: transakcje RCN po filtracji IQR w granicach $2\,500 - 40\,000\text{ PLN/m}^2$, poprawność wskaźnika Pustyni Transportowej (TDI).
+- **Dowody weryfikacji:**
+  - `uv run pytest backend/tests/ -v`: **63/63 testów PASSED w 12.47s** (100% zielone: `test_api_v1.py` 9/9, `test_spatial_engine.py` 15/15, `test_golden_dna_domain.py` 39/39).
+  - Frontend build check: `npm run build` w `urban-dashboard` przechodzi w **2.4s** (0 błędów TypeScript).
 
 
 ---
