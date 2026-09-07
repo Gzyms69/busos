@@ -141,24 +141,55 @@
 
 ---
 
-## 4. Action Items dla Kolejnej Sesji (Sprint 3.5: Universal Query Engine & 100% Audit Data Access)
+### Task 8 (Sprint 3.5): Universal Query Engine & 100% Audit Data Access w API
+- **Uniwersalne Rankingi & Paginacja Exact Rank**:
+  - `GET /api/v1/stops/ranking` (ze swobodnym limitem, sortowaniem po 53 metrykach, `rank=N` 1-based exact position, `grade=A+..F`, `h3_index`).
+  - `POST /api/v1/stops/batch` (masowy lookup pełnych profili słupków).
+  - `GET /api/v1/hubs/ranking` (ranking węzłów makro z `min_stops`).
+  - `GET /api/v1/hexagons/ranking` (ranking siatki H3 po TDI, cenach RCN, populacji GUS, odjazdach) + `GET /api/v1/hexagons/{hex_index}/profile` (profil 360° heksa łączący heks, słupki, RCN i POI).
+  - `GET /api/v1/market/transactions/ranking` (ranking notarialny RCN) + `GET /api/v1/market/transactions/nearby` (bufor metryczny EPSG:2180) + `GET /api/v1/market/h3-analysis` (6 przedziałów cenowych, korelacja z transportem).
+- **Nowy Router POI (`backend/app/routers/poi.py`)**:
+  - `GET /api/v1/poi/magnets`: TOP X kluczowych nazwanych atraktorów miejskich (T0–T2) posortowanych wagą grawitacji z odfiltrowaniem zaślepek.
+  - `GET /api/v1/poi/categories`: wykaz 20 kategorii z wagami $W$.
+- **Karta Audytowa Miasta & Ogólnopolski Leaderboard (`backend/app/routers/analytics.py`)**:
+  - `GET /api/v1/analytics/audit-summary?city=...&include=summary,zscore,grades,h3,rcn,tcrp,poi,samples,all` z modułową selekcją sekcji.
+  - `GET /api/v1/analytics/national-ranking?scope=stops|hubs|hexagons|cities&rank=N`.
+  - `GET /api/v1/analytics/metric-distribution?city=...&metric=...` (kwantyle i 10-bin histogram pod sparklines).
+  - `GET /api/v1/analytics/compare-cities?city_a=...&city_b=...`.
+- **Wyniki Weryfikacji (100% Green)**:
+  - `uv run pytest backend/tests/ -v`: **78/78 testów PASSED w 19.52s** (100% zielone; 24/24 w `test_api_v1.py`).
+  - `npm run build --prefix urban-dashboard`: **sukces w 2.3s (0 błędów TypeScript)**.
 
-1. **Krok 1: Uniwersalne Parametry Zapytań dla Słupków, Hubów i Heksów**:
-   - Dowolny limit: `limit=N` (np. 5, 7, 11, 50).
-   - Pobieranie konkretnego N-tego elementu bez ciągnięcia całej listy: parametr `rank=N` lub `offset=N-1&limit=1` (np. "pobierz dokładnie 6. najlepszy słupek").
-   - Sortowanie po dowolnej metryce z 53 dostępnych w audycie: `order_by={metric}`, `order_dir=desc|asc` (najlepsze vs najgorsze).
-   - Filtry domenowe: `grade=A+..F`, widełki wartości `min_{metric}`, `max_{metric}`.
-2. **Krok 2: Nowy Moduł POI w API (`backend/app/routers/poi.py`)**:
-   - `GET /api/v1/poi/magnets`: pobieranie TOP X nazwanych obiektów z Tierów 0–2 z wagami $W$.
-   - `GET /api/v1/poi/categories`: wykaz 20 kategorii POI miasta z wycenami.
-3. **Krok 3: Karta Audytowa Miasta (`/api/v1/analytics/audit-summary`)**:
-   - Lekki endpoint JSON zwracający kompletny scorecard audytowy dla danego miasta (odpowiednik sekcji miasta z raportu Golden DNA).
-4. **Krok 4: Tablica Liderów Ogólnopolskich (`/api/v1/analytics/national-ranking`)**:
-   - Porównania cross-city w skali całego kraju (np. TOP 20 przystanków w Polsce, TOP węzły przesiadkowe, TOP pustynie transportowe).
-5. **Krok 5: Weryfikacja jakościowa & Git Mandate**:
-   - Testy integracyjne w `backend/tests/test_api_v1.py` dla wszystkich nowych parametrów.
-   - `uv run pytest backend/tests/ -v` (100% pass).
-   - `npm run build --prefix urban-dashboard` (0 błędów TS).
+---
+
+## 3. Decyzje Architektoniczne z Sesji Grill-Me & PLAN.md (LOCKED)
+
+1. **Jeden Cel na Sesję**: Działamy w ścisłej izolacji celów zgodnie z `PLAN.md`.
+2. **Contract-First & Universal API Data Access (ZREALIZOWANO)**:
+   - Backend API oferuje całkowitą swobodę wyciągania 100% zebranych i przetworzonych danych z audytu.
+   - Zapobieganie ściąganiu ciężkich GeoJSONów (10 MB) na frontend – każdy widget UI ma dedykowany, lekki (<15ms) endpoint JSON.
+3. **100% Kompatybilności Wstecznej (ZREALIZOWANO)**:
+   - Wszystkie routery domenowe i legacy endpointy działają w 100% spójnie.
+4. **Mandat Gita**:
+   - Każdy krok kończy się aktualizacją `PLAN.md`, `NEXT_SESSION_PLAN.md` oraz `git commit && git push origin main`.
+
+---
+
+## 4. Action Items dla Kolejnej Sesji (Sprint 4: Palantir Foundry UI & Blueprint.js)
+
+1. **Krok 1: Instalacja i konfiguracja Blueprint.js we frontendzie**:
+   - Instalacja pakietów `@blueprintjs/core@^6.16.0`, `@blueprintjs/table`, `@blueprintjs/icons`, `@blueprintjs/select`.
+   - Konfiguracja motywu Blueprint Dark Theme zintegrowanego z Tailwind CSS i ciemną paletą BusOS.
+2. **Krok 2: Foundry Split View (Deck.gl 3D + DataGrid)**:
+   - Podział ekranu: lewa strona mapa Deck.gl (komórki H3 / węzły / słupki), prawa strona interaktywny DataGrid.
+   - Dwustronna interakcja: kliknięcie w wiersz tabeli centruje kamerę mapy na obiekcie; kliknięcie na mapie podświetla i przewija do rekordu w tabeli.
+3. **Krok 3: Dedykowane Widoki Analityczne**:
+   - Widok **"The Axe List"**: tabela słupków z audytu TCRP Report 100 ($R \ge 0.70$) z metrykami oszczędności wozokilometrów i kanibalizacji.
+   - Widok **"The Investment List"**: ranking Pustyń Transportowych (heksy H3 z wysokim TDI, gęstą populacją i zerową obsługą).
+   - Widok **"Real Estate Correlation"**: korelacja cen mieszkań RCN z oceną Stop DNA.
+   - Widok **"POI Attractors"**: topowe magnesy miejskie z wagami grawitacji Huffa.
+4. **Krok 4: Weryfikacja jakościowa & Git Mandate**:
+   - `npm run build --prefix urban-dashboard` (<3s, 0 błędów TS).
    - Git commit & push do `origin/main`.
 
 ---
@@ -166,29 +197,26 @@
 ## 5. Handoff Bootstrap Prompt (Kopiuj-Wklej do Nowej Sesji)
 
 ```markdown
-Kontynuujemy rozwój BusOS w NOWEJ SESJI zgodnie ze standardem PLAN.md (Sprint 3.5: Universal Query Engine & 100% Audit Data Access w API).
+Kontynuujemy rozwój BusOS w NOWEJ SESJI zgodnie ze standardem PLAN.md (Sprint 4: Palantir Foundry UI & Blueprint.js).
 
-1. Załaduj wymagane skille: `spec-driven-development`, `skill-backend-architect`, `skill-qa-engineer`, `skill-codebase-onboarding`.
+1. Załaduj wymagane skille: `spec-driven-development`, `skill-frontend-architect`, `skill-design-engineering`, `skill-qa-engineer`.
 2. Przeczytaj pliki SSOT:
    - `PLAN.md`
    - `NEXT_SESSION_PLAN.md`
    - `docs/contracts/DATA_DICTIONARY_AND_API_SSOT.md`
-   - Raport audytowy: `reports/audits/GOLDEN_DNA_AUDIT_20260907_2356.md`
-3. Stan bazowy po Sprincie 3 (Commit `54e9915` na `origin/main`):
-   - Opublikowano megareport Golden DNA Audit v4.2 dla 30 miast w Polsce (831 KB, 26 235 linii, 60 265 słupków, 28 317 hubów, 36 784 heksy H3, 0 NaNs/Infs).
-   - Pełny pakiet testów Pytest: 63/63 PASSED w 11.69s (`test_api_v1.py`, `test_spatial_engine.py`, `test_golden_dna_domain.py`).
-   - Frontend Next.js: buduje się w 2.4s (0 błędów TypeScript).
+3. Stan bazowy po Sprincie 3.5:
+   - Kompletny silnik zapytań backendu FastAPI zoptymalizowany pod kątem swobodnych rankingów (`/stops/ranking`, `/hubs/ranking`, `/hexagons/ranking`, `/market/transactions/ranking`), profilu 360° heksa H3, modułu POI (`/poi/magnets`, `/poi/categories`), karty audytowej miasta (`/analytics/audit-summary?include=...`) i tablicy liderów (`/analytics/national-ranking`).
+   - Pełny pakiet testów Pytest: 78/78 PASSED w 19.52s.
+   - Frontend Next.js: buduje się w 2.3s (0 błędów TypeScript).
 4. Pre-Flight Verification Command:
-   `uv run pytest backend/tests/ -v && npm run build --prefix urban-dashboard`
-5. Cel sesji: Rozbudowa API backendowego pod kątem CAŁKOWITEJ SWOBODY analitycznej i dostępu do 100% danych z audytu przed przystąpieniem do budowy frontendu (Foundry UI):
-   - Wdrożenie endpointów rankingowych i swobodnych zapytań dla słupków (`/api/v1/stops/ranking`), hubów (`/api/v1/hubs/ranking`) i heksów H3 (`/api/v1/hexagons/ranking`).
-   - Obsługa dowolnego limitu (np. 5, 7, 11, 50) ORAZ pobierania konkretnego N-tego rekordu (np. tylko 6. najlepszy lub 11. najgorszy obiekt za pomocą parametru `rank=N` lub `offset=N-1&limit=1`).
-   - Dynamiczne sortowanie po DOWOLNEJ z 53 metryk audytu w obu kierunkach (`order_dir=asc|desc`) i filtrowanie po rangach (`grade=A+..F`).
-   - Nowy router POI: `GET /api/v1/poi/magnets` (TOP X konkretnych nazwanych obiektów T0–T2 z wagami W) oraz `GET /api/v1/poi/categories`.
-   - Endpoint karty audytowej miasta: `GET /api/v1/analytics/audit-summary?city=...` (zwracający kompletny scorecard audytowy w jednym zwięzłym JSON).
-   - Ogólnopolska tablica liderów: `GET /api/v1/analytics/national-ranking` (dla 60 265 słupków w Polsce).
-   - Weryfikacja: nowe testy w `backend/tests/test_api_v1.py`, `uv run pytest` (100% pass), `npm run build` (<3s), git commit i push do `origin/main`.
+   `npm run build --prefix urban-dashboard && uv run pytest backend/tests/ -v`
+5. Cel sesji (Sprint 4): Przebudowa interfejsu analitycznego na styl Palantir Foundry z wykorzystaniem `@blueprintjs/core` i `@blueprintjs/table`:
+   - Dwudzielny layout split (Deck.gl 3D po lewej, zaawansowany DataGrid po prawej).
+   - Widoki analityczne dla audytu: The Axe List (TCRP 100), The Investment List (Pustynie Transportowe), Transakcje RCN, Magnesy POI.
+   - Dwukierunkowa synchronizacja mapa <-> tabela (hover, click, flyTo).
+   - Weryfikacja: `npm run build --prefix urban-dashboard` (<3s, 0 błędów TS), testy przeglądarkowe, git commit i push do `origin/main`.
 ```
+
 
 
 

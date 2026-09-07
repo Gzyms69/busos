@@ -1,5 +1,11 @@
+from typing import Optional
 from fastapi import APIRouter, Query, HTTPException
-from app.schemas import GeoJsonFeatureCollection, HubCardResponse, HubDetailsResponse
+from app.schemas import (
+    GeoJsonFeatureCollection,
+    HubCardResponse,
+    HubDetailsResponse,
+    HubRankingResponse,
+)
 from app import spatial_engine
 
 router = APIRouter(tags=["Transit Hubs (Macro)"])
@@ -14,6 +20,37 @@ async def get_hubs(city: str = Query(..., description="City slug (e.g. kielce, w
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal spatial error: {str(e)}")
+
+
+@router.get("/hubs/ranking", response_model=HubRankingResponse)
+async def get_hubs_ranking(
+    city: str = Query(..., description="City slug"),
+    order_by: str = Query("hub_local_score_raw", description="Metric to sort by"),
+    order_dir: str = Query("desc", description="Sort direction ('asc' or 'desc')"),
+    limit: int = Query(20, ge=1, le=1000, description="Max number of items to return"),
+    offset: int = Query(0, ge=0, description="Offset for pagination"),
+    rank: Optional[int] = Query(None, ge=1, description="1-based exact position to fetch"),
+    grade: Optional[str] = Query(None, description="Filter by grade"),
+    min_stops: Optional[int] = Query(None, ge=1, description="Filter for minimum stops inside hub"),
+):
+    """Universal ranking endpoint for macro transit hubs with arbitrary limits and dynamic sorting."""
+    try:
+        return spatial_engine.get_hubs_ranking(
+            city=city,
+            order_by=order_by,
+            order_dir=order_dir,
+            limit=limit,
+            offset=offset,
+            rank=rank,
+            grade=grade,
+            min_stops=min_stops,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e))
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Hub ranking error: {str(e)}")
 
 
 @router.get("/hubs/{hub_id}", response_model=HubCardResponse)

@@ -37,29 +37,45 @@ Każdy wiersz w `h3_grid.parquet` reprezentuje pojedynczą komórkę Uber H3 (do
 
 Architektura API zostaje podzielona na wyspecjalizowane routery domenowe z pełną kompatybilnością wsteczną.
 
+### 2.0 Router Fizycznych Słupków Przystankowych (`/api/v1/stops`)
+*   `GET /api/v1/stops?city={city}`: GeoJSON FeatureCollection ze wszystkimi fizycznymi słupkami przystankowymi.
+*   `GET /api/v1/stops/ranking?city={city}&order_by=...&order_dir=...&limit=N&rank=N&grade=...`: Uniwersalny ranking fizycznych słupków z dynamicznym sortowaniem po dowolnej z metryk filarowych, filtrowaniem po grade (`A+` do `F`), `is_hub_anchor`, `min_departures`, `min_pop`, `h3_index` oraz wsparciem dla pobierania konkretnej pozycji (`rank=N`).
+*   `POST /api/v1/stops/batch`: Masowy lookup pełnych profili przystanków po liście `stop_ids: string[]`.
+*   `GET /api/v1/stops/{stop_id}?city={city}`: Granularny profil Stop DNA pojedynczego słupka.
+
 ### 2.1 Router Węzłów Przesiadkowych (`/api/v1/hubs`)
 *   `GET /api/v1/hubs?city={city}`: [Legacy & Map] Lekki GeoJSON ze wszystkimi przystankami i ocenami Stop DNA (A+ do F) dla warstwy `ScatterplotLayer`.
-*   `GET /api/v1/hubs/{hub_id}?city={city}`: [Granularny] Podstawowe metryki wybranego węzła (nazwa, współrzędne, ocena, percentyl).
-*   `GET /api/v1/hubs/{hub_id}/metrics?city={city}`: [Granularny] Rozbicie 4 filarów Stop DNA (`transit_freq`, `infra_score`, `pop_val`, `market_val`, entropia Shannona).
-*   `GET /api/v1/hubs/{hub_id}/pois?city={city}&limit=50&category=...`: [Granularny] Paginowana lista POI w buforze 500m (DuckDB in-memory).
-*   `GET /api/v1/hubs/{hub_id}/population?city={city}`: [Granularny] Komórki demograficzne GUS 250m w buforze 500m.
+*   `GET /api/v1/hubs/ranking?city={city}&order_by=...&order_dir=...&limit=N&rank=N&grade=...&min_stops=...`: Uniwersalny ranking węzłów przesiadkowych z dowolnym limitem, pobieraniem dokładnej pozycji (`rank=N`), sortowaniem po 14 metrykach hubu i filtrowaniem po `min_stops`.
+*   `GET /api/v1/hubs/{hub_id}?city={city}`: [Granularny] Podstawowe metryki wybranego węzła (nazwa, współrzędne, ocena, percentyl, lista IDs słupków składowych).
 *   `GET /api/v1/hubs/{hub_id}/details` oraz `/full`: [Composite] Pełny zagregowany payload dla prawego panelu inspektora (100% kompatybilny wstecz).
 
 ### 2.2 Router Siatki Przestrzennej H3 (`/api/v1/hexagons`)
 *   `GET /api/v1/hexagons?city={city}&min_pop=0`: [Map Engine] Zunifikowana siatka komórek H3 Res 8 dla Deck.gl `H3HexagonLayer`.
-*   `GET /api/v1/hexagons/{hex_index}?city={city}`: [Granularny] Głęboki profil analityczny pojedynczej komórki H3 (populacja, odjazdy, mediana RCN, wskaźnik TDI).
-*   `GET /api/v1/hexagons/{hex_index}/stops?city={city}`: [Granularny] Lista fizycznych słupków przystankowych zlokalizowanych wewnątrz komórki.
+*   `GET /api/v1/hexagons/ranking?city={city}&order_by=...&order_dir=...&limit=N&rank=N&is_transit_desert=...&has_rcn=...`: Uniwersalny ranking komórek H3 z sortowaniem po TDI, transport_score, pop_total, rcn_median_price_m2 i filtrami wykluczenia transportowego.
+*   `GET /api/v1/hexagons/{hex_index}/profile?city={city}`: Profil 360° heksa H3 łączący metryki siatki, fizyczne słupki, okoliczne transakcje notarialne RCN i magnesy POI.
+*   `GET /api/v1/hexagons/{hex_index}?city={city}`: Granularny profil analityczny pojedynczej komórki H3.
+*   `GET /api/v1/hexagons/{hex_index}/stops?city={city}`: Lista fizycznych słupków przystankowych zlokalizowanych wewnątrz komórki.
 
 ### 2.3 Router Rynku Nieruchomości (`/api/v1/market`)
 *   `GET /api/v1/market/summary?city={city}`: Globalne statystyki transakcyjne miasta z `rcn_stats.json` (mediana ceny m², wolumen, przedziały IQR).
+*   `GET /api/v1/market/transactions/ranking?city={city}&order_by=price_m2&order_dir=...&limit=N&rank=N&market_type=...`: Paginowany ranking transakcji notarialnych RCN z dynamicznym sortowaniem, filtrowaniem po rynku (`pierwotny` / `wtorny`), funkcji nieruchomości i cenie.
+*   `GET /api/v1/market/transactions/nearby?city={city}&lat=...&lon=...&radius_m=500&limit=20`: Przestrzenne wyszukiwanie transakcji w promieniu metrycznym (EPSG:2180 C-GEOS).
+*   `GET /api/v1/market/h3-analysis?city={city}`: Zbiorcza analiza pokrycia nieruchomości w siatce H3, 6 przedziałów cenowych oraz korelacji z transportem publicznym.
 *   `GET /api/v1/market/transactions?city={city}`: [Legacy] GeoJSON ze znormalizowanymi punktami transakcji RCN.
 
-### 2.4 Router Analityki Miejskiej & Policy Audit (`/api/v1/analytics`)
+### 2.4 Router Punktów Zainteresowania (`/api/v1/poi`)
+*   `GET /api/v1/poi/magnets?city={city}&limit=N&tier=...&category=...`: Ranking kluczowych miejskich atraktorów/magnesów POI posortowanych wagą grawitacji Huffa, z odfiltrowanymi nazwami zastępczymi.
+*   `GET /api/v1/poi/categories?city={city}&limit=N&order_by=final_value`: Zestawienie wyceny i wolumenu kategorii POI.
+
+### 2.5 Router Analityki Miejskiej & Policy Audit (`/api/v1/analytics`)
+*   `GET /api/v1/analytics/audit-summary?city={city}&include=summary,zscore,grades,h3,rcn,tcrp,poi,samples,all`: Pełna karta audytowa miasta (City Audit Scorecard) z modularnym parametrem `include`, umożliwiającym pobranie całości lub wybranych podsystemów.
+*   `GET /api/v1/analytics/national-ranking?scope=stops|hubs|hexagons|cities&rank=N&limit=N`: Ogólnopolska tablica liderów dla 60k słupków, 28k hubów, 36k hexów lub 30 miast.
+*   `GET /api/v1/analytics/metric-distribution?city={city}&metric={metric}`: Generator statystyk kwantylowych (min, p10, p25, median, p75, p90, max, mean, std) i 10-kubełkowego histogramu do wykresów sparkline.
+*   `GET /api/v1/analytics/compare-cities?city_a={city}&city_b={city}`: Porównanie kluczowych KPI dwóch miast side-by-side.
 *   `GET /api/v1/analytics/transit-deserts?city={city}`: [The Investment List] Ranking komórek H3 o najwyższym wskaźniku wykluczenia (duża populacja GUS, brak oferty transportowej).
 *   `GET /api/v1/analytics/axe-list?city={city}`: [The Axe List] Przystanki zidentyfikowane jako zbędne wg standardu TCRP Report 100 ($R_{\max} \ge 0.70$).
-*   `GET /api/v1/analytics/gravity?city={city}`: Podsumowanie wyceny i rozkładu kategorii POI z `poi_valuation.json`.
 
-### 2.5 Router Wektorowy & AI (`/api/v1/ai`)
+### 2.6 Router Wektorowy & AI (`/api/v1/ai`)
 *   `POST /api/v1/ai/similar-hubs`: Wyszukiwanie semantyczne w silniku Qdrant na bazie embeddingów węzłów (znajdź najbardziej zbliżone węzły w kraju).
 
 

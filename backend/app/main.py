@@ -10,7 +10,8 @@ from app.schemas import (
     GeoJsonFeatureCollection,
 )
 from app import spatial_engine
-from app.routers import stops, hubs, hexagons, market, analytics, ai
+from app.routers import stops, hubs, hexagons, market, analytics, ai, poi
+
 
 QDRANT_HOST = os.getenv("QDRANT_HOST", "qdrant")
 QDRANT_PORT = int(os.getenv("QDRANT_PORT", "6333"))
@@ -86,5 +87,7 @@ app.include_router(stops.router, prefix="/api/v1")
 app.include_router(hubs.router, prefix="/api/v1")
 app.include_router(hexagons.router, prefix="/api/v1")
 app.include_router(market.router, prefix="/api/v1")
+app.include_router(poi.router, prefix="/api/v1")
 app.include_router(analytics.router, prefix="/api/v1")
 app.include_router(ai.router, prefix="/api/v1")
+

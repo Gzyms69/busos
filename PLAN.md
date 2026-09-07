@@ -34,8 +34,8 @@
 ## 1. Rejestr Sprintów (Sprint Registry)
 
 ```
-[Sprint 0: Stabilizacja & H3] ──► [Sprint 1: Symetria Danych Potoku] ──► [Sprint 2: Modularne API] ──► [Sprint 3: Testy Pytest] ──► [Sprint 4: Palantir Blueprint UI]
-          [DONE]                                [DONE]                              [DONE]                          [DONE]                    [NASTĘPNA SESJA]
+[Sprint 0: Stabilizacja & H3] ──► [Sprint 1: Symetria Danych Potoku] ──► [Sprint 2: Modularne API] ──► [Sprint 3: Testy Pytest] ──► [Sprint 3.5: Universal Query Engine] ──► [Sprint 4: Palantir Blueprint UI]
+          [DONE]                                [DONE]                              [DONE]                          [DONE]                               [DONE]                           [NASTĘPNA SESJA]
 ```
 
 ---
@@ -133,6 +133,33 @@
 - **Dowody weryfikacji:**
   - `uv run pytest backend/tests/ -v`: **63/63 testów PASSED w 12.47s** (100% zielone: `test_api_v1.py` 9/9, `test_spatial_engine.py` 15/15, `test_golden_dna_domain.py` 39/39).
   - Frontend build check: `npm run build` w `urban-dashboard` przechodzi w **2.4s** (0 błędów TypeScript).
+
+---
+
+### Sprint 3.5: Universal Query Engine & 100% Audit Data Access w API
+- **Status:** `[DONE]` (Zrealizowano 2026-09-08)
+- **Cel:** Całkowite odblokowanie swobody analitycznej w API BusOS przed budową Foundry UI (Sprint 4): uniwersalne endpointy rankingowe z parametrem `rank=N` (dokładna pozycja) i `limit=N`, sortowanie po wszystkich 53 metrykach, profil 360° heksa H3, moduł POI, karta audytowa miasta z modularnym `?include=`, ogólnopolskie tablice liderów oraz porównywarka miast.
+- **Wykonane zadania:**
+  1. **Uniwersalne rankingi ze swobodnym `limit` i `rank` (1-based exact position):**
+     - Słupki fizyczne: `GET /api/v1/stops/ranking` (12.7 ms SQLite) + `POST /api/v1/stops/batch`.
+     - Węzły przesiadkowe: `GET /api/v1/hubs/ranking`.
+     - Komórki H3 Res 8: `GET /api/v1/hexagons/ranking` + `GET /api/v1/hexagons/{hex_index}/profile`.
+     - Transakcje notarialne: `GET /api/v1/market/transactions/ranking` + `GET /api/v1/market/transactions/nearby` + `GET /api/v1/market/h3-analysis`.
+  2. **Nowy Router POI (`backend/app/routers/poi.py`):**
+     - `GET /api/v1/poi/magnets`: pobieranie kluczowych named obiektów (T0–T2) posortowanych wagą grawitacji z usunięciem nazw zaślepek (`Obiekt`, `bez_nazwy`).
+     - `GET /api/v1/poi/categories`: wykaz 20 kategorii z wagami $W$.
+  3. **Karta Audytowa Miasta & Ogólnopolski Leaderboard (`backend/app/routers/analytics.py`):**
+     - `GET /api/v1/analytics/audit-summary?city=...&include=summary,zscore,grades,h3,rcn,tcrp,poi,samples,all` z modułową selekcją.
+     - `GET /api/v1/analytics/national-ranking?scope=stops|hubs|hexagons|cities&rank=N`.
+     - `GET /api/v1/analytics/metric-distribution?city=...&metric=...` (kwantyle i 10-bin histogram pod sparklines).
+     - `GET /api/v1/analytics/compare-cities?city_a=...&city_b=...`.
+  4. **Bezpieczeństwo SQL Injection & Normalizacja Query Strings:**
+     - Whitelisty kolumn (`STOP_METRIC_MAP`, `HUB_METRIC_MAP`, `HEX_METRIC_MAP`, `MARKET_METRIC_MAP`) odrzucające nieautoryzowane zapytania kodem 422.
+     - Normalizacja parametru `grade=A+` (ochrona przed URL unquoting znaku `+` jako spacji).
+- **Dowody weryfikacji:**
+  - `uv run pytest backend/tests/ -v`: **78/78 testów PASSED w 19.52s** (100% zielone; 24/24 w `test_api_v1.py`).
+  - Frontend build check: `npm run build --prefix urban-dashboard` przechodzi w **2.3s** (Turbopack, 0 błędów TypeScript).
+
 
 
 ---
