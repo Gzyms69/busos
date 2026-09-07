@@ -113,57 +113,81 @@
     * Realizm ekonomiczny cen transakcyjnych RCN oraz demografii GUS 250m.
     * Weryfikacja matematyczna wskaźnika TDI w komórkach Uber H3.
 - **Wyniki Weryfikacji (100% Green)**:
-  - `uv run pytest backend/tests/ -v`: **63/63 testów PASSED w 12.47s**.
+  - `uv run pytest backend/tests/ -v`: **63/63 testów PASSED w 11.69s**.
   - `npm run build --prefix urban-dashboard`: **sukces w 2.4s (0 błędów TypeScript)**.
+
+### Task 7 (Sprint 3 Finale - Commit `54e9915`): Ekshibicyjny Audyt Złotego DNA v4.2
+- **Aktualizacja Walidatora ([`scripts/tools/100_percent_dna_validator.py`](file:///home/gzyms/Dev%20Projects/busos/scripts/tools/100_percent_dna_validator.py))**:
+  - Rozdzielenie inspekcji na: Słupki Fizyczne Micro (60 265 słupków z 22 metrykami) oraz Węzły Logiczne Macro (28 317 hubów z 17 metrykami i wskaźnikiem konsolidacji).
+  - Pełna statystyka siatki Uber H3 Res 8 (36 784 komórki): rozkłady cen transakcyjnych mieszkań RCN (średnia, mediana, std, min, max, pokrycie %), demografia GUS NSP 2021, podaż transportu, wskaźnik TDI, tabele TOP 5 Pustyń Transportowych, Biegunów Transportu i Najdroższych Heksów.
+  - Audyt redukcji TCRP Report 100: liczba zbędnych słupków dla progów 0.50, 0.70, 0.90 oraz tabela TOP 5 par kanibalizujących się.
+  - Hierarchia magnesów miejskich: Top 20 kategorii oraz TOP 10 konkretnych nazwanych obiektów z Tierów 0, 1 i 2 (dworce, lotniska, szpitale kliniczne, stadiony) posortowanych malejąco po wadze $W$.
+  - Korekta demograficzna strefy aglomeracyjnej (`OBSZAR AGLOMERACYJNY: +X%`).
+- **Opublikowany Megaraport Ogólnopolski**:
+  - `reports/audits/GOLDEN_DNA_AUDIT_20260907_2356.md` (831 KB, 26 235 linii, 30/30 miast, zero NaNs/Infs).
 
 ---
 
 ## 3. Decyzje Architektoniczne z Sesji Grill-Me & PLAN.md (LOCKED)
 
-1. **Jeden Sprint na Sesję**: Działamy w ścisłej izolacji celów zgodnie z `PLAN.md`.
-2. **Standard Złotego Audytu DNA (Sprint 3 - ZREALIZOWANO)**:
-   - Wszystkie metryki transportowe i przestrzenne audytowane pod kątem sensu fizycznego, rozkładów statystycznych i praw geografii.
+1. **Jeden Cel na Sesję**: Działamy w ścisłej izolacji celów zgodnie z `PLAN.md`.
+2. **Contract-First & Universal API Data Access (Przed Budową Frontendu)**:
+   - Zanim przystąpimy do budowy UI w Next.js (Palantir Foundry / Blueprint.js), backend API musi oferować całkowitą swobodę wyciągania 100% zebranych i przetworzonych danych z audytu.
+   - Zapobieganie ściąganiu ciężkich GeoJSONów (10 MB) na frontend – każdy widget UI musi mieć dedykowany, lekki (<15ms) endpoint JSON.
 3. **100% Kompatybilności Wstecznej (ZREALIZOWANO)**:
    - Wszystkie routery domenowe i legacy endpointy działają w 100% spójnie.
 4. **Mandat Gita**:
-   - Każdy sprint kończy się aktualizacją `PLAN.md`, `NEXT_SESSION_PLAN.md` oraz `git commit && git push origin main`.
+   - Każdy krok kończy się aktualizacją `PLAN.md`, `NEXT_SESSION_PLAN.md` oraz `git commit && git push origin main`.
 
 ---
 
-## 4. Action Items dla Kolejnej Sesji (Sprint 4: Palantir Foundry UI & Blueprint.js)
+## 4. Action Items dla Kolejnej Sesji (Sprint 3.5: Universal Query Engine & 100% Audit Data Access)
 
-1. **Krok 1: Wdrożenie Blueprint.js w Next.js**:
-   - Instalacja i konfiguracja `@blueprintjs/core@^6.16.0` oraz `@blueprintjs/table` w `urban-dashboard`.
-2. **Krok 2: Foundry Split Layout**:
-   - Podział ekranu: Interaktywna mapa 3D Deck.gl + profesjonalny DataGrid.
-3. **Krok 3: Tabele Domenowe**:
-   - "The Axe List" (audyt redukcji słupków TCRP 100) z podglądem par przystanków.
-   - "The Investment List" (pustynie transportowe H3) z sortowaniem po TDI.
-4. **Krok 4: Weryfikacja jakościowa & Git Mandate**:
-   - `npm run build` w `urban-dashboard` (<3s, 0 błędów TS).
-   - `uv run pytest backend/tests/ -v` (63/63 passed).
-   - Git commit & push.
+1. **Krok 1: Uniwersalne Parametry Zapytań dla Słupków, Hubów i Heksów**:
+   - Dowolny limit: `limit=N` (np. 5, 7, 11, 50).
+   - Pobieranie konkretnego N-tego elementu bez ciągnięcia całej listy: parametr `rank=N` lub `offset=N-1&limit=1` (np. "pobierz dokładnie 6. najlepszy słupek").
+   - Sortowanie po dowolnej metryce z 53 dostępnych w audycie: `order_by={metric}`, `order_dir=desc|asc` (najlepsze vs najgorsze).
+   - Filtry domenowe: `grade=A+..F`, widełki wartości `min_{metric}`, `max_{metric}`.
+2. **Krok 2: Nowy Moduł POI w API (`backend/app/routers/poi.py`)**:
+   - `GET /api/v1/poi/magnets`: pobieranie TOP X nazwanych obiektów z Tierów 0–2 z wagami $W$.
+   - `GET /api/v1/poi/categories`: wykaz 20 kategorii POI miasta z wycenami.
+3. **Krok 3: Karta Audytowa Miasta (`/api/v1/analytics/audit-summary`)**:
+   - Lekki endpoint JSON zwracający kompletny scorecard audytowy dla danego miasta (odpowiednik sekcji miasta z raportu Golden DNA).
+4. **Krok 4: Tablica Liderów Ogólnopolskich (`/api/v1/analytics/national-ranking`)**:
+   - Porównania cross-city w skali całego kraju (np. TOP 20 przystanków w Polsce, TOP węzły przesiadkowe, TOP pustynie transportowe).
+5. **Krok 5: Weryfikacja jakościowa & Git Mandate**:
+   - Testy integracyjne w `backend/tests/test_api_v1.py` dla wszystkich nowych parametrów.
+   - `uv run pytest backend/tests/ -v` (100% pass).
+   - `npm run build --prefix urban-dashboard` (0 błędów TS).
+   - Git commit & push do `origin/main`.
 
 ---
 
 ## 5. Handoff Bootstrap Prompt (Kopiuj-Wklej do Nowej Sesji)
 
 ```markdown
-Kontynuujemy rozwój BusOS w NOWEJ SESJI zgodnie ze standardem PLAN.md (Sprint 4).
+Kontynuujemy rozwój BusOS w NOWEJ SESJI zgodnie ze standardem PLAN.md (Sprint 3.5: Universal Query Engine & 100% Audit Data Access w API).
 
-1. Załaduj wymagane skille: `spec-driven-development`, `skill-frontend-architect`, `skill-qa-engineer`, `skill-codebase-onboarding`.
-2. Przeczytaj pliki SSOT: `PLAN.md`, `NEXT_SESSION_PLAN.md` oraz `docs/contracts/DATA_DICTIONARY_AND_API_SSOT.md`.
-3. Stan bazowy po Sprincie 3:
-   - Baza ogólnopolska i siatka H3: 30 miast, 36 784 komórek H3, certyfikowana symetria 8/8 w 30 miastach.
-   - Pełny pakiet testów Pytest: 63/63 PASSED w 12.47s (API v1, Spatial Engine, Golden DNA Domain Integrity).
-   - Frontend: Next.js 16.2.1 Turbopack, Deck.gl v9, H3HexagonLayer GPU compute, buduje się w 2.4s (0 błędów TS).
+1. Załaduj wymagane skille: `spec-driven-development`, `skill-backend-architect`, `skill-qa-engineer`, `skill-codebase-onboarding`.
+2. Przeczytaj pliki SSOT:
+   - `PLAN.md`
+   - `NEXT_SESSION_PLAN.md`
+   - `docs/contracts/DATA_DICTIONARY_AND_API_SSOT.md`
+   - Raport audytowy: `reports/audits/GOLDEN_DNA_AUDIT_20260907_2356.md`
+3. Stan bazowy po Sprincie 3 (Commit `54e9915` na `origin/main`):
+   - Opublikowano megareport Golden DNA Audit v4.2 dla 30 miast w Polsce (831 KB, 26 235 linii, 60 265 słupków, 28 317 hubów, 36 784 heksy H3, 0 NaNs/Infs).
+   - Pełny pakiet testów Pytest: 63/63 PASSED w 11.69s (`test_api_v1.py`, `test_spatial_engine.py`, `test_golden_dna_domain.py`).
+   - Frontend Next.js: buduje się w 2.4s (0 błędów TypeScript).
 4. Pre-Flight Verification Command:
    `uv run pytest backend/tests/ -v && npm run build --prefix urban-dashboard`
-5. Cel sesji: Realizacja SPRINTU 4 z PLAN.md (Frontend Palantir Foundry UI & Blueprint.js):
-   - Wdrożenie `@blueprintjs/core` i `@blueprintjs/table` w layoutcie dwudzielnym (Foundry split).
-   - Zaawansowane widoki analityczne: "The Axe List" (TCRP 100) oraz "The Investment List" (Pustynie Transportowe H3).
-   - Weryfikacja: `npm run build` < 3s, 0 błędów TS.
-   - Git Mandate: commit i push do `origin/main`.
+5. Cel sesji: Rozbudowa API backendowego pod kątem CAŁKOWITEJ SWOBODY analitycznej i dostępu do 100% danych z audytu przed przystąpieniem do budowy frontendu (Foundry UI):
+   - Wdrożenie endpointów rankingowych i swobodnych zapytań dla słupków (`/api/v1/stops/ranking`), hubów (`/api/v1/hubs/ranking`) i heksów H3 (`/api/v1/hexagons/ranking`).
+   - Obsługa dowolnego limitu (np. 5, 7, 11, 50) ORAZ pobierania konkretnego N-tego rekordu (np. tylko 6. najlepszy lub 11. najgorszy obiekt za pomocą parametru `rank=N` lub `offset=N-1&limit=1`).
+   - Dynamiczne sortowanie po DOWOLNEJ z 53 metryk audytu w obu kierunkach (`order_dir=asc|desc`) i filtrowanie po rangach (`grade=A+..F`).
+   - Nowy router POI: `GET /api/v1/poi/magnets` (TOP X konkretnych nazwanych obiektów T0–T2 z wagami W) oraz `GET /api/v1/poi/categories`.
+   - Endpoint karty audytowej miasta: `GET /api/v1/analytics/audit-summary?city=...` (zwracający kompletny scorecard audytowy w jednym zwięzłym JSON).
+   - Ogólnopolska tablica liderów: `GET /api/v1/analytics/national-ranking` (dla 60 265 słupków w Polsce).
+   - Weryfikacja: nowe testy w `backend/tests/test_api_v1.py`, `uv run pytest` (100% pass), `npm run build` (<3s), git commit i push do `origin/main`.
 ```
 
 
