@@ -49,59 +49,81 @@
 - **Odblokowanie kliknięć przystanków**: Słupki 3D nie przechwytują już kliknięć myszy (`pickable: false` lub hierarchia warstw), a przystanki (`ScatterplotLayer`) renderują się na wierzchu z priorytetem interakcji.
 - **Dwupoziomowy Tooltip**: Prezentacja parametrów przystanku lub pełnego profilu komórki H3 (populacja, odjazdy/h, cena m² RCN).
 
+### Task 4 (Sprint 1): Fundament Danych & Pełna Symetria Słupek vs Hub (`scripts/pipeline/15_compute_stop_dna.py`)
+- **Pełna symetria metryk (Full Feature Parity)**:
+  - Każdy fizyczny słupek (`stop_id`) otrzymuje natywne 4 filary Stop DNA: `stop_departures_h`, `stop_routes` (linie GTFS), `stop_raw_gravity`, `stop_entropy`, `stop_infra_score` (w promieniu 500m z modelem Huffa), `stop_pop_val` (GUS 250m z kanibalizacją), `stop_market_val` (RCN z filtrem IQR) oraz Z-Score i ocenę A+ do F w populacji słupków miasta.
+  - Relacje makro-mikro: `stop_hub_share` ($[0.0, 1.0]$), `is_hub_anchor` (dokładnie 1 anchor na hub dla słupka o najwyższym wolumenie).
+  - 100% kompatybilności wstecznej: Zachowano aliasy (`infra_score`, `transit_freq`, `pop_val`, `market_val`, `local_score_raw`, `local_percentile`, `grade`).
+- **Eksport dwóch warstw GeoPackage**:
+  - `data/cities/kielce/04_results/stop_dna.gpkg`: 1357 fizycznych słupków (WGS84 Point EPSG:4326).
+  - `data/cities/kielce/04_results/hubs.gpkg`: 817 unikalnych węzłów logicznych (WGS84 Point EPSG:4326 na współrzędnych centroidu, `hub_stops_count`, `hub_stops_ids`).
+- **Weryfikacja & Git Mandate**:
+  - `scripts/pipeline/tests/test_stop_hub_symmetry.py`: Wszystkie 8 bramek weryfikacyjnych zaliczone sukcesem.
+  - Backend `TestClient`: HTTP 200 OK dla `/api/v1/hubs?city=kielce` (1357 rekordów), `/details` i `/hexagons`.
+  - Frontend `npm run build`: kompilacja w **2.3s** (0 błędów TS).
+  - Commit `9fe7dc5` wypchnięty do `origin/main`.
+
 ---
 
-## 3. Decyzje Architektoniczne z Sesji Grill-Me (LOCKED)
+## 3. Decyzje Architektoniczne z Sesji Grill-Me & PLAN.md (LOCKED)
 
-1. **Automatyzacja CI/CD i Wdrażania**:
-   - **Frontend (Vercel)**: Automatyczny deploy przy `git push origin main`.
-   - **Backend (OCI ARM64)**: Dodano `.github/workflows/deploy-backend.yml`. Po skonfigurowaniu secretów (`OCI_HOST`, `OCI_SSH_KEY`, `OCI_USER`) push do `main` automatycznie łączy się po SSH i bez przestoju przeładowuje kontenery Docker Compose na chmurze OCI.
-2. **Modularyzacja API & Maksymalizacja Danych**:
+1. **Jeden Sprint na Sesję**: Działamy w ścisłej izolacji celów zgodnie z `PLAN.md`.
+2. **Modularyzacja API & Maksymalizacja Danych (Sprint 2)**:
    - Rozbicie monolitycznego `main.py` na dedykowane routery domenowe:
-     - `app/routers/hubs.py` (granularne metryki węzłów, POI, ludność, widok composite `/full`)
-     - `app/routers/hexagons.py` (siatka H3, profil komórki, przystanki w hexie)
-     - `app/routers/market.py` (wyciąganie danych z `rcn_stats.json` i transakcji)
-     - `app/routers/analytics.py` (The Investment List - pustynie TDI, The Axe List - TCRP 100, wyceny POI)
+     - `app/routers/stops.py` (fizyczne słupki mikro, GeoJSON, profile `/api/v1/stops/{id}`)
+     - `app/routers/hubs.py` (węzły makro, GeoJSON, karta huba z listą słupków, widok composite `/full`)
+     - `app/routers/hexagons.py` (siatka H3 Res 8, profil komórki)
+     - `app/routers/market.py` (statystyki z `rcn_stats.json`, transakcje)
+     - `app/routers/analytics.py` (The Axe List - TCRP 100 cannibalization, The Investment List - TDI, wyceny POI)
      - `app/routers/ai.py` (wektorowe podobieństwo Qdrant)
 3. **100% Kompatybilności Wstecznej**:
-   - Istniejące endpointy (`/api/v1/hubs`, `/details`, `/hexagons`, `/population`, `/transactions`, `/health`) zostają w 100% zachowane, gwarantując zero przestojów na Vercelu.
-4. **Zautomatyzowany Test Suite przez Tier-2 Sub-Worker**:
-   - Wygenerowanie kompleksowego pakietu testów `pytest` dla wszystkich nowych i starych endpointów za pomocą FastMCP `chinese-worker` (`worker_generate_tests`).
+   - Wszystkie dotychczasowe endpointy (`/api/v1/hubs`, `/details`, `/hexagons`, `/population`, `/transactions`, `/health`) działają identycznie jak przed podziałem na routery.
+4. **Zautomatyzowany Test Suite przez Tier-2 Sub-Worker (Sprint 3)**:
+   - Wygenerowanie testów `pytest` przez FastMCP `chinese-worker` (`worker_generate_tests`).
+5. **Mandat Gita**:
+   - Każdy sprint kończy się aktualizacją `PLAN.md`, `NEXT_SESSION_PLAN.md` oraz `git commit && git push origin main`.
 
 ---
 
-## 4. Action Items dla Kolejnej Sesji
+## 4. Action Items dla Kolejnej Sesji (Sprint 2)
 
-1. **Krok 1: Refaktoryzacja Modułowa FastAPI (`backend/app/routers/`)**:
-   - Implementacja domen: `hubs.py`, `hexagons.py`, `market.py`, `analytics.py`, `ai.py`.
-   - Podpięcie danych z `rcn_stats.json`, `poi_valuation.json` i `h3_grid.parquet`.
-2. **Krok 2: Wygenerowanie Test Suite przez `chinese-worker`**:
-   - Uruchomienie `worker_generate_tests` dla routerów backendu i weryfikacja `pytest tests/ -v`.
-3. **Krok 3: Przebudowa Frontendu na Palantir Blueprint.js**:
-   - Integracja `@blueprintjs/core@^6.16.0` i `@blueprintjs/table`.
-   - Podpięcie widoków tabelarycznych: "The Investment List" i "The Axe List".
-4. **Krok 4: Integracja Qdrant i Wdrożenie OCI**:
-   - Aktywacja wektorowego wyszukiwania podobnych węzłów (`similar-hubs`).
-   - Push i deployment na OCI przez GitHub Actions.
+1. **Krok 1: Implementacja routerów domenowych w `backend/app/routers/`**:
+   - `stops.py`, `hubs.py`, `hexagons.py`, `market.py`, `analytics.py`, `ai.py`.
+2. **Krok 2: Podpięcie warstwy `hubs.gpkg` i nowych źródeł**:
+   - Odczyt `hubs.gpkg` w `hubs.py` oraz `stop_dna.gpkg` w `stops.py`.
+   - Podpięcie `rcn_stats.json` w `market.py` (`/api/v1/market/summary`).
+   - Implementacja audytu kanibalizacji TCRP Report 100 w `analytics.py` (`/api/v1/analytics/axe-list`).
+3. **Krok 3: Weryfikacja jakościowa**:
+   - Zero regresji: `TestClient` HTTP 200 OK dla wszystkich tras.
+   - Frontend `npm run build` w `urban-dashboard` (<3s, 0 błędów TS).
+   - Git commit & push.
 
 ---
 
 ## 5. Handoff Bootstrap Prompt (Kopiuj-Wklej do Nowej Sesji)
 
 ```markdown
-Kontynuujemy rozwój BusOS zgodnie z protokołem Session Handoff.
+Kontynuujemy rozwój BusOS w NOWEJ SESJI zgodnie z protokołem PLAN.md.
 
-1. Załaduj wymagane skille: `spec-driven-development`, `skill-backend-architect`, `skill-frontend-architect`, `skill-qa-engineer`.
-2. Przeczytaj pliki SSOT: `NEXT_SESSION_PLAN.md` oraz `docs/contracts/DATA_DICTIONARY_AND_API_SSOT.md`.
-3. Stan bazowy:
-   - DuckDB w `backend/app/spatial_engine.py` działa z dynamiczną introspekcją kolumn (Warszawa, Wrocław, Kraków zwracają pełne POI i populację).
-   - Pipeline Step 17 (`scripts/pipeline/17_build_h3_grid.py`) i endpoint `/api/v1/hexagons` działają dla wszystkich miast.
-   - Deck.gl renderuje natywny GPU `H3HexagonLayer` z `AbortController` przy przełączaniu miast (0 lagów, odblokowane kliknięcia przystanków).
-   - Utworzono workflow CI/CD `.github/workflows/deploy-backend.yml` dla OCI.
-   - `npm run build` w `urban-dashboard` kompiluje się w 2.2s (0 błędów TS).
-4. Cele nowej sesji (zgodnie z ustaleniami grill-me):
-   - Cel 1: Rozbicie backendu na modułowe routery (`backend/app/routers/`: hubs, hexagons, market, analytics, ai) i wyciągnięcie pełni danych (rcn_stats, poi_valuation, The Investment List, The Axe List) przy zachowaniu 100% kompatybilności wstecznej.
-   - Cel 2: Wygenerowanie test suite pytest przez FastMCP `chinese-worker` (`worker_generate_tests`).
-   - Cel 3: Rozpoczęcie migracji panelu na Palantir Blueprint.js (@blueprintjs/core, @blueprintjs/table) i integracja z Qdrant.
+1. Załaduj wymagane skille: `spec-driven-development`, `skill-backend-architect`, `skill-qa-engineer`, `skill-codebase-onboarding`.
+2. Przeczytaj pliki SSOT: `PLAN.md`, `NEXT_SESSION_PLAN.md` oraz `docs/contracts/DATA_DICTIONARY_AND_API_SSOT.md`.
+3. Stan bazowy po Sprincie 1:
+   - Potok `scripts/pipeline/15_compute_stop_dna.py` generuje pełną symetrię metryk mikro (`stop_*`) i makro (`hub_*`).
+   - Wyeksportowano dwie warstwy GeoPackage: `stop_dna.gpkg` (1357 słupków w Kielcach) i `hubs.gpkg` (817 węzłów z centroidami WGS84 Point).
+   - Test `scripts/pipeline/tests/test_stop_hub_symmetry.py` zalicza wszystkie 8 bramek weryfikacyjnych.
+   - Step 17 (`17_build_h3_grid.py`) i endpoint `/api/v1/hexagons` działają bezbłędnie (843 hexy w Kielcach, 0.27s).
+   - Backend `TestClient` i Frontend `npm run build` (2.3s, 0 błędów TS) są zielone.
+   - Ostatni commit: `9fe7dc5` na `origin/main`.
+4. Cel nowej sesji: Realizacja SPRINTU 2 z PLAN.md (Granularne, Inteligentne API w `backend/app/routers/`):
+   - Rozbicie monolitycznego `main.py` na czyste routery domenowe: `stops.py`, `hubs.py`, `hexagons.py`, `market.py`, `analytics.py`, `ai.py`.
+   - Nowe endpointy:
+     * `GET /api/v1/stops?city={city}` oraz `GET /api/v1/stops/{id}?city={city}` (profil słupka z `stop_dna.gpkg`)
+     * `GET /api/v1/hubs?city={city}` (z `hubs.gpkg`) oraz `GET /api/v1/hubs/{id}?city={city}` (karta huba + tablica przypisanych `hub_stops_ids`)
+     * `GET /api/v1/market/summary?city={city}` (dane z `rcn_stats.json`)
+     * `GET /api/v1/analytics/axe-list?city={city}` (audyt kanibalizacji TCRP Report 100 na poziomie fizycznych słupków)
+     * `GET /api/v1/analytics/transit-deserts?city={city}` (The Investment List z siatki H3)
+   - 100% kompatybilności wstecznej dla wszystkich dotychczasowych tras.
+   - Rygor: zakaz modyfikacji frontendu w tym sprincie. Weryfikacja przez `TestClient` / `pytest`.
 ```
+
 
