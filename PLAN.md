@@ -242,14 +242,13 @@
 
 ---
 
-### Sprint 4: Frontend Palantir Foundry UI & Blueprint.js
-- **Status:** `[PLANNED / NASTĘPNA SESJA]`
-- **Cel:** Przebudowa interfejsu analitycznego z wykorzystaniem `@blueprintjs/core@^6.16.0` i `@blueprintjs/table`.
-- **Zakres:**
-  - Layout dwudzielny (Foundry split): Mapa Deck.gl 3D + zaawansowany DataGrid.
-  - Tabele: "The Axe List" (audyt redukcji słupków wg TCRP 100) oraz "The Investment List" (pustynie transportowe z TDI).
-  - Przełącznik widoku: Słupki (Micro) vs Huby (Macro) vs Siatka H3 (Meso).
-  - Integracja z routerem tras (`/api/v1/routes`) i pre-materializowanym mostkiem RCN.
+### Sprint 4: Frontend Palantir Foundry UI & Blueprint.js (SSOT: PLAN_FRONTEND.md)
+- **Status:** `[PLANNED / ZAPLANOWANY W 3 PODSESJACH]`
+- **Specyfikacja Główna (SSOT):** Pełny plan implementacyjny, kontrakty 45 tras API oraz architektura komponentów znajdują się w dedykowanym dokumencie [`PLAN_FRONTEND.md`](PLAN_FRONTEND.md).
+- **Architektura Wykonawcza (3 Logiczne Podsesje):**
+  - **Sesja 4.1 (Fundament & Shell):** Czysty stack Blueprint v6, typowany klient dla 45 tras (`src/lib/api/`), Zustand Store z Session Cache per City, Command Palette (`Ctrl+K` Omnibar), FoundryShell, moduł Command Center (Scorecard) oraz refaktoryzacja Deck.gl MapCanvas.
+  - **Sesja 4.2 (Silniki Analityczne):** Network Explorer (wirtualizowany DataGrid Table2 dla 60k słupków i 28k hubów), Optimization (The Axe List TCRP 100 + The Investment List TDI), Route Analyzer (stepper sekwencji GTFS z LRS, prędkości).
+  - **Sesja 4.3 (Rynki, AI & Mobile):** Market Intel (mostek DuckDB RCN i trendy), Benchmarking Krajowy (leaderboard 30 miast, porównywarka side-by-side), Inspektor 360° (AI Radar Qdrant), Mobile Adaptive Bottom Sheet (`vaul` / `motion`), usunięcie legacy kodu i release.
 
 ---
 

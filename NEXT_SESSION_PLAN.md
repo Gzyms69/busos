@@ -217,61 +217,84 @@
 
 ---
 
-## 4. Action Items dla Kolejnej Sesji (Sprint 4: Frontend Palantir Foundry UI & Blueprint.js)
+## 4. Action Items dla Kolejnej Sesji (Sprint 4.1: Fundament, Shell, Command Center & Mapa)
 
-1. **Krok 1: Wdrożenie Layoutu Dwudzielnego (Foundry Split)**:
-   - Podział ekranu: Mapa Deck.gl 3D (lewa strona) + interaktywny DataGrid `@blueprintjs/table` (prawa strona) z regulowanym splitterem.
-2. **Krok 2: Tabela Analityczna "The Axe List" (Audyt Redukcji Słupków)**:
-   - Integracja z endpointem `GET /api/v1/analytics/axe-list`.
-   - Prezentacja par słupków kanibalizujących się wg TCRP Report 100 z wyliczeniem potencjalnych oszczędności eksploatacyjnych.
-3. **Krok 3: Tabela Inwestycyjna "The Investment List" (Pustynie Transportowe)**:
-   - Integracja z endpointem `GET /api/v1/analytics/transit-deserts`.
-   - Wizualizacja komórek siatki Uber H3 Res 8 o wysokim deficycie transportowym (TDI) i wysokiej gęstości zaludnienia GUS NSP 2021.
-4. **Krok 4: Trójstopniowy Przełącznik Widoku (Micro / Macro / Meso)**:
-   - Płynne przełączanie widoków: Słupki Fizyczne Micro (`/api/v1/stops`), Węzły Logiczne Macro (`/api/v1/hubs`), Siatka Analityczna H3 Meso (`/api/v1/hexagons`).
-5. **Krok 5: Weryfikacja Jakościowa & Git Mandate**:
-   - `uv run pytest backend/tests/ -v` (potwierdzenie 95/95 passed).
-   - `npm run build --prefix urban-dashboard` (<5s, 0 błędów TypeScript).
-   - Commit i push do `origin/main`.
+> **Główny dokument SSOT:** [`PLAN_FRONTEND.md`](PLAN_FRONTEND.md) (Pełna specyfikacja 45 tras, tokenów Blueprint v6 i architektury ~60 plików).
+
+1. **Krok 1: Instalacja Pakietów i Konfiguracja Czystego Stacku Blueprint v6**:
+   - `npm install @blueprintjs/core@^6.16.0 @blueprintjs/table@latest @blueprintjs/icons@latest recharts vaul motion --prefix urban-dashboard`
+   - Usunięcie katalogu legacy `src/components/ui/` (100% Blueprint, eliminacja shadcn/ui).
+   - Aktualizacja `src/app/globals.css` (importy styli Blueprint, reset Tailwind v4, motyw `bp6-dark`) oraz `src/app/layout.tsx`.
+2. **Krok 2: Silnie Typowany Klient API dla 45 Tras (`src/lib/api/`)**:
+   - `types.ts`: 100% interfejsów TypeScript modeli Pydantic dla 45 zarejestrowanych tras HTTP.
+   - `client.ts`: Baza fetch z `AbortController`, timeoutem, obsługą błędów i fallbackiem do `/data/showcase/`.
+   - Moduły domenowe: `cities.ts`, `stops.ts`, `hubs.ts`, `hexagons.ts`, `market.ts`, `poi.ts`, `analytics.ts`, `routes.ts`, `ai.ts`.
+3. **Krok 3: Zustand Store z Session Cache per City & URL State (`src/lib/store/`)**:
+   - Slajsy: `city-slice.ts`, `module-slice.ts`, `map-slice.ts`, `selection-slice.ts`, `grid-slice.ts`.
+   - Zapamiętywanie stanu, filtrów i zaznaczeń dla 30 aglomeracji w `Session Cache`.
+   - Dwukierunkowa synchronizacja parametrów z `window.location.search` (`searchParams`).
+4. **Krok 4: Globalny Command Palette (`src/components/foundry/CommandPalette.tsx`)**:
+   - Implementacja Blueprint `Omnibar` (`Ctrl+K` / `Cmd+K`) ze skrótami do 30 miast, modułów i akcji.
+5. **Krok 5: Trójstrefowy Layout Foundry & Pasek Statusu (`src/components/foundry/`)**:
+   - `FoundryShell.tsx`: Orkiestrator z regulowanym splitterem myszą (desktop split) i adapterem mobilnym.
+   - `FoundryNavbar.tsx`: Selektor 30 miast, przełącznik 6 modułów, tag zdrowia OCI, przycisk Omnibar.
+   - `StatusBar.tsx`: Pasek dolny ze statystykami obiektów (słupki, huby, heksy, latencja API).
+   - `AnalyticalWorkspace.tsx`: Router prawego panelu modułów.
+6. **Krok 6: Moduł 1 — Command Center (Scorecard Miasta & KPI)**:
+   - `CommandCenterModule.tsx`: Kontener widoku głównego.
+   - `CityScorecardCards.tsx`: 4 kafelki KPI (Konsolidacja sieci, Podaż kursów/h szczytu, Wycena mieszkań, Spójność danych 0 nulli) zasilane z `GET /api/v1/analytics/audit-summary?include=summary`.
+   - `GradeDistributionChart.tsx`: Wykres rozkładu ocen Stop DNA (A+..F) w Recharts zasilany z `/audit-summary?include=grades`.
+   - `CityMagnetsList.tsx`: Karta kluczowych magnesów miejskich zasilana z `GET /api/v1/poi/magnets`.
+   - Komponenty współdzielone: `GradeBadge.tsx`, `KpiMetricCard.tsx`, `SvgSparkline.tsx`.
+7. **Krok 7: Refaktoryzacja `MapCanvas.tsx` (Deck.gl v9 + MapLibre GL v5)**:
+   - Podkład Carto Dark Matter + mini-HUD mapy (`MapHud.tsx`) z przełącznikiem satelity i budynków 3D.
+   - Dynamiczne przełączanie warstw wg aktywnego modułu: `GeoJsonLayer` (obrys `/boundary`), `H3HexagonLayer` (ekstruzja 3D i oceny), `ScatterplotLayer` (słupki/huby), `PathLayer` (trasy GTFS).
+   - Asynchroniczny model interakcji: kliknięcie obiektu na mapie podświetla element bez resetowania stanu tabel.
+8. **Krok 8: Weryfikacja Jakościowa & Commit Sesji 4.1**:
+   - `npx tsc --noEmit --project urban-dashboard/tsconfig.json` = 0 błędów.
+   - `npm run build --prefix urban-dashboard` = sukces w < 5.0s.
+   - `uv run pytest backend/tests/ -v` = 95/95 testów PASSED.
+   - Commit Git: `feat(core): sprint 4.1 - blueprint shell, typed api, command center & map canvas`.
+   - Aktualizacja `PLAN_FRONTEND.md` oraz `NEXT_SESSION_PLAN.md` z promptem handoff dla Sesji 4.2.
 
 ---
 
 ## 5. Handoff Bootstrap Prompt (Kopiuj-Wklej do Nowej Sesji)
 
 ```markdown
-Kontynuujemy rozwój BusOS w NOWEJ SESJI zgodnie ze standardem PLAN.md (Sprint 4: Frontend Palantir Foundry UI & Blueprint.js).
+Kontynuujemy rozwój BusOS w NOWEJ SESJI (Sprint 4.1: Fundament, Shell, Command Center & Mapa).
 
-1. Załaduj wymagane skille:
-   `view_file` na:
+1. Załaduj wymagane skille poprzez fizyczne odczytanie (view_file):
    - `.agents/skills/skill-codebase-onboarding/SKILL.md`
    - `.agents/skills/spec-driven-development/SKILL.md`
    - `.agents/skills/skill-frontend-architect/SKILL.md`
    - `.agents/skills/skill-qa-engineer/SKILL.md`
+
 2. Przeczytaj pliki SSOT:
-   - `PLAN.md`
-   - `NEXT_SESSION_PLAN.md`
+   - `PLAN_FRONTEND.md` (Kompletna specyfikacja Sprintu 4: 45 tras API, tokeny Blueprint v6, architektura 60 plików)
+   - `PLAN.md` (Sekcja Sprint 4)
+   - `NEXT_SESSION_PLAN.md` (Sekcja 4: Zakres Sesji 4.1)
    - `docs/contracts/DATA_DICTIONARY_AND_API_SSOT.md`
-3. Stan bazowy po Sprincie 3.8 (100% Data Access & API Gap Closure):
-   - Ogólnopolska baza 30 miast w 100% wygenerowana i dostępna przez 28 tras API (210 plików GPKG/Parquet, 60 265 słupków, 28 317 hubów, 36 784 heksy H3).
-   - Nowe trasy API wdrożone i zweryfikowane:
-     * `GET /api/v1/cities/{city}/boundary` (geometria granicy z `transport_zone.gpkg` + `area_km2`).
-     * `GET /api/v1/poi/search` (wyszukiwarka i filtr POI po nazwie i kategorii na `poi_matrix.parquet`).
-     * `GET /api/v1/market/trends` (agregaty roczne i kwartalne RCN 2020–2026 na poziomie miasta lub słupka).
-     * `GET /api/v1/routes/stop/{stop_id}/destinations` (1-hop bezpośrednia osiągalność z `transit_network_edges.parquet`).
-     * `GET /api/v1/analytics/metric-distribution?city=all` (ogólnopolski benchmark rozkładu z bazy krajowej).
-     * Pełna parzystość typów Pydantic: `h3_index`, `stop_entropy`, `stop_liquidity`, `hub_raw_gravity`, `hub_entropy`, `hub_liquidity`.
-   - Produkcyjne środowisko OCI ARM64 w pełni ustabilizowane z automatycznym CI/CD GitHub Actions (2m 1s).
-   - Testy: 104/104 Pytest PASSED (21.9s), Next.js build PASSED w 4.6s (0 błędów TS).
+
+3. Stan bazowy:
+   - Planowanie architektoniczne Sprintu 4 zakończone i zablokowane (14 decyzji projektowych z sesji /grill-me).
+   - Backend na OCI ARM64 (FastAPI 0.115+, DuckDB, Qdrant) w 100% online z 45 zarejestrowanymi trasami HTTP.
+   - Testy bazowe: 95/95 Pytest PASSED (22.2s), frontend build PASSED w 4.6s (0 błędów TS).
+
 4. Pre-Flight Verification Command:
-   `npm run build --prefix urban-dashboard && uv run pytest backend/tests/ -v`
-5. Cel sesji (Sprint 4):
-   Przebudowa interfejsu analitycznego `urban-dashboard` na wzór Palantir Foundry z wykorzystaniem Blueprint.js (`@blueprintjs/core@^6.16.0` oraz `@blueprintjs/table`):
-   - Krok 1: Wdrożenie layoutu dwudzielnego (Foundry Split): Mapa Deck.gl 3D + DataGrid Blueprint.js z regulowanym splitterem.
-   - Krok 2: Interaktywna tabela "The Axe List" (redukcja słupków wg TCRP 100) z linkowaniem do mapy.
-   - Krok 3: Interaktywna tabela "The Investment List" (pustynie transportowe z TDI) z wycenami mieszkań RCN.
-   - Krok 4: Przełącznik analityczny: Słupki (Micro) vs Huby (Macro) vs Siatka H3 (Meso).
-   - Krok 5: Weryfikacja jakościowa (Pytest 104/104, TypeScript 0 błędów) oraz git commit i push do origin/main.
+   npm run build --prefix urban-dashboard && uv run pytest backend/tests/ -v
+
+5. Zakres do wdrożenia w bieżącej Sesji 4.1:
+   - Krok 1: Instalacja pakietów Blueprint v6 (@blueprintjs/core, @blueprintjs/table, @blueprintjs/icons, recharts, vaul, motion), usunięcie legacy shadcn/ui (src/components/ui/*), konfiguracja bp6-dark w globals.css i layout.tsx.
+   - Krok 2: Silnie typowany klient API dla 45 tras w src/lib/api/ (types.ts, client.ts, cities, stops, hubs, hexagons, market, poi, analytics, routes, ai).
+   - Krok 3: Zustand Store z Session Cache per City i synchronizacją URL searchParams w src/lib/store/.
+   - Krok 4: Globalny Command Palette (Blueprint Omnibar Ctrl+K) w src/components/foundry/CommandPalette.tsx.
+   - Krok 5: Główny szkielet Foundry: FoundryShell, FoundryNavbar, StatusBar, AnalyticalWorkspace.
+   - Krok 6: Moduł 1: Command Center (CommandCenterModule, CityScorecardCards, GradeDistributionChart, CityMagnetsList) zasilany z /analytics/audit-summary i /poi/magnets.
+   - Krok 7: Refaktoryzacja MapCanvas Deck.gl v9 (H3HexagonLayer, Scatterplot, Path, Boundary GeoJson, mini-HUD MapHud.tsx).
+   - Krok 8: Weryfikacja jakościowa (TypeScript 0 błędów, Next.js build < 5s, Pytest 95/95 passed), commit Git i handoff do Sesji 4.2.
 ```
+
 
 
 
