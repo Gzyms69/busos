@@ -395,8 +395,8 @@ export default function NationalLeaderboardGrid() {
             />
 
             <Column
-              name="Klasa Stop DNA"
-              columnHeaderCellRenderer={() => <ColumnHeaderCell name="Klasa Stop DNA" />}
+              name="Ocena Jakości"
+              columnHeaderCellRenderer={() => <ColumnHeaderCell name="Ocena Jakości" />}
               cellRenderer={(row) => (
                 <Cell>
                   <GradeBadge grade={items[row]?.grade || items[row]?.stop_grade || items[row]?.hub_grade} size="small" />

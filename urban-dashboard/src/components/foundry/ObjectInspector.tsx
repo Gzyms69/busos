@@ -126,16 +126,16 @@ export default function ObjectInspector() {
   let typeLabel = "OBIEKT";
 
   if (selectionType === "stop") {
-    title = stopProfile?.stop_name || (selectedData as any)?.stop_name || `Słupek ${selectedId}`;
+    title = stopProfile?.stop_name || (selectedData as any)?.stop_name || `Przystanek ${selectedId}`;
     grade = stopProfile?.stop_grade || (selectedData as any)?.stop_grade || (selectedData as any)?.grade || "C";
-    typeLabel = "SŁUPEK FIZYCZNY (MICRO)";
+    typeLabel = "PRZYSTANEK";
   } else if (selectionType === "hub") {
     title = hubCard?.hub_name || (selectedData as any)?.hub_name || `Węzeł #${selectedId}`;
     grade = hubCard?.hub_grade || (selectedData as any)?.hub_grade || (selectedData as any)?.grade || "B";
-    typeLabel = "WĘZEŁ LOGICZNY (MACRO)";
+    typeLabel = "WĘZEŁ PRZESIADKOWY";
   } else if (selectionType === "hex") {
-    title = `Komórka H3 Res 8: ${selectedId}`;
-    typeLabel = "SIATKA H3 RES 8";
+    title = `Obszar analizy H3: ${selectedId}`;
+    typeLabel = "OBSZAR ANALIZY";
   }
 
   const hexData = hexProfile?.hexagon || (selectedData as any);
@@ -144,13 +144,13 @@ export default function ObjectInspector() {
     <div
       style={{
         position: "absolute",
-        bottom: 0,
+        bottom: 28,
         left: 0,
         right: 0,
         height: expanded ? 480 : 250,
-        background: "rgba(24, 28, 33, 0.98)",
-        backdropFilter: "blur(10px)",
-        borderTop: "1px solid #383e47",
+        background: "rgba(9, 10, 15, 0.96)",
+        backdropFilter: "blur(12px)",
+        borderTop: "1px solid #27272a",
         boxShadow: "0 -8px 24px rgba(0, 0, 0, 0.6)",
         zIndex: 25,
         display: "flex",
@@ -166,8 +166,8 @@ export default function ObjectInspector() {
           alignItems: "center",
           justifyContent: "space-between",
           padding: "8px 16px",
-          background: "#181c20",
-          borderBottom: "1px solid #2f343c",
+          background: "#121318",
+          borderBottom: "1px solid #27272a",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
@@ -225,7 +225,7 @@ export default function ObjectInspector() {
             }}
           >
             <Spinner size={18} />
-            <span>Pobieranie profilu 360° obiektu...</span>
+            <span>Ładowanie szczegółów obiektu...</span>
           </div>
         ) : (
           <>
@@ -240,41 +240,41 @@ export default function ObjectInspector() {
                     gap: 8,
                   }}
                 >
-                  <Card style={{ background: "#1c2127", border: "1px solid #2f343c", padding: "8px 12px" }}>
-                    <div style={{ fontSize: 9, color: "#8f99a8", textTransform: "uppercase" }}>I. Podaż Transportu</div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: "#f6f7f9" }}>
+                  <Card style={{ background: "#121318", border: "1px solid #27272a", padding: "8px 12px", borderRadius: 8, boxShadow: "inset 0 1px 0 0 rgba(255, 255, 255, 0.08)" }}>
+                    <div style={{ fontSize: 10, color: "#94a3b8", textTransform: "uppercase" }}>Częstotliwość Kursów</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: "#f8fafc" }}>
                       {formatNumber(stopProfile?.stop_departures_h, 1)} kursów/h
                     </div>
-                    <div style={{ fontSize: 9, color: "#8f99a8" }}>
-                      {stopProfile?.stop_routes_count ?? stopRoutes.length} linii GTFS
+                    <div style={{ fontSize: 10, color: "#94a3b8" }}>
+                      {stopProfile?.stop_routes_count ?? stopRoutes.length} linii komunikacyjnych
                     </div>
                   </Card>
 
-                  <Card style={{ background: "#1c2127", border: "1px solid #2f343c", padding: "8px 12px" }}>
-                    <div style={{ fontSize: 9, color: "#8f99a8", textTransform: "uppercase" }}>II. Popyt Demografii</div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: "#f6f7f9" }}>
+                  <Card style={{ background: "#121318", border: "1px solid #27272a", padding: "8px 12px", borderRadius: 8, boxShadow: "inset 0 1px 0 0 rgba(255, 255, 255, 0.08)" }}>
+                    <div style={{ fontSize: 10, color: "#94a3b8", textTransform: "uppercase" }}>Mieszkańcy w Pobliżu</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: "#f8fafc" }}>
                       {formatNumber(stopProfile?.stop_pop_val, 0)} os.
                     </div>
-                    <div style={{ fontSize: 9, color: "#8f99a8" }}>Zlewnia GUS 250m</div>
+                    <div style={{ fontSize: 10, color: "#94a3b8" }}>Promień 250m (dane GUS)</div>
                   </Card>
 
-                  <Card style={{ background: "#1c2127", border: "1px solid #2f343c", padding: "8px 12px" }}>
-                    <div style={{ fontSize: 9, color: "#8f99a8", textTransform: "uppercase" }}>III. Rynek RCN</div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: "#2b95d6" }}>
+                  <Card style={{ background: "#121318", border: "1px solid #27272a", padding: "8px 12px", borderRadius: 8, boxShadow: "inset 0 1px 0 0 rgba(255, 255, 255, 0.08)" }}>
+                    <div style={{ fontSize: 10, color: "#94a3b8", textTransform: "uppercase" }}>Ceny Mieszkań</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: "#38bdf8" }}>
                       {formatPLN(stopProfile?.stop_market_val, true)}
                     </div>
-                    <div style={{ fontSize: 9, color: "#8f99a8" }}>
+                    <div style={{ fontSize: 10, color: "#94a3b8" }}>
                       {stopProfile?.stop_liquidity ?? stopTransactions.length} transakcji (500m)
                     </div>
                   </Card>
 
-                  <Card style={{ background: "#1c2127", border: "1px solid #2f343c", padding: "8px 12px" }}>
-                    <div style={{ fontSize: 9, color: "#8f99a8", textTransform: "uppercase" }}>IV. Pozycja i Z-Score</div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: "#15b371" }}>
+                  <Card style={{ background: "#121318", border: "1px solid #27272a", padding: "8px 12px", borderRadius: 8, boxShadow: "inset 0 1px 0 0 rgba(255, 255, 255, 0.08)" }}>
+                    <div style={{ fontSize: 10, color: "#94a3b8", textTransform: "uppercase" }}>Standard Obsługi</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: "#22c55e" }}>
                       Top {stopProfile?.stop_percentile ? (100 - stopProfile.stop_percentile).toFixed(1) : "—"}%
                     </div>
-                    <div style={{ fontSize: 9, color: "#8f99a8" }}>
-                      Z-Score: {stopProfile?.stop_local_score_raw?.toFixed(2) ?? "—"}
+                    <div style={{ fontSize: 10, color: "#94a3b8" }}>
+                      Klasa dostępności: {grade}
                     </div>
                   </Card>
                 </div>
@@ -283,7 +283,8 @@ export default function ObjectInspector() {
                 <Tabs id="stop-details-tabs" selectedTabId={activeTab} onChange={(t) => setActiveTab(String(t))}>
                   <Tab
                     id="pillars"
-                    title="Osiągalność 1-Hop"
+                    title="Bezpośrednie Kierunki"
+
                     panel={
                       <div style={{ display: "flex", flexDirection: "column", gap: 6, maxHeight: 180, overflowY: "auto" }}>
                         {(stopDestinations?.destinations || []).length === 0 ? (
@@ -471,29 +472,30 @@ export default function ObjectInspector() {
                     <div style={{ fontSize: 9, color: "#8f99a8" }}>Siatka 250m</div>
                   </Card>
 
-                  <Card style={{ background: "#1c2127", border: "1px solid #2f343c", padding: "8px 12px" }}>
-                    <div style={{ fontSize: 9, color: "#8f99a8", textTransform: "uppercase" }}>Wycena RCN</div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: "#2b95d6" }}>
+                  <Card style={{ background: "#121318", border: "1px solid #27272a", padding: "8px 12px", borderRadius: 8, boxShadow: "inset 0 1px 0 0 rgba(255, 255, 255, 0.08)" }}>
+                    <div style={{ fontSize: 10, color: "#94a3b8", textTransform: "uppercase" }}>Wycena RCN</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: "#3b82f6" }}>
                       {formatPLN(hexData?.rcn_median_price_m2, true)}
                     </div>
-                    <div style={{ fontSize: 9, color: "#8f99a8" }}>Mediana w komórce</div>
+                    <div style={{ fontSize: 10, color: "#94a3b8" }}>Mediana w obszarze</div>
                   </Card>
 
-                  <Card style={{ background: "#1c2127", border: "1px solid #2f343c", padding: "8px 12px" }}>
-                    <div style={{ fontSize: 9, color: "#8f99a8", textTransform: "uppercase" }}>Status Pustyni</div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: hexData?.is_transit_desert ? "#db3737" : "#15b371" }}>
-                      {hexData?.is_transit_desert ? "PUSTYNIA TDI" : "OBSŁUGIWANY"}
+                  <Card style={{ background: "#121318", border: "1px solid #27272a", padding: "8px 12px", borderRadius: 8, boxShadow: "inset 0 1px 0 0 rgba(255, 255, 255, 0.08)" }}>
+                    <div style={{ fontSize: 10, color: "#94a3b8", textTransform: "uppercase" }}>Dostępność Transportu</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: hexData?.is_transit_desert ? "#ef4444" : "#22c55e" }}>
+                      {hexData?.is_transit_desert ? "DEFICYT OBSŁUGI" : "DOBRA OBSŁUGA"}
                     </div>
-                    <div style={{ fontSize: 9, color: "#8f99a8" }}>
-                      TDI: {(hexData?.transit_desert_index ?? 0).toFixed(2)}
+                    <div style={{ fontSize: 10, color: "#94a3b8" }}>
+                      Wskaźnik deficytu: {(hexData?.transit_desert_index ?? 0).toFixed(1)}
                     </div>
                   </Card>
+
                 </div>
 
                 {hexProfile?.stops && hexProfile.stops.length > 0 && (
                   <div style={{ marginTop: 8 }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: "#f6f7f9", marginBottom: 6 }}>
-                      Słupki w komórce H3 ({hexProfile.stops.length}):
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "#f8fafc", marginBottom: 6 }}>
+                      Przystanki w obszarze ({hexProfile.stops.length}):
                     </div>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                       {hexProfile.stops.map((st) => (

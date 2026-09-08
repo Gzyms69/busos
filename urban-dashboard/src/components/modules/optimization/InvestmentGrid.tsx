@@ -62,7 +62,7 @@ export default function InvestmentGrid() {
   const exportHeaders = [
     "Rank",
     "H3 Index",
-    "TDI Index",
+    "Deficit Index",
     "Excluded Population (GUS)",
     "Departures/h",
     "RCN Median Price m2",
@@ -109,16 +109,16 @@ export default function InvestmentGrid() {
           }}
         >
           <div style={{ fontSize: 11, color: "#8f99a8", textTransform: "uppercase", fontWeight: 700 }}>
-            Zidentyfikowane Pustynie TDI
+            Obszary o Niskiej Dostępności
           </div>
           <div style={{ display: "flex", alignItems: "baseline", gap: 8, margin: "6px 0" }}>
             <span style={{ fontSize: 24, fontWeight: 800, color: "#db3737" }}>
               {totalCount}
             </span>
-            <span style={{ fontSize: 12, color: "#8f99a8" }}>komórek H3 Res 8</span>
+            <span style={{ fontSize: 12, color: "#8f99a8" }}>obszarów analizy (H3)</span>
           </div>
           <div style={{ fontSize: 11, color: "#d9822b" }}>
-            Kryterium: Pop ≥ 150 mieszk. oraz Odjazdy &lt; 4.0/h
+            Kryterium: min. 150 mieszkańców i &lt; 4 odjazdy/h
           </div>
         </Card>
 
@@ -133,16 +133,16 @@ export default function InvestmentGrid() {
           }}
         >
           <div style={{ fontSize: 11, color: "#8f99a8", textTransform: "uppercase", fontWeight: 700 }}>
-            Populacja Wykluczona Komunikacyjnie
+            Mieszkańcy z Ograniczoną Obsługą
           </div>
           <div style={{ display: "flex", alignItems: "baseline", gap: 8, margin: "6px 0" }}>
             <span style={{ fontSize: 24, fontWeight: 800, color: "#f6f7f9" }}>
               {formatNumber(totalExcludedPop, 0)}
             </span>
-            <span style={{ fontSize: 12, color: "#8f99a8" }}>mieszkańców w deficycie</span>
+            <span style={{ fontSize: 12, color: "#8f99a8" }}>mieszkańców w strefie deficytu</span>
           </div>
           <div style={{ fontSize: 11, color: "#2b95d6" }}>
-            Potencjał inwestycyjny nowych linii i przystanków GTFS
+            Potencjał dla nowych przystanków i korekty tras
           </div>
         </Card>
       </div>
@@ -174,12 +174,12 @@ export default function InvestmentGrid() {
       {loading && (
         <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 0", fontSize: 11, color: "#8f99a8" }}>
           <Spinner size={12} />
-          <span>Ładowanie rankingu pustyń transportowych...</span>
+          <span>Ładowanie rankingu...</span>
         </div>
       )}
 
-      {/* Virtualized Table2 */}
-      <div style={{ flex: 1, minHeight: 300, overflow: "hidden", position: "relative" }}>
+      {/* Virtualized Table2 Container */}
+      <div style={{ flex: 1, minHeight: 350, overflow: "hidden", position: "relative" }}>
         <Table2
           numRows={items.length}
           enableRowReordering={false}
@@ -187,7 +187,9 @@ export default function InvestmentGrid() {
           defaultRowHeight={28}
           onSelection={(regions) => {
             const r = regions?.[0]?.rows?.[0];
-            if (r != null) handleRowClick(r);
+            if (r != null) {
+              handleRowClick(r);
+            }
           }}
         >
           <Column
@@ -198,28 +200,37 @@ export default function InvestmentGrid() {
               </Cell>
             )}
           />
+
           <Column
-            name="Komórka H3 Res 8"
+            name="Obszar H3"
             cellRenderer={(row) => (
               <Cell>
-                <span style={{ fontFamily: "monospace", color: "#2b95d6", fontSize: 11 }}>
-                  {items[row]?.h3_index}
+                <span
+                  style={{
+                    fontFamily: "monospace",
+                    fontSize: 11,
+                    color: "#2b95d6",
+                    cursor: "pointer",
+                  }}
+                >
+                  {items[row]?.h3_index || "—"}
+                </span>
+              </Cell>
+            )}
+          />
+
+          <Column
+            name="Wskaźnik Deficytu"
+            cellRenderer={(row) => (
+              <Cell>
+                <span style={{ fontSize: 11, color: "#f6f7f9", fontWeight: 700 }}>
+                  Deficyt: {formatNumber(items[row]?.transit_desert_index, 2)}
                 </span>
               </Cell>
             )}
           />
           <Column
-            name="Wskaźnik TDI"
-            cellRenderer={(row) => (
-              <Cell>
-                <Tag minimal intent="danger" style={{ fontSize: 10, fontWeight: 800 }}>
-                  TDI: {formatNumber(items[row]?.transit_desert_index, 2)}
-                </Tag>
-              </Cell>
-            )}
-          />
-          <Column
-            name="Populacja GUS (Wykluczona)"
+            name="Mieszkańcy w Strefie"
             cellRenderer={(row) => (
               <Cell>
                 <strong>{formatNumber(items[row]?.pop_total, 0)}</strong>
@@ -227,7 +238,7 @@ export default function InvestmentGrid() {
             )}
           />
           <Column
-            name="Odjazdy w Heksie"
+            name="Odjazdy / Godzina"
             cellRenderer={(row) => (
               <Cell>
                 <span style={{ color: items[row]?.total_departures_h < 1 ? "#db3737" : "#d9822b" }}>
@@ -237,7 +248,7 @@ export default function InvestmentGrid() {
             )}
           />
           <Column
-            name="Cena RCN w Heksie"
+            name="Cena Mieszkań"
             cellRenderer={(row) => (
               <Cell>
                 {items[row]?.rcn_median_price_m2
@@ -247,10 +258,10 @@ export default function InvestmentGrid() {
             )}
           />
           <Column
-            name="Liczba Słupków"
+            name="Liczba Przystanków"
             cellRenderer={(row) => (
               <Cell>
-                {items[row]?.stop_count || 0} słupków
+                {items[row]?.stop_count || 0} przystanków
               </Cell>
             )}
           />

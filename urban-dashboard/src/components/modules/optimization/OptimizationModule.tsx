@@ -44,14 +44,14 @@ export default function OptimizationModule() {
                 letterSpacing: 0.5,
               }}
             >
-              OPTIMIZATION & POLICY: {selectedCity.toUpperCase()}
+              OPTYMALIZACJA SIECI: {selectedCity.toUpperCase()}
             </h2>
             <Tag minimal intent="danger" style={{ fontSize: 10, fontWeight: 700 }}>
-              POLICY AUDIT
+              ANALIZA POŁĄCZEŃ
             </Tag>
           </div>
           <div style={{ fontSize: 11, color: "#8f99a8", marginTop: 3 }}>
-            Optymalizacja siatki połączeń: redukcja kanibalizujących się przystanków (TCRP 100) oraz eliminacja pustyń (TDI).
+            Weryfikacja efektywności sieci: redukcja dublujących się przystanków oraz identyfikacja obszarów z deficytem transportowym.
           </div>
         </div>
       </div>
@@ -65,7 +65,7 @@ export default function OptimizationModule() {
         >
           <Tab
             id="axe"
-            title="The Axe List (Redukcja TCRP 100)"
+            title="Dublujące się przystanki"
             panel={
               <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
                 <AxeListGrid />
@@ -74,7 +74,7 @@ export default function OptimizationModule() {
           />
           <Tab
             id="investment"
-            title="The Investment List (Pustynie TDI)"
+            title="Deficyty i białe plamy"
             panel={
               <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
                 <InvestmentGrid />

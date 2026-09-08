@@ -29,18 +29,18 @@ export interface GridSlice {
 }
 
 export const createGridSlice: StateCreator<GridSlice, [], [], GridSlice> = (set, get) => ({
-  stopsOrderBy: "rank",
+  stopsOrderBy: "score",
   stopsOrderDir: "asc",
   stopsGradeFilter: "",
   stopsAnchorOnly: false,
   stopsSearch: "",
 
-  hubsOrderBy: "rank",
+  hubsOrderBy: "score",
   hubsOrderDir: "asc",
   hubsMinStops: 1,
 
-  hexOrderBy: "rank",
-  hexOrderDir: "asc",
+  hexOrderBy: "transport_score",
+  hexOrderDir: "desc",
 
   rankJump: null,
 

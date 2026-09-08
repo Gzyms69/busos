@@ -20,7 +20,7 @@ export async function apiFetch<T>(
   path: string,
   options: ApiFetchOptions = {}
 ): Promise<T> {
-  const { timeoutMs = 10000, signal, ...fetchOptions } = options;
+  const { timeoutMs = 30000, signal, ...fetchOptions } = options;
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);

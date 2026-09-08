@@ -18,12 +18,12 @@ import {
 import { useFoundryStore, type FoundryModuleId } from "@/lib/store";
 
 const MODULES: Array<{ id: FoundryModuleId; label: string; icon: any }> = [
-  { id: "command-center", label: "Command Center", icon: "dashboard" },
-  { id: "network", label: "Network", icon: "git-branch" },
-  { id: "optimization", label: "Optimization", icon: "cut" },
-  { id: "routes", label: "Routes", icon: "path" },
-  { id: "market", label: "Market Intel", icon: "dollar" },
-  { id: "benchmark", label: "Benchmarking", icon: "chart" },
+  { id: "command-center", label: "Przegląd", icon: "dashboard" },
+  { id: "network", label: "Przystanki i Węzły", icon: "git-branch" },
+  { id: "optimization", label: "Optymalizacja", icon: "cut" },
+  { id: "routes", label: "Linie", icon: "path" },
+  { id: "market", label: "Nieruchomości", icon: "dollar" },
+  { id: "benchmark", label: "Ranking Miast", icon: "chart" },
 ];
 
 export default function FoundryNavbar() {
@@ -54,40 +54,58 @@ export default function FoundryNavbar() {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        borderBottom: "1px solid #2f343c",
+        borderBottom: "1px solid #27272a",
+        background: "#0e1017",
         zIndex: 20,
       }}
     >
       {/* Left: Brand & City Selector */}
       <NavbarGroup>
-        <NavbarHeading style={{ margin: 0, display: "flex", alignItems: "center", gap: 8 }}>
-          <span
-            style={{
-              fontWeight: 800,
-              letterSpacing: 1.2,
-              fontSize: 15,
-              color: "#f6f7f9",
-              textTransform: "uppercase",
-            }}
+        <NavbarHeading style={{ margin: 0, display: "flex", alignItems: "center" }}>
+          <a
+            href="https://czerwinskidawid.pl"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: 8 }}
+            title="Odwiedź stronę domową Dawida Czerwińskiego (czerwinskidawid.pl)"
           >
-            BusOS
-          </span>
-          <Tag minimal intent="primary" style={{ fontSize: 10, fontWeight: 700 }}>
-            FOUNDRY
-          </Tag>
+            <span
+              style={{
+                fontWeight: 900,
+                letterSpacing: 1.2,
+                fontSize: 15,
+                color: "#f8fafc",
+                textTransform: "uppercase",
+              }}
+            >
+              BusOS
+            </span>
+            <span
+              style={{
+                fontSize: 10,
+                fontWeight: 600,
+                color: "#94a3b8",
+                letterSpacing: 0.5,
+                borderLeft: "1px solid #27272a",
+                paddingLeft: 8,
+              }}
+            >
+              BY DAWID CZERWIŃSKI
+            </span>
+          </a>
         </NavbarHeading>
 
-        <NavbarDivider style={{ margin: "0 12px" }} />
+        <NavbarDivider style={{ margin: "0 12px", borderColor: "#27272a" }} />
 
         {/* City Selector Popover */}
         <PopoverNext
           isOpen={isCityOpen}
           onInteraction={(nextOpen) => setIsCityOpen(nextOpen)}
           content={
-            <div style={{ width: 220, padding: 8, background: "#1c2127" }}>
+            <div style={{ width: 220, padding: 8, background: "#121318", border: "1px solid #27272a", borderRadius: 6 }}>
               <InputGroup
                 leftIcon="search"
-                placeholder="Szukaj miasta..."
+                placeholder="Szukaj aglomeracji..."
                 value={cityFilter}
                 onChange={(e) => setCityFilter(e.target.value)}
                 small
@@ -116,7 +134,7 @@ export default function FoundryNavbar() {
             minimal
             icon="globe"
             rightIcon="caret-down"
-            style={{ fontWeight: 700, letterSpacing: 0.5, color: "#2b95d6" }}
+            style={{ fontWeight: 700, letterSpacing: 0.5, color: "#22c55e" }}
           >
             {selectedCity.toUpperCase()}
           </Button>
@@ -138,9 +156,9 @@ export default function FoundryNavbar() {
                 style={{
                   fontWeight: isActive ? 700 : 500,
                   fontSize: 12,
-                  color: isActive ? "#2b95d6" : "#8f99a8",
-                  background: isActive ? "rgba(43, 149, 214, 0.12)" : "transparent",
-                  borderBottom: isActive ? "2px solid #2b95d6" : "2px solid transparent",
+                  color: isActive ? "#22c55e" : "#94a3b8",
+                  background: isActive ? "rgba(34, 197, 94, 0.10)" : "transparent",
+                  borderBottom: isActive ? "2px solid #22c55e" : "2px solid transparent",
                   borderRadius: 0,
                   height: 48,
                   padding: "0 12px",
@@ -159,14 +177,14 @@ export default function FoundryNavbar() {
           <Button
             minimal
             icon="search"
-            style={{ color: "#8f99a8", marginRight: 8 }}
+            style={{ color: "#94a3b8", marginRight: 8 }}
             onClick={() => {
               window.dispatchEvent(
                 new KeyboardEvent("keydown", { ctrlKey: true, key: "k" })
               );
             }}
           >
-            <Tag minimal style={{ fontSize: 10, opacity: 0.7 }}>
+            <Tag minimal style={{ fontSize: 10, background: "rgba(39, 39, 42, 0.5)", color: "#94a3b8", border: "1px solid #27272a" }}>
               Ctrl+K
             </Tag>
           </Button>
@@ -174,26 +192,31 @@ export default function FoundryNavbar() {
 
         <Tooltip
           content={
-            <div style={{ fontSize: 11 }}>
-              <div><b>Backend:</b> {health?.status || "online"} (v{health?.version || "9.5.0"})</div>
-              <div><b>Silnik:</b> {health?.engine || "DuckDB / C-GEOS"}</div>
-              <div><b>Qdrant:</b> {health?.qdrant_connected ? "Połączony" : "Offline"}</div>
-              <div><b>Aktywne miasta:</b> {health?.active_cities_count || 30}</div>
-              {lastLatencyMs != null && <div><b>Latencja:</b> {lastLatencyMs} ms</div>}
+            <div style={{ fontSize: 11, padding: 4 }}>
+              <div><b>Aglomeracje:</b> {health?.active_cities_count || 30} miast w Polsce</div>
+              <div><b>Stan bazy:</b> Zsynchronizowana</div>
+              {lastLatencyMs != null && <div><b>Czas odpowiedzi:</b> {lastLatencyMs} ms</div>}
             </div>
           }
           placement="bottom-end"
         >
           <Tag
             round
-            intent={health?.status === "healthy" || !health ? "success" : "warning"}
             minimal
-            style={{ fontSize: 11, cursor: "pointer" }}
+            style={{
+              fontSize: 11,
+              cursor: "pointer",
+              background: "rgba(34, 197, 94, 0.12)",
+              color: "#22c55e",
+              border: "1px solid rgba(34, 197, 94, 0.3)",
+              fontWeight: 600,
+            }}
           >
-            ● OCI ARM64
+            ● Status: Online
           </Tag>
         </Tooltip>
       </NavbarGroup>
     </Navbar>
   );
 }
+

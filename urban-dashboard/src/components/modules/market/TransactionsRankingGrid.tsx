@@ -238,7 +238,7 @@ export default function TransactionsRankingGrid() {
             }}
           >
             <Spinner size={24} />
-            <span>Pobieranie rejestru aktów notarialnych RCN...</span>
+            <span>Pobieranie transakcji notarialnych...</span>
           </div>
         ) : items.length === 0 ? (
           <div

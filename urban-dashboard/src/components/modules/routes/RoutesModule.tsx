@@ -45,10 +45,10 @@ export default function RoutesModule() {
                 letterSpacing: 0.5,
               }}
             >
-              ROUTE ANALYZER: {selectedCity.toUpperCase()}
+              LINIE I TRASY: {selectedCity.toUpperCase()}
             </h2>
             <Tag minimal intent="primary" style={{ fontSize: 10, fontWeight: 700 }}>
-              GTFS TOPOLOGIA & LRS
+              KATALOG GTFS
             </Tag>
             {activeRouteUid && (
               <Tag intent="success" style={{ fontSize: 10, fontWeight: 800 }}>
@@ -57,7 +57,7 @@ export default function RoutesModule() {
             )}
           </div>
           <div style={{ fontSize: 11, color: "#8f99a8", marginTop: 3 }}>
-            Katalog linii GTFS, wertykalny stepper sekwencji z LRS, czasy netto $\Delta t$ oraz wąskie gardła prędkości handlowej.
+            Katalog linii komunikacji miejskiej, przebiegi tras, czasy przejazdu oraz prędkości handlowe.
           </div>
         </div>
       </div>
@@ -80,7 +80,7 @@ export default function RoutesModule() {
           />
           <Tab
             id="stepper"
-            title="Sekwencja i Profil LRS"
+            title="Przebieg Trasy"
             panel={
               <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
                 <RouteStepperView />
@@ -89,7 +89,7 @@ export default function RoutesModule() {
           />
           <Tab
             id="edges"
-            title="Prędkości Odcinkowe (Edges)"
+            title="Prędkości Handlowe"
             panel={
               <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
                 <RouteSpeedGrid />

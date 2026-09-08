@@ -32,15 +32,16 @@ export default function KpiMetricCard({
       interactive={isClickable}
       onClick={onClick}
       style={{
-        background: "#1c2127",
-        border: "1px solid #2f343c",
+        background: "#121318",
+        border: "1px solid #27272a",
         padding: "12px 14px",
-        borderRadius: 6,
+        borderRadius: 8,
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
         minHeight: 88,
         cursor: isClickable ? "pointer" : "default",
+        boxShadow: "inset 0 1px 0 0 rgba(255, 255, 255, 0.08), 0 4px 12px rgba(0, 0, 0, 0.3)",
       }}
     >
       {/* Header */}
@@ -53,19 +54,20 @@ export default function KpiMetricCard({
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          {icon && <Icon icon={icon} size={13} style={{ color: "#8f99a8" }} />}
+          {icon && <Icon icon={icon} size={13} style={{ color: "#94a3b8" }} />}
           <span
             style={{
               fontSize: 11,
               fontWeight: 600,
               textTransform: "uppercase",
               letterSpacing: 0.6,
-              color: "#8f99a8",
+              color: "#94a3b8",
             }}
           >
             {title}
           </span>
         </div>
+
         {badge && (
           <Tag minimal intent={intent} style={{ fontSize: 10, padding: "0 4px" }}>
             {badge}

@@ -118,16 +118,16 @@ export default function AxeListGrid() {
           }}
         >
           <div style={{ fontSize: 11, color: "#8f99a8", textTransform: "uppercase", fontWeight: 700 }}>
-            Redukcja Zbędnych Słupków (TCRP 100)
+            Dublujące się przystanki
           </div>
           <div style={{ display: "flex", alignItems: "baseline", gap: 8, margin: "6px 0" }}>
             <span style={{ fontSize: 24, fontWeight: 800, color: "#db3737" }}>
               {totalRedundant}
             </span>
-            <span style={{ fontSize: 12, color: "#8f99a8" }}>słupków do likwidacji</span>
+            <span style={{ fontSize: 12, color: "#8f99a8" }}>przystanków o wysokiej redundancji</span>
           </div>
           <div style={{ fontSize: 11, color: "#0f9960", fontWeight: 700 }}>
-            Potencjał oszczędności: {formatPLN(estAnnualSavings)} / rok
+            Szacowana optymalizacja: {formatPLN(estAnnualSavings)} / rok
           </div>
         </Card>
 
@@ -144,10 +144,10 @@ export default function AxeListGrid() {
         >
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <span style={{ fontSize: 11, color: "#8f99a8", textTransform: "uppercase", fontWeight: 700 }}>
-              Próg Redundancji TCRP (R ≥ {threshold.toFixed(2)})
+              Próg podobieństwa linii (R ≥ {threshold.toFixed(2)})
             </span>
             <Tag minimal intent={threshold >= 0.9 ? "danger" : threshold >= 0.7 ? "warning" : "primary"}>
-              {threshold >= 0.9 ? "Krytyczna" : threshold >= 0.7 ? "Zalecany TCRP" : "Szeroka"}
+              {threshold >= 0.9 ? "Ścisły" : threshold >= 0.7 ? "Zalecany" : "Szeroki"}
             </Tag>
           </div>
 
@@ -164,7 +164,7 @@ export default function AxeListGrid() {
           </div>
 
           <div style={{ fontSize: 10, color: "#8f99a8", marginTop: 4 }}>
-            Wskaźnik TCRP Report 100 uwzględnia odległość pieszą cKDTree ≤200m oraz rozkład Gaussa.
+            Analiza uwzględnia przystanki w promieniu ≤200m obsługujące te same relacje.
           </div>
         </Card>
       </div>
@@ -211,7 +211,7 @@ export default function AxeListGrid() {
       {loading && (
         <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 0", fontSize: 11, color: "#8f99a8" }}>
           <Spinner size={12} />
-          <span>Przeliczanie par kanibalizujących TCRP 100...</span>
+          <span>Analizowanie dublujących się przystanków...</span>
         </div>
       )}
 

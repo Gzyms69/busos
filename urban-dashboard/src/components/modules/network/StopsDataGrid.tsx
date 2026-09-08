@@ -227,7 +227,7 @@ export default function StopsDataGrid() {
           <Switch
             inline
             checked={stopsAnchorOnly}
-            label="Tylko Anchory Huba"
+            label="Tylko główne słupki węzła"
             onChange={(e) => setStopsFilter({ anchorOnly: (e.target as HTMLInputElement).checked })}
             style={{ margin: 0, fontSize: 11 }}
           />
@@ -236,7 +236,7 @@ export default function StopsDataGrid() {
           <InputGroup
             small
             leftIcon="filter"
-            placeholder="Filtruj słupki / linie..."
+            placeholder="Szukaj przystanku lub linii..."
             value={stopsSearch}
             onChange={(e) => setStopsFilter({ search: e.target.value })}
             style={{ width: 160, fontSize: 11 }}
@@ -278,7 +278,7 @@ export default function StopsDataGrid() {
         }}
       >
         <div>
-          Pokazywane: <strong>{items.length}</strong> z <strong>{total}</strong> fizycznych słupków
+          Pokazywane: <strong>{items.length}</strong> z <strong>{total}</strong> przystanków
         </div>
         {loading && (
           <div style={{ display: "flex", alignItems: "center", gap: 4 }}>

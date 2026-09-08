@@ -47,14 +47,14 @@ export default function MarketModule() {
                 letterSpacing: 0.5,
               }}
             >
-              MARKET INTEL: {selectedCity.toUpperCase()}
+              RYNEK MIESZKANIOWY: {selectedCity.toUpperCase()}
             </h2>
             <Tag minimal intent="success" style={{ fontSize: 10, fontWeight: 700 }}>
-              DUCKDB BRIDGE &lt;15MS
+              DANE RCN
             </Tag>
           </div>
           <div style={{ fontSize: 11, color: "#8f99a8", marginTop: 3 }}>
-            Rynek nieruchomości RCN: wyceny mieszkań przy przystankach, trendy cenowe 2020–2026 i analiza przestrzenna H3.
+            Wyceny mieszkań w sąsiedztwie przystanków, trendy cenowe 2020–2026 oraz rejestr transakcji notarialnych.
           </div>
         </div>
       </div>
@@ -71,7 +71,7 @@ export default function MarketModule() {
         >
           <Tab
             id="valuation"
-            title="Wyceny przy Słupkach (DuckDB)"
+            title="Ceny przy Przystankach"
             panel={
               <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
                 <StopsValuationGrid />
@@ -90,7 +90,7 @@ export default function MarketModule() {
           />
           <Tab
             id="transactions"
-            title="Rejestr Aktów Notarialnych"
+            title="Rejestr Transakcji"
             panel={
               <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
                 <TransactionsRankingGrid />

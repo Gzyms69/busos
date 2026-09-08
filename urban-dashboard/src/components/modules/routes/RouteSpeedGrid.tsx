@@ -144,12 +144,12 @@ export default function RouteSpeedGrid() {
         }}
       >
         <div>
-          Liczba krawędzi sieci: <strong>{sortedEdges.length}</strong> (posortowane po: {sortCol})
+          Liczba odcinków tras: <strong>{sortedEdges.length}</strong>
         </div>
         {loading && (
           <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
             <Spinner size={12} />
-            <span>Pobieranie prędkości krawędzi sieci...</span>
+            <span>Pobieranie prędkości na odcinkach...</span>
           </div>
         )}
       </div>
@@ -163,7 +163,7 @@ export default function RouteSpeedGrid() {
           defaultRowHeight={28}
         >
           <Column
-            name="Odcinek Międzyprzystankowy (u → v)"
+            name="Odcinek Międzyprzystankowy"
             cellRenderer={(row) => {
               const e = sortedEdges[row];
               return (

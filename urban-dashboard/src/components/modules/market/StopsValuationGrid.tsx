@@ -205,7 +205,7 @@ export default function StopsValuationGrid() {
             }}
           >
             <Spinner size={24} />
-            <span>Odpytywanie mostka DuckDB RCN (&lt;15ms)...</span>
+            <span>Ładowanie wycen mieszkań...</span>
           </div>
         ) : rows.length === 0 ? (
           <div
@@ -218,7 +218,7 @@ export default function StopsValuationGrid() {
               fontSize: 12,
             }}
           >
-            Brak wycen wokół słupków dla wybranego filtru
+            Brak wycen dla wybranego filtru
           </div>
         ) : (
           <Table2
@@ -232,8 +232,8 @@ export default function StopsValuationGrid() {
             }}
           >
             <Column
-              name="Słupek"
-              columnHeaderCellRenderer={() => renderSortHeader("stop_id", "Słupek")}
+              name="Przystanek"
+              columnHeaderCellRenderer={() => renderSortHeader("stop_id", "Przystanek")}
               cellRenderer={(rowIndex) => {
                 const r = rows[rowIndex];
                 return (

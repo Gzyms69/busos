@@ -43,14 +43,14 @@ export default function BenchmarkModule() {
                 letterSpacing: 0.5,
               }}
             >
-              BENCHMARKING KRAJOWY: OGÓLNOPOLSKI AUDYT 30 MIAST
+              RANKING MIAST: OGÓLNOPOLSKI AUDYT 30 AGLOMERACJI
             </h2>
             <Tag minimal intent="primary" style={{ fontSize: 10, fontWeight: 700 }}>
-              LEADERBOARD POLSKA
+              RANKING POLSKA
             </Tag>
           </div>
           <div style={{ fontSize: 11, color: "#8f99a8", marginTop: 3 }}>
-            Porównanie 30 skalibrowanych aglomeracji, rozkłady statystyczne 60k słupków i analiza side-by-side.
+            Porównanie 30 polskich miast, wskaźniki dostępności transportowej i bezpośrednie porównywarki.
           </div>
         </div>
       </div>
@@ -64,7 +64,7 @@ export default function BenchmarkModule() {
         >
           <Tab
             id="leaderboard"
-            title="Tablica Liderów (30 Miast / Polska)"
+            title="Ranking 30 Miast"
             panel={
               <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
                 <NationalLeaderboardGrid />
@@ -73,7 +73,7 @@ export default function BenchmarkModule() {
           />
           <Tab
             id="compare"
-            title="Porównywarka Miast (Side-by-Side)"
+            title="Porównanie Miast"
             panel={
               <div style={{ height: "100%", display: "flex", flexDirection: "column", overflowY: "auto" }}>
                 <CityComparisonView />
@@ -82,7 +82,7 @@ export default function BenchmarkModule() {
           />
           <Tab
             id="distribution"
-            title="Rozkład Kwantylowy Metryk"
+            title="Rozkład Wskaźników"
             panel={
               <div style={{ height: "100%", display: "flex", flexDirection: "column", overflowY: "auto" }}>
                 <MetricDistributionWidget />

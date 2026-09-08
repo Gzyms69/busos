@@ -79,8 +79,8 @@ export default function RouteStepperView() {
           Nie wybrano żadnej linii transportowej.
         </div>
         <div style={{ fontSize: 11 }}>
-          Wybierz linię w zakładce <strong>Katalog Linii</strong>, aby przeanalizować sekwencję LRS,
-          czasy przejazdu $\Delta t$ oraz prędkości odcinkowe.
+          Wybierz linię w zakładce <strong>Katalog Linii</strong>, aby przeanalizować listę przystanków,
+          czasy przejazdu oraz prędkości odcinkowe.
         </div>
       </div>
     );
@@ -90,7 +90,7 @@ export default function RouteStepperView() {
     return (
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", gap: 8 }}>
         <Spinner size={24} />
-        <span style={{ fontSize: 12, color: "#8f99a8" }}>Ładowanie sekwencji GTFS i profilu LRS...</span>
+        <span style={{ fontSize: 12, color: "#8f99a8" }}>Ładowanie trasy i przystanków...</span>
       </div>
     );
   }

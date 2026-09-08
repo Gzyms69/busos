@@ -46,25 +46,25 @@ export default function CityComparisonView() {
   const metrics = [
     {
       key: "stops_count",
-      label: "Fizyczne Słupki Przystankowe",
+      label: "Liczba Przystanków",
       formatter: (v: any) => formatNumber(v, 0),
-      unit: "słupków",
+      unit: "przystanków",
     },
     {
       key: "hubs_count",
-      label: "Logiczne Węzły Makro",
+      label: "Węzły Przesiadkowe",
       formatter: (v: any) => formatNumber(v, 0),
-      unit: "hubów",
+      unit: "węzłów",
     },
     {
       key: "consolidation_ratio",
-      label: "Wskaźnik Konsolidacji Sieci",
-      formatter: (v: any) => `${formatNumber(v, 2)} sł/hub`,
+      label: "Średnia liczba przystanków na węzeł",
+      formatter: (v: any) => `${formatNumber(v, 2)} prz./węzeł`,
       unit: "",
     },
     {
       key: "population_total",
-      label: "Popyt Demograficzny (GUS 250m)",
+      label: "Mieszkańcy w Zasięgu (GUS 250m)",
       formatter: (v: any) => formatNumber(v, 0),
       unit: "mieszkańców",
     },

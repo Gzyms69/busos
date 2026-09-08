@@ -10,7 +10,7 @@ import CityMagnetsList from "./CityMagnetsList";
 import { Tag, Button } from "@blueprintjs/core";
 
 export default function CommandCenterModule() {
-  const { selectedCity, health, setHealth } = useFoundryStore();
+  const { selectedCity, setHealth } = useFoundryStore();
 
   const [auditData, setAuditData] = useState<CityAuditSummaryResponse | null>(null);
   const [magnets, setMagnets] = useState<PoiMagnetItem[]>([]);
@@ -37,15 +37,16 @@ export default function CommandCenterModule() {
           setAuditData(auditRes);
           setMagnets(magnetsRes.magnets || []);
           setLoading(false);
-          if (health) {
-            setHealth(health, latency);
+          const currentHealth = useFoundryStore.getState().health;
+          if (currentHealth) {
+            setHealth(currentHealth, latency);
           }
         }
       })
       .catch((err) => {
         if (err?.name !== "AbortError") {
           console.error("Failed to load Command Center data:", err);
-          setError("Nie udało się pobrać danych audytowych aglomeracji.");
+          setError("Nie udało się pobrać danych analitycznych aglomeracji.");
           setLoading(false);
         }
       });
@@ -53,7 +54,7 @@ export default function CommandCenterModule() {
     return () => {
       controller.abort();
     };
-  }, [selectedCity, health, setHealth]);
+  }, [selectedCity, setHealth]);
 
   return (
     <div
@@ -73,7 +74,7 @@ export default function CommandCenterModule() {
           justifyContent: "space-between",
           marginBottom: 16,
           paddingBottom: 10,
-          borderBottom: "1px solid #2f343c",
+          borderBottom: "1px solid #27272a",
         }}
       >
         <div>
@@ -83,18 +84,18 @@ export default function CommandCenterModule() {
                 margin: 0,
                 fontSize: 16,
                 fontWeight: 800,
-                color: "#f6f7f9",
+                color: "#f8fafc",
                 letterSpacing: 0.5,
               }}
             >
-              COMMAND CENTER: {selectedCity.toUpperCase()}
+              PRZEGLĄD AGLOMERACJI: {selectedCity.toUpperCase()}
             </h2>
-            <Tag minimal intent="success" style={{ fontSize: 10, fontWeight: 700 }}>
-              LIVE AUDIT
+            <Tag minimal intent="success" style={{ fontSize: 10, fontWeight: 700, background: "rgba(34, 197, 94, 0.15)", color: "#22c55e", border: "1px solid rgba(34, 197, 94, 0.3)" }}>
+              DANE AKTYWNE
             </Tag>
           </div>
-          <div style={{ fontSize: 11, color: "#8f99a8", marginTop: 3 }}>
-            Syntetyczny przegląd DNA węzłów, spójności transportowej i rynku nieruchomości.
+          <div style={{ fontSize: 12, color: "#94a3b8", marginTop: 3 }}>
+            Analiza dostępności przystanków, węzłów przesiadkowych i kluczowych celów podróży.
           </div>
         </div>
 
@@ -107,10 +108,11 @@ export default function CommandCenterModule() {
             setLoading(true);
             fetchAuditSummary(selectedCity, "summary,zscore,grades").then(setAuditData);
           }}
-          title="Odśwież dane audytu"
-          style={{ color: "#8f99a8" }}
+          title="Odśwież dane aglomeracji"
+          style={{ color: "#94a3b8" }}
         />
       </div>
+
 
       {error && (
         <div

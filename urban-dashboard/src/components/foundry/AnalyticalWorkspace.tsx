@@ -39,29 +39,29 @@ export default function AnalyticalWorkspace() {
 
   const moduleNames: Record<string, { name: string; session: string; desc: string }> = {
     network: {
-      name: "Network Explorer",
-      session: "Sesja 4.2",
-      desc: "Wirtualizowany DataGrid Table2 dla 60k słupków i 28k hubów, wyszukiwarka POI DuckDB pushdown, linked cross-filtering.",
+      name: "Przystanki i Węzły",
+      session: "Moduł 2",
+      desc: "Wyszukiwanie przystanków i węzłów przesiadkowych, linked cross-filtering i parametry.",
     },
     optimization: {
-      name: "Optimization & Policy",
-      session: "Sesja 4.2",
-      desc: "The Axe List TCRP 100 z kalkulatorem oszczędności PLN oraz The Investment List (Pustynie TDI w siatce H3).",
+      name: "Optymalizacja Sieci",
+      session: "Moduł 3",
+      desc: "Identyfikacja dublujących się przystanków oraz analiza białych plam transportowych.",
     },
     routes: {
-      name: "Route Analyzer",
-      session: "Sesja 4.2",
-      desc: "Katalog linii GTFS, wertykalny stepper przystanków z LRS, czasy netto i analiza prędkości handlowych na krawędziach.",
+      name: "Linie i Rozkłady",
+      session: "Moduł 4",
+      desc: "Katalog linii GTFS, wertykalny przebieg trasy, czasy przejazdu i analiza prędkości handlowych.",
     },
     market: {
-      name: "Market Intel",
-      session: "Sesja 4.3",
-      desc: "Wycena transakcji notarialnych RCN, trendy cenowe kwartalne 2020–2026, mostek DuckDB w 15ms.",
+      name: "Rynek Nieruchomości",
+      session: "Moduł 5",
+      desc: "Wyceny mieszkań przy przystankach, trendy cenowe kwartalne 2020–2026 i transakcje notarialne.",
     },
     benchmark: {
-      name: "Benchmarking Krajowy",
-      session: "Sesja 4.3",
-      desc: "Ogólnopolski Leaderboard 30 aglomeracji, porównywarka side-by-side oraz histogramy rozkładu kwantylowego.",
+      name: "Ranking Miast",
+      session: "Moduł 6",
+      desc: "Ogólnopolski ranking 30 aglomeracji, porównywarka miast oraz histogramy wskaźników.",
     },
   };
 

@@ -45,14 +45,14 @@ export default function NetworkModule() {
                 letterSpacing: 0.5,
               }}
             >
-              NETWORK EXPLORER: {selectedCity.toUpperCase()}
+              PRZYSTANKI I WĘZŁY: {selectedCity.toUpperCase()}
             </h2>
             <Tag minimal intent="primary" style={{ fontSize: 10, fontWeight: 700 }}>
-              60k+ SŁUPKÓW & 28k+ HUBÓW
+              KATALOG PUNKTÓW
             </Tag>
           </div>
           <div style={{ fontSize: 11, color: "#8f99a8", marginTop: 3 }}>
-            Wirtualizowana eksploracja słupków fizycznych (Micro) oraz logicznych węzłów przesiadkowych (Macro).
+            Eksplorator przystanków i węzłów przesiadkowych z parametrami obsługi pasażerskiej.
           </div>
         </div>
 
@@ -69,7 +69,7 @@ export default function NetworkModule() {
         >
           <Tab
             id="stops"
-            title="Słupki Fizyczne (Micro)"
+            title="Przystanki"
             panel={
               <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
                 <StopsDataGrid />
@@ -78,7 +78,7 @@ export default function NetworkModule() {
           />
           <Tab
             id="hubs"
-            title="Węzły Logiczne (Macro)"
+            title="Węzły Przesiadkowe"
             panel={
               <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
                 <HubsDataGrid />

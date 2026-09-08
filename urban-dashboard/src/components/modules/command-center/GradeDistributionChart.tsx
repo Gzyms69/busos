@@ -15,8 +15,10 @@ import { getGradeColor } from "@/components/shared/GradeBadge";
 
 interface GradeDistributionChartProps {
   grades?: {
-    stops: Record<string, number>;
-    hubs: Record<string, number>;
+    micro?: Record<string, number>;
+    macro?: Record<string, number>;
+    stops?: Record<string, number>;
+    hubs?: Record<string, number>;
   };
   loading?: boolean;
 }
@@ -28,8 +30,8 @@ export default function GradeDistributionChart({
   loading = false,
 }: GradeDistributionChartProps) {
   const chartData = ORDERED_GRADES.map((grade) => {
-    const stopsCount = grades?.stops?.[grade] || 0;
-    const hubsCount = grades?.hubs?.[grade] || 0;
+    const stopsCount = (grades as any)?.micro?.[grade] ?? (grades as any)?.stops?.[grade] ?? 0;
+    const hubsCount = (grades as any)?.macro?.[grade] ?? (grades as any)?.hubs?.[grade] ?? 0;
     return {
       grade,
       stops: stopsCount,
@@ -44,11 +46,12 @@ export default function GradeDistributionChart({
     <Card
       elevation={Elevation.ONE}
       style={{
-        background: "#1c2127",
-        border: "1px solid #2f343c",
+        background: "#121318",
+        border: "1px solid #27272a",
         padding: "14px 16px",
-        borderRadius: 6,
+        borderRadius: 8,
         marginBottom: 16,
+        boxShadow: "inset 0 1px 0 0 rgba(255, 255, 255, 0.08), 0 4px 12px rgba(0, 0, 0, 0.4)",
       }}
     >
       {/* Header */}
@@ -67,17 +70,17 @@ export default function GradeDistributionChart({
               fontWeight: 700,
               textTransform: "uppercase",
               letterSpacing: 0.6,
-              color: "#8f99a8",
+              color: "#94a3b8",
             }}
           >
-            Rozkład Klas Stop DNA
+            Dostępność Komunikacyjna
           </span>
-          <div style={{ fontSize: 13, fontWeight: 700, color: "#f6f7f9", marginTop: 2 }}>
-            Kategoryzacja Jakościowa Słupków ({totalStops.toLocaleString("pl-PL")})
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#f8fafc", marginTop: 2 }}>
+            Rozkład Ocen Przystanków ({totalStops.toLocaleString("pl-PL")})
           </div>
         </div>
-        <Tag minimal intent="primary" style={{ fontSize: 10 }}>
-          Gauss Z-Score
+        <Tag minimal style={{ fontSize: 10, background: "rgba(39, 39, 42, 0.6)", color: "#94a3b8", border: "1px solid #27272a" }}>
+          Standard GTFS
         </Tag>
       </div>
 
@@ -90,7 +93,7 @@ export default function GradeDistributionChart({
               alignItems: "center",
               justifyContent: "center",
               height: "100%",
-              color: "#8f99a8",
+              color: "#94a3b8",
               fontSize: 12,
             }}
           >
@@ -104,33 +107,33 @@ export default function GradeDistributionChart({
             >
               <XAxis
                 dataKey="grade"
-                stroke="#656e7b"
-                tick={{ fill: "#8f99a8", fontSize: 11, fontWeight: 600 }}
-                axisLine={{ stroke: "#2f343c" }}
+                stroke="#52525b"
+                tick={{ fill: "#94a3b8", fontSize: 11, fontWeight: 600 }}
+                axisLine={{ stroke: "#27272a" }}
                 tickLine={false}
               />
               <YAxis
-                stroke="#656e7b"
-                tick={{ fill: "#656e7b", fontSize: 10 }}
+                stroke="#52525b"
+                tick={{ fill: "#71717a", fontSize: 10 }}
                 axisLine={false}
                 tickLine={false}
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#181c20",
-                  borderColor: "#383e47",
-                  borderRadius: 4,
-                  fontSize: 11,
-                  color: "#f6f7f9",
-                  boxShadow: "0 4px 12px rgba(0,0,0,0.5)",
+                  backgroundColor: "#090a0f",
+                  borderColor: "#27272a",
+                  borderRadius: 6,
+                  fontSize: 12,
+                  color: "#f8fafc",
+                  boxShadow: "0 8px 24px rgba(0,0,0,0.6)",
                 }}
                 formatter={(value: any, name: any) => [
-                  `${Number(value).toLocaleString("pl-PL")} obiektów`,
-                  name === "stops" ? "Słupki fizyczne" : "Węzły macro",
+                  `${Number(value).toLocaleString("pl-PL")} przystanków`,
+                  name === "stops" ? "Liczba słupków" : "Węzły przesiadkowe",
                 ]}
-                labelFormatter={(label) => `Klasa DNA: ${label}`}
+                labelFormatter={(label) => `Ocena standardu: ${label}`}
               />
-              <Bar dataKey="stops" radius={[3, 3, 0, 0]}>
+              <Bar dataKey="stops" radius={[4, 4, 0, 0]}>
                 {chartData.map((entry) => (
                   <Cell key={`cell-${entry.grade}`} fill={entry.color} />
                 ))}
@@ -147,14 +150,14 @@ export default function GradeDistributionChart({
           justifyContent: "space-between",
           marginTop: 10,
           paddingTop: 8,
-          borderTop: "1px solid #2f343c",
-          fontSize: 10,
-          color: "#656e7b",
+          borderTop: "1px solid #27272a",
+          fontSize: 11,
+          color: "#71717a",
         }}
       >
-        <span>A+/A: Dominacja & Węzły Węzłowe</span>
-        <span>B/C: Średni Standard</span>
-        <span>D/F: Peryferia / Deficyt</span>
+        <span>A+/A: Wysoka częstotliwość</span>
+        <span>B/C: Dobry i średni standard</span>
+        <span>D/F: Niska obsługa / peryferia</span>
       </div>
     </Card>
   );

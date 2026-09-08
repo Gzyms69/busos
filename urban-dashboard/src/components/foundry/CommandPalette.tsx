@@ -53,12 +53,12 @@ export default function CommandPalette() {
 
     // Modules
     const modules: Array<{ id: FoundryModuleId; name: string; desc: string }> = [
-      { id: "command-center", name: "1. Command Center", desc: "Karta audytowa miasta i metryki DNA" },
-      { id: "network", name: "2. Network Explorer", desc: "Słupki fizyczne micro & węzły macro" },
-      { id: "optimization", name: "3. Optimization", desc: "The Axe List TCRP 100 & Pustynie TDI" },
-      { id: "routes", name: "4. Route Analyzer", desc: "Katalog linii GTFS, stepper i prędkości" },
-      { id: "market", name: "5. Market Intel", desc: "Wycena transakcji RCN i trendy 2020-2026" },
-      { id: "benchmark", name: "6. Benchmarking", desc: "Ogólnopolski leaderboard 30 miast" },
+      { id: "command-center", name: "1. Przegląd Miasta", desc: "Główny pulpit analityczny i kluczowe wskaźniki" },
+      { id: "network", name: "2. Przystanki i Węzły", desc: "Katalog przystanków i węzłów przesiadkowych" },
+      { id: "optimization", name: "3. Optymalizacja Sieci", desc: "Analiza dublujących się przystanków i deficytów" },
+      { id: "routes", name: "4. Linie i Rozkłady", desc: "Katalog linii GTFS, przebiegi i prędkości handlowe" },
+      { id: "market", name: "5. Rynek Nieruchomości", desc: "Ceny mieszkań i analiza transakcji przy przystankach" },
+      { id: "benchmark", name: "6. Ranking Miast", desc: "Ogólnopolskie zestawienie 30 aglomeracji" },
     ];
 
     modules.forEach((m) => {

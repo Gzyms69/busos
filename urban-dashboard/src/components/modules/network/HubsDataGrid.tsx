@@ -199,7 +199,7 @@ export default function HubsDataGrid() {
 
           {/* Min Stops Filter */}
           <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-            <span style={{ fontSize: 11, color: "#8f99a8" }}>Min. słupków w hubie:</span>
+            <span style={{ fontSize: 11, color: "#8f99a8" }}>Min. przystanków w węźle:</span>
             <NumericInput
               small
               min={1}
@@ -251,7 +251,7 @@ export default function HubsDataGrid() {
         }}
       >
         <div>
-          Pokazywane: <strong>{items.length}</strong> z <strong>{total}</strong> węzłów logicznych
+          Pokazywane: <strong>{items.length}</strong> z <strong>{total}</strong> węzłów przesiadkowych
         </div>
         {loading && (
           <div style={{ display: "flex", alignItems: "center", gap: 4 }}>

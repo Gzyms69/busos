@@ -12,12 +12,12 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { id: "command-center", label: "Center", icon: "dashboard" },
-  { id: "network", label: "Network", icon: "git-merge" },
-  { id: "optimization", label: "Policy", icon: "shield" },
-  { id: "routes", label: "Routes", icon: "path" },
-  { id: "market", label: "Market", icon: "home" },
-  { id: "benchmark", label: "Benchmark", icon: "comparison" },
+  { id: "command-center", label: "Przegląd", icon: "dashboard" },
+  { id: "network", label: "Węzły", icon: "git-merge" },
+  { id: "optimization", label: "Korekty", icon: "shield" },
+  { id: "routes", label: "Linie", icon: "path" },
+  { id: "market", label: "Rynek", icon: "home" },
+  { id: "benchmark", label: "Ranking", icon: "comparison" },
 ];
 
 export default function MobileSegmentedNav() {
@@ -30,8 +30,8 @@ export default function MobileSegmentedNav() {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-around",
-        background: "#181c20",
-        borderTop: "1px solid #2f343c",
+        background: "#0e1017",
+        borderTop: "1px solid #27272a",
         height: 54,
         padding: "0 4px",
         zIndex: 40,
@@ -57,7 +57,7 @@ export default function MobileSegmentedNav() {
               border: "none",
               borderRadius: 6,
               cursor: "pointer",
-              color: isActive ? "#2b95d6" : "#8f99a8",
+              color: isActive ? "#22c55e" : "#71717a",
               outline: "none",
               transition: "color 0.15s ease",
             }}

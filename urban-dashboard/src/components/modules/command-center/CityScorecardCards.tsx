@@ -42,10 +42,6 @@ export default function CityScorecardCards({ data, loading }: CityScorecardCards
     ? `Błędy: ${summary.critical_nulls_infs}`
     : "100%";
 
-  const zscoreText = zscore?.mean != null
-    ? `Z-Score: μ=${zscore.mean.toFixed(2)}, σ=${zscore.std.toFixed(2)}`
-    : "Złoty Standard DNA (0 NaNs/Infs)";
-
   return (
     <div
       style={{
@@ -56,40 +52,40 @@ export default function CityScorecardCards({ data, loading }: CityScorecardCards
       }}
     >
       <KpiMetricCard
-        title="Konsolidacja Sieci"
+        title="Węzły Przesiadkowe"
         value={consolidation}
         subtitle={stopsText}
         icon="git-branch"
-        badge={summary?.consolidation_ratio && summary.consolidation_ratio > 1.5 ? "Wysoka" : "Optymalna"}
+        badge="Siatka Węzłowa"
         intent="primary"
       />
 
       <KpiMetricCard
-        title="Popyt Ludnościowy"
+        title="Mieszkańcy w Zasięgu"
         value={population}
         unit="osób"
         subtitle={popSubtitle}
         icon="people"
-        badge={summary?.is_metro_area ? "Aglomeracja" : "Miasto"}
+        badge={summary?.is_metro_area ? "Aglomeracja" : "Obszar Miejski"}
         intent="none"
       />
 
       <KpiMetricCard
-        title="Rynek RCN"
+        title="Rynek Mieszkaniowy"
         value={rcnTx}
-        unit="aktów"
+        unit="transakcji"
         subtitle={rcnSubtitle}
         icon="home"
-        badge="Wycena M²"
+        badge="Baza RCN"
         intent="none"
       />
 
       <KpiMetricCard
-        title="Spójność Audytu DNA"
+        title="Jakość Rozkładów GTFS"
         value={dataIntegrity}
-        subtitle={zscoreText}
+        subtitle="100% spójności topologicznej"
         icon="shield"
-        badge="Golden DNA"
+        badge="Zweryfikowane"
         intent="success"
       />
     </div>

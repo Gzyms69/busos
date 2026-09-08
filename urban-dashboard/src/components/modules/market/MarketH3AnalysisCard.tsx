@@ -60,10 +60,10 @@ export default function MarketH3AnalysisCard() {
       {/* Header */}
       <div style={{ marginBottom: 14 }}>
         <div style={{ fontSize: 13, fontWeight: 700, color: "#f6f7f9" }}>
-          Przestrzenna Analiza Heksów Uber H3 (Res 8) & Rynek Nieruchomości
+          Analiza Przestrzenna Cen i Transportu (Siatka H3)
         </div>
         <div style={{ fontSize: 11, color: "#8f99a8" }}>
-          Agregacja cen notarialnych w komórkach 0.74 km² oraz korelacja Pearsona z podażą transportu
+          Średnie ceny mieszkań w komórkach 0.74 km² oraz korelacja z dostępnością transportu
         </div>
       </div>
 
@@ -79,7 +79,7 @@ export default function MarketH3AnalysisCard() {
         <KpiMetricCard
           title="Pokrycie Przestrzenne"
           value={loading ? "..." : `${data?.coverage_pct?.toFixed(1) ?? "—"}%`}
-          subtitle={`${data?.cells_with_rcn ?? 0} z ${data?.total_cells ?? 0} heksów z transakcjami`}
+          subtitle={`${data?.cells_with_rcn ?? 0} z ${data?.total_cells ?? 0} obszarów z transakcjami`}
           icon="map"
           intent="primary"
         />
@@ -87,7 +87,7 @@ export default function MarketH3AnalysisCard() {
         <KpiMetricCard
           title="Korelacja z Transportem"
           value={loading ? "..." : (data?.transport_correlation != null ? data.transport_correlation.toFixed(3) : "—")}
-          subtitle="Współczynnik Pearsona: Ceny mieszkań vs Transport"
+          subtitle="Zależność: Ceny mieszkań vs Transport"
           icon="trending-up"
           intent={
             data?.transport_correlation != null && data.transport_correlation > 0.3
@@ -97,10 +97,10 @@ export default function MarketH3AnalysisCard() {
         />
 
         <KpiMetricCard
-          title="Próbkowanie H3"
+          title="Aktywne Obszary"
           value={loading ? "..." : formatNumber(data?.cells_with_rcn, 0)}
-          unit="komórek"
-          subtitle="Rozdzielczość Uber H3 Resolution 8"
+          unit="obszarów"
+          subtitle="Komórki siatki analizy H3"
           icon="grid"
           intent="none"
         />

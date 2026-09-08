@@ -34,10 +34,10 @@ export default function MapHud() {
   const [isMetricOpen, setIsMetricOpen] = useState(false);
 
   const metricLabels: Record<H3ColorMetric, string> = {
-    transport_score: "Podaż Transportu (0-100)",
-    pop_total: "Populacja GUS 250m",
-    transit_desert: "Pustynie Transportowe (TDI)",
-    rcn_median_price_m2: "Ceny Mieszkań RCN (PLN/m²)",
+    transport_score: "Dostępność Transportu (0-100)",
+    pop_total: "Mieszkańcy (Siatka GUS)",
+    transit_desert: "Obszary z deficytem transportowym",
+    rcn_median_price_m2: "Ceny mieszkań (PLN/m²)",
   };
 
   return (
@@ -56,9 +56,9 @@ export default function MapHud() {
       <Card
         elevation={Elevation.TWO}
         style={{
-          background: "rgba(24, 28, 32, 0.88)",
+          background: "rgba(9, 10, 15, 0.92)",
           backdropFilter: "blur(8px)",
-          border: "1px solid rgba(56, 62, 71, 0.8)",
+          border: "1px solid #27272a",
           borderRadius: 6,
           padding: "6px 8px",
           display: "flex",

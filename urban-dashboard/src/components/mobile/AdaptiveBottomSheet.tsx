@@ -18,6 +18,15 @@ export default function AdaptiveBottomSheet() {
     expanded: "88vh",
   };
 
+  const modulePolishNames: Record<string, string> = {
+    "command-center": "Przegląd Miasta",
+    "network": "Przystanki i Węzły",
+    "optimization": "Optymalizacja",
+    "routes": "Linie i Trasy",
+    "market": "Rynek Mieszkaniowy",
+    "benchmark": "Ranking Miast",
+  };
+
   const handleToggle = () => {
     if (snap === "peek") setSnap("half");
     else if (snap === "half") setSnap("expanded");
@@ -32,9 +41,9 @@ export default function AdaptiveBottomSheet() {
         left: 0,
         right: 0,
         height: snapHeights[snap],
-        background: "rgba(24, 28, 33, 0.98)",
+        background: "rgba(9, 10, 15, 0.96)",
         backdropFilter: "blur(12px)",
-        borderTop: "1px solid #383e47",
+        borderTop: "1px solid #27272a",
         boxShadow: "0 -8px 24px rgba(0,0,0,0.6)",
         zIndex: 35,
         display: "flex",
@@ -55,7 +64,7 @@ export default function AdaptiveBottomSheet() {
           alignItems: "center",
           justifyContent: "space-between",
           cursor: "pointer",
-          borderBottom: snap !== "peek" ? "1px solid #2f343c" : "none",
+          borderBottom: snap !== "peek" ? "1px solid #27272a" : "none",
           userSelect: "none",
         }}
       >
@@ -65,7 +74,7 @@ export default function AdaptiveBottomSheet() {
             width: 38,
             height: 4,
             borderRadius: 2,
-            background: "#636e7b",
+            background: "#52525b",
             marginTop: 2,
           }}
         />
@@ -85,13 +94,13 @@ export default function AdaptiveBottomSheet() {
               style={{
                 fontSize: 12,
                 fontWeight: 800,
-                color: "#f6f7f9",
-                textTransform: "uppercase",
+                color: "#f8fafc",
+                letterSpacing: 0.3,
               }}
             >
-              {activeModule.replace("-", " ")}
+              {modulePolishNames[activeModule] || activeModule}
             </span>
-            <Tag minimal style={{ fontSize: 9 }}>
+            <Tag minimal style={{ fontSize: 9, background: "rgba(34, 197, 94, 0.15)", color: "#22c55e", border: "1px solid rgba(34, 197, 94, 0.3)" }}>
               {selectedCity.toUpperCase()}
             </Tag>
           </div>

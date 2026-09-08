@@ -4,24 +4,24 @@
 @import "@blueprintjs/table/lib/css/table.css";
 @import "@blueprintjs/select/lib/css/blueprint-select.css";
 
-/* Palantir Foundry Technical Dark Palette (bp6-dark) */
+/* Swiss Design & Obsidian Palette matching czerwinskidawid.pl */
 :root {
-  --foundry-canvas: #111418;
-  --foundry-surface: #1c2127;
-  --foundry-surface-elevated: #252a31;
-  --foundry-border: #383e47;
-  --foundry-text: #f6f7f9;
-  --foundry-text-muted: #8f99a8;
+  --obsidian-canvas: #090a0f;
+  --obsidian-surface: #121318;
+  --obsidian-surface-elevated: #181922;
+  --obsidian-border: #27272a;
+  --obsidian-text: #f8fafc;
+  --obsidian-text-muted: #94a3b8;
 
-  /* Semantics */
-  --foundry-emerald: #0f9960;
-  --foundry-cobalt: #2b95d6;
-  --foundry-amber: #d9822b;
-  --foundry-crimson: #db3737;
+  /* Semantics from czerwinskidawid.pl */
+  --accent-emerald: #22c55e;
+  --accent-blue: #3b82f6;
+  --accent-amber: #f59e0b;
+  --accent-crimson: #ef4444;
 
   /* Base overrides */
-  --background: var(--foundry-canvas);
-  --foreground: var(--foundry-text);
+  --background: var(--obsidian-canvas);
+  --foreground: var(--obsidian-text);
 }
 
 html,
@@ -31,56 +31,63 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: #111418;
-  color: #f6f7f9;
-  font-family: -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Open Sans", "Helvetica Neue", "Icons16", sans-serif;
+  background-color: #090a0f;
+  color: #f8fafc;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Blueprint Dark Mode Adaptations */
+/* Blueprint Dark Mode Adaptations - Harmonized with czerwinskidawid.pl */
 .bp6-dark {
-  background-color: #111418 !important;
-  color: #f6f7f9 !important;
+  background-color: #090a0f !important;
+  color: #f8fafc !important;
 }
 
 .bp6-dark .bp6-navbar {
-  background-color: #181c20 !important;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1) !important;
-  border-bottom: 1px solid #2f343c;
+  background-color: #0e1017 !important;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+  border-bottom: 1px solid #27272a;
 }
 
 .bp6-dark .bp6-card {
-  background-color: #1c2127;
-  border: 1px solid #2f343c;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  background-color: #121318;
+  border: 1px solid #27272a;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08), 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .bp6-dark .bp6-section {
-  background-color: #1c2127;
-  border: 1px solid #2f343c;
+  background-color: #121318;
+  border: 1px solid #27272a;
 }
 
 .bp6-dark .bp6-section-header {
-  background-color: #22272e;
-  border-bottom: 1px solid #2f343c;
+  background-color: #181922;
+  border-bottom: 1px solid #27272a;
 }
 
-/* Custom Scrollbars for dense analytical tables */
+/* Tactile Card Style matching czerwinskidawid.pl */
+.card-tactile {
+  background: rgba(18, 19, 24, 0.85);
+  backdrop-filter: blur(16px);
+  border: 1px solid #27272a;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.1), 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* Custom Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #14171b;
+  background: #090a0f;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #383e47;
+  background: #27272a;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #4f5763;
+  background: #3f3f46;
 }

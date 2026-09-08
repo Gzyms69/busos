@@ -18,11 +18,11 @@ import type { MetricDistributionResponse } from "@/lib/api/types";
 import { formatNumber } from "@/lib/utils/formatters";
 
 const METRIC_OPTIONS = [
-  { value: "stop_local_score_raw", label: "Z-Score Jakości Stop DNA" },
+  { value: "stop_local_score_raw", label: "Wskaźnik Jakości Przystanku" },
   { value: "stop_departures_h", label: "Odjazdy w Godzinie Szczytu (kursy/h)" },
-  { value: "stop_market_val", label: "Wycena Rynkowa RCN (PLN/m²)" },
-  { value: "pop_total", label: "Popyt Demograficzny GUS (osoby)" },
-  { value: "transit_desert_index", label: "Wskaźnik Pustyni Transportowej (TDI)" },
+  { value: "stop_market_val", label: "Wycena Mieszkań w Zasięgu (PLN/m²)" },
+  { value: "pop_total", label: "Liczba Mieszkańców w Zasięgu (osoby)" },
+  { value: "transit_desert_index", label: "Wskaźnik Deficytu Transportowego" },
 ];
 
 export default function MetricDistributionWidget() {

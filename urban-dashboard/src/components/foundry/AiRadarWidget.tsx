@@ -49,27 +49,29 @@ export default function AiRadarWidget({ city, hubId }: AiRadarWidgetProps) {
   return (
     <div
       style={{
-        background: "#181c20",
-        border: "1px solid #2f343c",
-        borderRadius: 6,
+        background: "#121318",
+        border: "1px solid #27272a",
+        borderRadius: 8,
         padding: 14,
         display: "flex",
         flexDirection: "column",
         gap: 10,
+        boxShadow: "inset 0 1px 0 0 rgba(255, 255, 255, 0.08)",
       }}
     >
       {/* Widget Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ fontSize: 11, fontWeight: 700, color: "#f6f7f9", letterSpacing: 0.5 }}>
-            AI RADAR: WEKTOROWE PODOBIEŃSTWO DNA
+          <span style={{ fontSize: 11, fontWeight: 700, color: "#f8fafc", letterSpacing: 0.5 }}>
+            PODOBNE WĘZŁY W INNYCH MIASTACH
           </span>
-          <Tag minimal intent="primary" style={{ fontSize: 9, fontWeight: 700 }}>
-            QDRANT COSINE
+          <Tag minimal style={{ fontSize: 9, fontWeight: 700, background: "rgba(59, 130, 246, 0.15)", color: "#38bdf8", border: "1px solid rgba(59, 130, 246, 0.3)" }}>
+            ANALIZA PORÓWNAWCZA
           </Tag>
         </div>
-        <span style={{ fontSize: 10, color: "#8f99a8" }}>Baza: 28 317 hubów w Polsce</span>
+        <span style={{ fontSize: 10, color: "#94a3b8" }}>Baza: 28 317 węzłów w Polsce</span>
       </div>
+
 
       {loading ? (
         <div
