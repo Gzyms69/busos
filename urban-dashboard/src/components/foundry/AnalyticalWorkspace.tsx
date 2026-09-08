@@ -6,6 +6,8 @@ import CommandCenterModule from "@/components/modules/command-center/CommandCent
 import NetworkModule from "@/components/modules/network/NetworkModule";
 import OptimizationModule from "@/components/modules/optimization/OptimizationModule";
 import RoutesModule from "@/components/modules/routes/RoutesModule";
+import MarketModule from "@/components/modules/market/MarketModule";
+import BenchmarkModule from "@/components/modules/benchmark/BenchmarkModule";
 import EmptyStateView from "@/components/shared/EmptyStateView";
 
 export default function AnalyticalWorkspace() {
@@ -25,6 +27,14 @@ export default function AnalyticalWorkspace() {
 
   if (activeModule === "routes") {
     return <RoutesModule />;
+  }
+
+  if (activeModule === "market") {
+    return <MarketModule />;
+  }
+
+  if (activeModule === "benchmark") {
+    return <BenchmarkModule />;
   }
 
   const moduleNames: Record<string, { name: string; session: string; desc: string }> = {

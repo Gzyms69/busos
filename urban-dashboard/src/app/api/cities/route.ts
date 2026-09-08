@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
-import { fetchCities } from '@/lib/api-client';
+import { fetchCities } from '@/lib/api';
 
 export async function GET() {
   try {

@@ -1,17 +1,48 @@
 # BusOS Spatial Platform — Caddyfile
-# Auto-SSL via Let's Encrypt for custom domain, nip.io wildcard, and direct HTTP
+# Auto-SSL via Let's Encrypt for custom domain
+# Defense-in-depth: Bot blocking, HTTPS enforcement, Security Headers
 
-api.busos.czerwinskidawid.pl, busos.duckdns.org, 141.147.13.101.nip.io, :80 {
-    reverse_proxy busos-api:8000
+api.busos.czerwinskidawid.pl, busos.duckdns.org {
+    # 1. Block automated vulnerability scanners & aggressive scraper libraries
+    @bad_bots {
+        header_regexp User-Agent "(?i)(sqlmap|nikto|masscan|nmap|zgrab|censys|shodan|acunetix|nessus|dirbuster|gobuster|scrapy)"
+        header_regexp User-Agent "(?i)(python-requests|aiohttp|urllib|libwww)"
+    }
+    @empty_ua {
+        not header User-Agent *
+    }
+    respond @bad_bots "Access Denied by Security Policy" 403
+    respond @empty_ua "Bad Request: Missing User-Agent" 400
 
+    # 2. Limit request body size to 1MB
+    request_body {
+        max_size 1MB
+    }
+
+    # 3. Reverse proxy to FastAPI with real client IP headers
+    reverse_proxy busos-api:8000 {
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+    }
+
+    # 4. Strict Security Headers
     header {
-        X-Content-Type-Options nosniff
-        X-Frame-Options DENY
-        Referrer-Policy strict-origin-when-cross-origin
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "geolocation=(), camera=(), microphone=()"
+        -Server
     }
 
     log {
         output stdout
         format console
     }
+}
+
+# Redirect HTTP to HTTPS immediately
+:80 {
+    redir https://{host}{uri} permanent
 }

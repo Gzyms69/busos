@@ -1,4 +1,5 @@
 from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel, Field
 
 
@@ -208,7 +209,7 @@ class TransitDesertsResponse(BaseModel):
 class SimilarHubRequest(BaseModel):
     hub_id: str
     city: str
-    top_k: int = Field(5, description="Number of top similar hubs to return")
+    top_k: int = Field(5, ge=1, le=50, description="Number of top similar hubs to return (1-50)")
 
 
 # ==============================================================================

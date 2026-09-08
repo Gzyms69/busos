@@ -279,61 +279,51 @@
 
 ---
 
-## 4. Action Items dla Kolejnej Sesji (Sprint 4.3: Rynek Nieruchomości, AI Radar, Mobilny Sheet & Wydanie)
-
-> **Główny dokument SSOT:** [`PLAN_FRONTEND.md`](PLAN_FRONTEND.md) (Sekcja 1: Podsesja 4.3 oraz specyfikacja tras Grupy 5, 6, 8, 9).
-
-1. **Krok 1: Moduł 5 — Market Intel (Wycena RCN & Mostek DuckDB)**:
-   - `MarketIntelModule.tsx`: Podgląd transakcji notarialnych RCN (`/api/v1/market/transactions`), wykres kwartalnych trendów cenowych 2020–2026 (`/api/v1/market/trends`) oraz analiza cen w heksach H3 (`/api/v1/market/h3-analysis`).
-2. **Krok 2: Moduł 6 — Benchmarking Krajowy (Leaderboard 30 Miast)**:
-   - `BenchmarkingModule.tsx`: Ogólnopolski ranking 30 aglomeracji (`/api/v1/analytics/national-ranking`), porównywarka side-by-side dwóch miast (`/api/v1/analytics/compare-cities`) oraz rozkład kwantylowy metryk (`/api/v1/analytics/metric-distribution`).
-3. **Krok 3: Dolny Inspektor 360° Profilu Obiektu**:
-   - `ObjectInspector360.tsx`: Asynchroniczny podgląd profilu klikniętego słupka (`/stops/{id}`), węzła (`/hubs/{id}`) lub heksa (`/hexagons/{id}/profile`), kafelki 4 filarów, lista słupków składowych (`POST /stops/batch`).
-4. **Krok 4: Integracja AI Radar (Qdrant Vector Similarity)**:
-   - `AiRadarWidget.tsx`: Wyszukiwanie podobieństwa wektorowego profilu Stop DNA w skali kraju (`POST /api/v1/ai/similar-hubs`).
-5. **Krok 5: Mobile Adaptive Bottom Sheet & Responsywność**:
-   - `MobileBottomSheet.tsx`: Adaptacyjny dolny arkusz (`vaul` / `motion`) z 3 snap-pointami (72px collapsed / 45% preview / 90% expanded) dla urządzeń mobilnych.
-6. **Krok 6: Usunięcie Legacy Kodu i Finalne Wydanie**:
-   - Usunięcie starych komponentów (`src/components/MapContainer.tsx`, `LeftSidebar.tsx`, `RightPanel.tsx`, stary `api-client.ts`).
-   - Weryfikacja jakościowa (TypeScript 0 błędów, Next.js build < 5s, Pytest 104/104 PASSED), aktualizacja SSOT, git commit i push na `main`.
+#### Task 12 (Sprint 4.3): Rynek Nieruchomości RCN, AI Radar, Benchmarking Krajowy, Dolny Inspektor 360° & Mobile Adaptive Sheet
+- **Status:** `[DONE]` (Zrealizowano 2026-09-08)
+- **Zrealizowany zakres:**
+  1. **Moduł 5: Market Intel (`src/components/modules/market/`):**
+     - `MarketKpiCards.tsx`: 4 kafelki KPI (Mediana cen m², Średnia IQR, Wolumen, Korytarz rynkowy) zasilane z `/api/v1/market/summary`.
+     - `PriceTrendsChart.tsx`: Wykres szeregów czasowych 2020–2026 (Recharts ComposedChart: pasmo kwartyli Q1–Q3, mediana cen, wolumen na osi pomocniczej, filtry interwału i typu rynku).
+     - `StopsValuationGrid.tsx`: Wirtualizowana `Table2` wycen przy słupkach zasilana z mostka DuckDB (<15ms), z wyszukiwarką, sortowaniem, filtrem rynku, centrowaniem mapy i eksportem.
+     - `TransactionsRankingGrid.tsx`: Wirtualizowana `Table2` pojedynczych aktów notarialnych RCN z paginacją, sortowaniem i centrowaniem mapy.
+     - `MarketH3AnalysisCard.tsx`: Wykres 6 przedziałów cenowych w komórkach Uber H3 Res 8 oraz współczynnik korelacji Pearsona z podażą transportu.
+     - `MarketModule.tsx`: Główny kontener modułu z 3 sub-zakładkami.
+  2. **Moduł 6: Benchmarking Krajowy (`src/components/modules/benchmark/`):**
+     - `NationalLeaderboardGrid.tsx`: Ogólnopolska tablica liderów dla 30 miast, słupków, hubów i heksów z przyciskiem natychmiastowego przełączenia aktywnej aglomeracji.
+     - `CityComparisonView.tsx`: Narzędzie porównywarki side-by-side dwóch aglomeracji zasilane z `/api/v1/analytics/compare-cities` z automatycznymi tagami delta (`+X%` / `-Y%`).
+     - `MetricDistributionWidget.tsx`: Rozkład kwantylowy i 10-bin histogram empiryczny wybranej metryki (miasto vs cała Polska) z pionową linią mediany.
+     - `BenchmarkModule.tsx`: Główny kontener modułu z 3 sub-zakładkami.
+  3. **Dolny Inspektor 360° Profilu Obiektu (`src/components/foundry/ObjectInspector.tsx`):**
+     - Asynchroniczny panel 360° montowany w centralnym widoku mapy z przełącznikiem wysokości (250px Compact / 480px Expanded) oraz kafelkami 4 filarów Stop DNA.
+     - Dla słupka: kafelki 4 filarów, osiągalność 1-hop (`/routes/stop/{id}/destinations`), linie GTFS (`/routes/stop/{id}`) oraz okoliczne transakcje notarialne w buforze 500m (`/market/stop/{id}/transactions`).
+     - Dla huba: karta huba, masowy lookup fizycznych słupków składowych (`POST /stops/batch`) z ich udziałem `stop_hub_share` oraz wbudowany AI Radar.
+     - Dla heksa: metryki siatki H3 Res 8, populacja GUS 250m, wycena mieszkań RCN, flaga pustyni TDI i lista słupków w komórce.
+  4. **Integracja AI Radar (`src/components/foundry/AiRadarWidget.tsx`):**
+     - Wyszukiwanie 5 najbardziej zbliżonych węzłów w Polsce w oparciu o wektory cech Stop DNA i cosinusowy dystans w Qdrant (`POST /api/v1/ai/similar-hubs`).
+     - Paski dopasowania procentowego (np. `98.4%`) oraz przycisk bezpośredniego skoku do bliźniaczego węzła.
+  5. **Mobile Adaptive Bottom Sheet & Nawigacja Dotykowa (`src/components/mobile/`):**
+     - `AdaptiveBottomSheet.tsx`: 3-stopniowy dolny arkusz gestowy (72px Peek / 45vh Half / 88vh Full) dla ekranów mobilnych (<768px).
+     - `MobileSegmentedNav.tsx`: Dotykowy pasek 6 modułów o wysokości min. 44px (zgodność z WCAG 2.1/2.2 AA).
+     - `FoundryShell.tsx`: Responsywny router przełączający dynamicznie pomiędzy trójstrefowym layoutem Foundry na desktopie a mobilnym ekranem z Bottom Sheet.
+  6. **Czyszczenie Kodu Legacy & Trasy App Router:**
+     - Zaktualizowano wszystkie trasy w `src/app/api/*/route.ts` bezpośrednio z `@/lib/api`.
+     - Usunięto zbędne pliki pomostowe `urban-dashboard/src/lib/api-client.ts` oraz `urban-dashboard/src/lib/store.ts`.
+- **Dowody Weryfikacji (100% Green):**
+  - `npx tsc --noEmit`: **0 błędów**.
+  - `npm run build --prefix urban-dashboard`: **sukces w 4.8s** (Turbopack Next.js 16, < 5.0s quality gate).
+  - `uv run pytest backend/tests/ -v`: **109/109 testów PASSED w 23.46s** (w tym testy zabezpieczeń API i rate limitera).
 
 ---
 
-## 5. Handoff Bootstrap Prompt (Kopiuj-Wklej do Nowej Sesji)
-
-```markdown
-Kontynuujemy rozwój BusOS w NOWEJ SESJI (Sprint 4.3: Rynek Nieruchomości, AI Radar, Mobilny Sheet & Wydanie Produkcyjne).
-
-1. Załaduj wymagane skille poprzez fizyczne odczytanie (view_file):
-   - `.agents/skills/skill-codebase-onboarding/SKILL.md`
-   - `.agents/skills/spec-driven-development/SKILL.md`
-   - `.agents/skills/skill-frontend-architect/SKILL.md`
-   - `.agents/skills/skill-qa-engineer/SKILL.md`
-
-2. Przeczytaj pliki SSOT:
-   - `PLAN_FRONTEND.md` (Sekcja 1: Podsesja 4.3 oraz specyfikacja tras Grupy 5, 6, 8, 9)
-   - `PLAN.md` (Sekcja Sprint 4.3)
-   - `NEXT_SESSION_PLAN.md` (Sekcja 4: Zakres Sesji 4.3)
-   - `docs/contracts/DATA_DICTIONARY_AND_API_SSOT.md`
-
-3. Stan bazowy:
-   - Sprint 4.1 & 4.2 zakończone sukcesem: Czysty stack Blueprint v6, typowany klient dla 45 tras, Zustand Store, Command Palette, FoundryShell, CommandCenterModule, NetworkModule (StopsDataGrid, HubsDataGrid, PoiSearchOverlay), OptimizationModule (AxeListGrid, InvestmentGrid, wektory na Deck.gl), RoutesModule (RouteCatalogGrid, RouteStepperView, RouteSpeedGrid).
-   - Backend na OCI ARM64 w 100% online z 45 trasami.
-   - Testy bazowe: 104/104 Pytest PASSED (22.43s), frontend build PASSED w 3.9s (0 błędów TS).
-
-4. Pre-Flight Verification Command:
-   npm run build --prefix urban-dashboard && uv run pytest backend/tests/ -v
-
-5. Zakres do wdrożenia w Sesji 4.3:
-   - Krok 1: Moduł 5: Market Intel (Wyceny RCN, transakcje, trendy kwartalne 2020–2026, mostek DuckDB w 15ms).
-   - Krok 2: Moduł 6: Benchmarking Krajowy (Ogólnopolski Leaderboard 30 miast, porównywarka side-by-side, rozkład metryk).
-   - Krok 3: Dolny Inspektor 360° Profilu Obiektu (Asynchroniczny podgląd słupka/huba/heksa, kafelki 4 filarów, batch lookup).
-   - Krok 4: Integracja AI Radar (Qdrant Vector Similarity & Stop DNA wektory).
-   - Krok 5: Mobile Adaptive Bottom Sheet (vaul / motion z 3 snap-pointami).
-   - Krok 6: Usunięcie starych plików legacy, finalny audyt jakości (0 błędów TS, build < 5s, 104/104 Pytest), commit Git i push origin main.
-```
-
-
-
-
-
+## 4. Podsumowanie Realizacji Sprintu 4: Frontend Palantir Foundry Workspace
+- **100% zrealizowanych tras API**: Wszystkie 45 tras backendowych zostało zintegrowanych w nowoczesnym, modularnym interfejsie Foundry Workspace.
+- **Wszystkie 6 modułów analitycznych operacyjnych**:
+  1. Command Center (City Scorecard & KPI)
+  2. Network Explorer (Stops & Hubs DataGrids, POI search)
+  3. Optimization & Policy Audit (The Axe List TCRP 100, Investment Grid TDI, wektory na Deck.gl)
+  4. Route Analyzer (Katalog linii GTFS, stepper sekwencji z LRS, analiza prędkości handlowej)
+  5. Market Intel (Wyceny RCN, mostek DuckDB w 15ms, trendy 2020–2026, ranking transakcji)
+  6. Benchmarking Krajowy (Leaderboard 30 miast, porównywarka side-by-side, histogramy metryk)
+- **Kompletna integracja AI Radar** (wektory podobieństwa Stop DNA w skali kraju).
+- **Pełna adaptacja mobilna** (Bottom Sheet z 3 snap-pointami).

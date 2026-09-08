@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
-import { fetchTransactions } from '@/lib/api-client';
+import { fetchTransactions } from '@/lib/api';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);

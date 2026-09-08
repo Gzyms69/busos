@@ -12,6 +12,9 @@ import StatusBar from "./StatusBar";
 import AnalyticalWorkspace from "./AnalyticalWorkspace";
 import MapCanvas from "./MapCanvas";
 import CommandPalette from "./CommandPalette";
+import ObjectInspector from "./ObjectInspector";
+import AdaptiveBottomSheet from "@/components/mobile/AdaptiveBottomSheet";
+import MobileSegmentedNav from "@/components/mobile/MobileSegmentedNav";
 
 export default function FoundryShell() {
   const store = useFoundryStore();
@@ -19,6 +22,7 @@ export default function FoundryShell() {
 
   const [panelWidth, setPanelWidth] = useState<number>(540);
   const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
   const dragRef = useRef<{ startX: number; startWidth: number }>({
     startX: 0,
     startWidth: 540,
@@ -89,6 +93,16 @@ export default function FoundryShell() {
     };
   }, [isDragging]);
 
+  // Handle mobile detection (<768px)
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
   return (
     <div
       className="bp6-dark"
@@ -106,53 +120,72 @@ export default function FoundryShell() {
       {/* 1. Foundry Top Navbar (48px) */}
       <FoundryNavbar />
 
-      {/* 2. Central Split Layout */}
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
-        {/* Left: Map Canvas */}
-        <div style={{ flex: 1, height: "100%", position: "relative" }}>
-          <MapCanvas />
+      {/* 2. Main Layout (Mobile vs Desktop) */}
+      {isMobile ? (
+        <div style={{ flex: 1, position: "relative", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+          {/* Map Canvas full screen */}
+          <div style={{ flex: 1, position: "relative", height: "100%" }}>
+            <MapCanvas />
+          </div>
+
+          {/* Mobile Gestural Bottom Sheet */}
+          <AdaptiveBottomSheet />
+
+          {/* Mobile Bottom Navigation Bar (54px) */}
+          <MobileSegmentedNav />
         </div>
+      ) : (
+        <>
+          {/* Central Split Layout for Desktop */}
+          <div
+            style={{
+              flex: 1,
+              display: "flex",
+              position: "relative",
+              overflow: "hidden",
+            }}
+          >
+            {/* Left: Map Canvas with Docked Object Inspector */}
+            <div style={{ flex: 1, height: "100%", position: "relative" }}>
+              <MapCanvas />
+              <ObjectInspector />
+            </div>
 
-        {/* Resizable Splitter */}
-        <div
-          onMouseDown={handleMouseDown}
-          style={{
-            width: 5,
-            cursor: "col-resize",
-            background: isDragging ? "#2b95d6" : "#242930",
-            borderLeft: "1px solid #2f343c",
-            borderRight: "1px solid #14171b",
-            zIndex: 15,
-            transition: isDragging ? "none" : "background 0.15s ease",
-          }}
-          title="Przeciągnij, aby zmienić szerokość panelu"
-        />
+            {/* Resizable Splitter */}
+            <div
+              onMouseDown={handleMouseDown}
+              style={{
+                width: 5,
+                cursor: "col-resize",
+                background: isDragging ? "#2b95d6" : "#242930",
+                borderLeft: "1px solid #2f343c",
+                borderRight: "1px solid #14171b",
+                zIndex: 15,
+                transition: isDragging ? "none" : "background 0.15s ease",
+              }}
+              title="Przeciągnij, aby zmienić szerokość panelu"
+            />
 
-        {/* Right: Analytical Workspace Panel */}
-        <div
-          style={{
-            width: panelWidth,
-            height: "100%",
-            background: "#1c2127",
-            overflow: "hidden",
-            display: "flex",
-            flexDirection: "column",
-            zIndex: 10,
-          }}
-        >
-          <AnalyticalWorkspace />
-        </div>
-      </div>
+            {/* Right: Analytical Workspace Panel */}
+            <div
+              style={{
+                width: panelWidth,
+                height: "100%",
+                background: "#1c2127",
+                overflow: "hidden",
+                display: "flex",
+                flexDirection: "column",
+                zIndex: 10,
+              }}
+            >
+              <AnalyticalWorkspace />
+            </div>
+          </div>
 
-      {/* 3. Bottom Status Bar (28px) */}
-      <StatusBar />
+          {/* 3. Bottom Status Bar (28px) */}
+          <StatusBar />
+        </>
+      )}
 
       {/* Global Spotlight Omnibar */}
       <CommandPalette />

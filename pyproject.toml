@@ -35,6 +35,7 @@ dependencies = [
     "duckdb>=1.5.5",
     "httpx>=0.28.1",
     "qdrant-client>=1.19.0",
+    "slowapi>=0.1.9",
 ]
 
 [project.optional-dependencies]

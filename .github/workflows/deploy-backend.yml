@@ -34,6 +34,7 @@ jobs:
             cd backend
             docker compose build --no-cache busos-api
             docker compose up -d busos-api
+            docker compose restart caddy
             
             echo "[+] Waiting for healthcheck..."
             sleep 3

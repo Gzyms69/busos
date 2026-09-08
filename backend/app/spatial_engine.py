@@ -1053,6 +1053,9 @@ MARKET_METRIC_MAP = {
 }
 
 
+ALLOWED_GRADES = {"A+", "A", "B", "C", "D", "E", "F"}
+
+
 def _parse_grades(grade_str: str) -> List[str]:
     """Parses comma-separated grade filter, correctly handling 'A+' when '+' was URL-decoded into space."""
     if not grade_str:
@@ -1064,7 +1067,7 @@ def _parse_grades(grade_str: str) -> List[str]:
             continue
         if (g.endswith(" ") or g.endswith("+") or "+" in g) and g_clean == "A":
             grades.append("A+")
-        else:
+        elif g_clean in ALLOWED_GRADES:
             grades.append(g_clean)
     return grades
 
@@ -1415,28 +1418,38 @@ def get_hexagons_ranking(
         raise FileNotFoundError(f"h3_grid.parquet not found for city '{city}'")
 
     where_clauses = []
+    params = [h3_file]
+
     if is_transit_desert is not None:
-        where_clauses.append(f"is_transit_desert = {str(is_transit_desert).lower()}")
+        where_clauses.append("is_transit_desert = ?")
+        params.append(bool(is_transit_desert))
     if has_rcn:
         where_clauses.append("rcn_median_price_m2 IS NOT NULL AND rcn_median_price_m2 > 0")
     if min_pop is not None:
-        where_clauses.append(f"pop_total >= {float(min_pop)}")
+        where_clauses.append("pop_total >= ?")
+        params.append(float(min_pop))
     if max_pop is not None:
-        where_clauses.append(f"pop_total <= {float(max_pop)}")
+        where_clauses.append("pop_total <= ?")
+        params.append(float(max_pop))
     if min_departures is not None:
-        where_clauses.append(f"total_departures_h >= {float(min_departures)}")
+        where_clauses.append("total_departures_h >= ?")
+        params.append(float(min_departures))
     if max_departures is not None:
-        where_clauses.append(f"total_departures_h <= {float(max_departures)}")
+        where_clauses.append("total_departures_h <= ?")
+        params.append(float(max_departures))
     if grade:
-        grades = [f"'{g}'" for g in _parse_grades(grade)]
+        grades = _parse_grades(grade)
         if grades:
-            where_clauses.append(f"max_stop_grade IN ({','.join(grades)})")
-
+            placeholders = ",".join(["?"] * len(grades))
+            where_clauses.append(f"max_stop_grade IN ({placeholders})")
+            params.extend(grades)
+        else:
+            where_clauses.append("1 = 0")
 
     where_sql = ("WHERE " + " AND ".join(where_clauses)) if where_clauses else ""
 
     db = duckdb.connect(":memory:")
-    total_count = db.execute(f"SELECT COUNT(*) FROM read_parquet('{h3_file}') {where_sql}").fetchone()[0]
+    total_count = db.execute(f"SELECT COUNT(*) FROM read_parquet(?) {where_sql}", params).fetchone()[0]
 
     query_sql = f"""
         SELECT 
@@ -1454,12 +1467,12 @@ def get_hexagons_ranking(
             poi_gravity_sum,
             transit_desert_index,
             is_transit_desert
-        FROM read_parquet('{h3_file}')
+        FROM read_parquet(?)
         {where_sql}
         ORDER BY {db_col} {order_dir_clean}
-        LIMIT {actual_limit} OFFSET {actual_offset}
+        LIMIT ? OFFSET ?
     """
-    rows = db.execute(query_sql).fetch_df().to_dict(orient="records")
+    rows = db.execute(query_sql, params + [actual_limit, actual_offset]).fetch_df().to_dict(orient="records")
     db.close()
 
     items = []

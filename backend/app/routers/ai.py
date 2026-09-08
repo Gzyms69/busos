@@ -1,16 +1,57 @@
 import os
 import sqlite3
-import numpy as np
-import httpx
 from typing import List
-from fastapi import APIRouter, HTTPException
+
+import httpx
+import numpy as np
 from app.schemas import SimilarHubRequest, SimilarHubResponse
 from app.spatial_engine import DATA_DIR
+from fastapi import APIRouter, HTTPException
 
 router = APIRouter(tags=["AI & Vector Search"])
 
 QDRANT_HOST = os.getenv("QDRANT_HOST", "qdrant")
 QDRANT_PORT = int(os.getenv("QDRANT_PORT", "6333"))
+
+
+_EMBEDDINGS_CACHE: dict = {}
+
+
+def _get_embeddings_data(source_db: str, table_name: str):
+    mtime = os.path.getmtime(source_db)
+    if source_db in _EMBEDDINGS_CACHE:
+        cached_mtime, cached_df, cached_norm_matrix = _EMBEDDINGS_CACHE[source_db]
+        if cached_mtime == mtime:
+            return cached_df, cached_norm_matrix
+
+    con = sqlite3.connect(f"file:{source_db}?mode=ro", uri=True)
+    try:
+        import pandas as pd
+        df = pd.read_sql_query(f"SELECT * FROM {table_name}", con)
+    finally:
+        con.close()
+
+    if df.empty:
+        return df, None
+
+    feat_cols = ["hub_infra_score", "hub_departures_h", "hub_pop_val", "hub_market_val"]
+    for c in feat_cols:
+        if c not in df.columns:
+            alt = c.replace("hub_", "")
+            if alt in df.columns:
+                df[c] = df[alt]
+            elif c.replace("departures_h", "departures") in df.columns:
+                df[c] = df[c.replace("departures_h", "departures")]
+            else:
+                df[c] = 0.0
+
+    matrix = df[feat_cols].fillna(0.0).values
+    norm = np.linalg.norm(matrix, axis=1, keepdims=True)
+    norm[norm == 0] = 1e-9
+    normalized_matrix = matrix / norm
+
+    _EMBEDDINGS_CACHE[source_db] = (mtime, df, normalized_matrix)
+    return df, normalized_matrix
 
 
 @router.post("/ai/similar-hubs", response_model=List[SimilarHubResponse])
@@ -38,16 +79,10 @@ async def search_similar_hubs(req: SimilarHubRequest):
     if not os.path.exists(source_db):
         raise HTTPException(status_code=404, detail=f"No Stop DNA database found for city '{req.city}'")
 
-    con = sqlite3.connect(f"file:{source_db}?mode=ro", uri=True)
     table_name = "master_stop_dna_poland" if os.path.exists(db_file) else "hubs"
-    
-    try:
-        import pandas as pd
-        df = pd.read_sql_query(f"SELECT * FROM {table_name}", con)
-    finally:
-        con.close()
+    df, normalized_matrix = _get_embeddings_data(source_db, table_name)
 
-    if df.empty:
+    if df is None or df.empty or normalized_matrix is None:
         return []
 
     # Find target hub
@@ -58,26 +93,7 @@ async def search_similar_hubs(req: SimilarHubRequest):
     if target_row.empty:
         raise HTTPException(status_code=404, detail=f"Hub '{req.hub_id}' not found in city '{req.city}'")
 
-    target = target_row.iloc[0]
-    
-    # Feature vector: [infra_score, transit_freq, pop_val, market_val]
     feat_cols = ["hub_infra_score", "hub_departures_h", "hub_pop_val", "hub_market_val"]
-    for c in feat_cols:
-        if c not in df.columns:
-            # Check aliases
-            alt = c.replace("hub_", "")
-            if alt in df.columns:
-                df[c] = df[alt]
-            elif c.replace("departures_h", "departures") in df.columns:
-                df[c] = df[c.replace("departures_h", "departures")]
-            else:
-                df[c] = 0.0
-
-    matrix = df[feat_cols].fillna(0.0).values
-    norm = np.linalg.norm(matrix, axis=1, keepdims=True)
-    norm[norm == 0] = 1e-9
-    normalized_matrix = matrix / norm
-
     t_vec = target_row[feat_cols].fillna(0.0).values[0]
     t_norm = np.linalg.norm(t_vec)
     if t_norm == 0:

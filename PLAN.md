@@ -275,10 +275,32 @@
       - `npx tsc --noEmit`: **0 błędów**.
       - `npm run build --prefix urban-dashboard`: **sukces w 3.9s** (Turbopack Next.js 16).
       - `uv run pytest backend/tests/ -v`: **104/104 testów PASSED w 22.43s**.
-  - **Sesja 4.3 (Rynki, AI & Mobile):** `[PLANNED]` Market Intel (mostek DuckDB RCN i trendy), Benchmarking Krajowy (leaderboard 30 miast, porównywarka side-by-side), Inspektor 360° (AI Radar Qdrant), Mobile Adaptive Bottom Sheet (`vaul` / `motion`), usunięcie legacy kodu i release.
+  - **Sesja 4.3 (Rynki, AI & Mobile):** `[DONE]` (Zrealizowano 2026-09-08)
+    * **Moduł 5: Market Intel (`MarketModule.tsx`):**
+      - `MarketKpiCards.tsx`: 4 kafelki KPI (Mediana cen m², Średnia IQR, Wolumen, Zakres rynkowy) zasilane z `/api/v1/market/summary`.
+      - `PriceTrendsChart.tsx`: Wykres szeregów czasowych 2020–2026 (Recharts ComposedChart: pasmo kwartyli Q1–Q3, mediana cen, wolumen na osi prawej, filtry interwału i rynku).
+      - `StopsValuationGrid.tsx`: Wirtualizowana `Table2` wycen przy słupkach z mostka DuckDB (<15ms), sortowaniem, filtrami i centrowaniem mapy.
+      - `TransactionsRankingGrid.tsx`: Wirtualizowana `Table2` pojedynczych aktów notarialnych RCN z paginacją i sortowaniem.
+      - `MarketH3AnalysisCard.tsx`: Wykres 6 przedziałów cenowych i korelacja Pearsona z transportem.
+    * **Moduł 6: Benchmarking Krajowy (`BenchmarkModule.tsx`):**
+      - `NationalLeaderboardGrid.tsx`: Ogólnopolska tablica liderów dla 30 miast, słupków, hubów i heksów z przyciskiem szybkiego przełączenia aglomeracji.
+      - `CityComparisonView.tsx`: Porównywarka side-by-side dwóch wybranych aglomeracji z tagami delta (`+X%` / `-Y%`).
+      - `MetricDistributionWidget.tsx`: Rozkład kwantylowy i 10-bin histogram empiryczny wybranej metryki (miasto vs cała Polska).
+    * **Dolny Inspektor 360° Profilu Obiektu (`ObjectInspector.tsx`):**
+      - Asynchroniczny panel 360° z kafelkami 4 filarów DNA, osiągalnością 1-hop, liniami GTFS oraz transakcjami RCN w buforze 500m.
+    * **Integracja AI Radar (`AiRadarWidget.tsx`):**
+      - Wyszukiwanie 5 bliźniaczych węzłów w skali kraju o najbardziej zbliżonym wektorze cech Stop DNA z bazy 28 317 hubów w Qdrant (`POST /api/v1/ai/similar-hubs`).
+    * **Mobile Adaptive Bottom Sheet (`AdaptiveBottomSheet.tsx`, `MobileSegmentedNav.tsx`):**
+      - 3-stopniowy arkusz gestowy (72px Peek / 45vh Half / 88vh Full) oraz dotykowa nawigacja (min 44x44px hit-targets WCAG AA).
+    * **Czyszczenie Legacy & Trasy Next.js:**
+      - Usunięto zbędne pliki pomostowe `api-client.ts`, `store.ts`. Zaktualizowano trasy App Router.
+    * **Dowody weryfikacji:**
+      - `npx tsc --noEmit`: **0 błędów**.
+      - `npm run build --prefix urban-dashboard`: **sukces w 4.8s** (Turbopack Next.js 16, < 5.0s quality gate).
+      - `uv run pytest backend/tests/ -v`: **109/109 testów PASSED w 23.46s**.
 
 ---
 
 ### Sprint 5: Integracja AI & Qdrant Vector Search
-- **Status:** `[PLANNED]` (Do wykonania w Sesji 6)
-- **Cel:** Uruchomienie wyszukiwania podobieństwa profilu Stop DNA w oparciu o wektory w Qdrant (`POST /api/v1/ai/similar-hubs`).
+- **Status:** `[DONE - SPRINT 4.3 AI RADAR INTEGRATED]`
+- **Cel:** Uruchomiono wyszukiwanie podobieństwa profilu Stop DNA w oparciu o wektory w Qdrant (`POST /api/v1/ai/similar-hubs`) z pełną integracją w interfejsie Foundry Workspace.

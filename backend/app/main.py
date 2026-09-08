@@ -1,22 +1,33 @@
-import time
 import os
+import time
 from contextlib import asynccontextmanager
+
 import duckdb
 import httpx
-from fastapi import FastAPI, Request, Query, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-
+from app import spatial_engine
+from app.routers import ai, analytics, hexagons, hubs, market, poi, routes, stops
 from app.schemas import (
-    HealthResponse,
     CitiesResponse,
     GeoJsonFeatureCollection,
+    HealthResponse,
 )
-from app import spatial_engine
-from app.routers import stops, hubs, hexagons, market, analytics, ai, poi, routes
-
+from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi.middleware.cors import CORSMiddleware
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
+from slowapi.util import get_remote_address
 
 QDRANT_HOST = os.getenv("QDRANT_HOST", "qdrant")
 QDRANT_PORT = int(os.getenv("QDRANT_PORT", "6333"))
+IS_PROD = os.getenv("ENVIRONMENT", "").lower() in ["production", "prod"]
+
+limiter = Limiter(
+    key_func=get_remote_address,
+    default_limits=["60/minute"],
+    headers_enabled=True,
+    storage_uri="memory://"
+)
 
 
 @asynccontextmanager
@@ -33,28 +44,45 @@ app = FastAPI(
     title="BusOS Spatial Intelligence Engine API",
     description="High-throughput spatial analytical API serving 30 Polish metropolitan hubs with DuckDB, GeoPackage, and GNN Vector Embeddings.",
     version="9.5.0",
-    docs_url="/docs",
-    redoc_url="/redoc",
+    docs_url=None if IS_PROD else "/docs",
+    redoc_url=None if IS_PROD else "/redoc",
+    openapi_url=None if IS_PROD else "/openapi.json",
     lifespan=lifespan
 )
 
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_middleware(SlowAPIMiddleware)
 
-# Open CORS policy for Vercel and local development
+
+ALLOWED_ORIGINS = [
+    "https://busos.czerwinskidawid.pl",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+# Strict CORS policy for Vercel and local development
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
+    allow_origins=ALLOWED_ORIGINS,
+    allow_origin_regex=r"^https:\/\/busos.*\.vercel\.app$",
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
+    max_age=86400,
 )
 
 
 @app.middleware("http")
-async def add_process_time_header(request: Request, call_next):
+async def add_process_time_and_cache_header(request: Request, call_next):
     start_time = time.perf_counter()
     response = await call_next(request)
     process_time_ms = (time.perf_counter() - start_time) * 1000
     response.headers["X-Process-Time-Ms"] = f"{process_time_ms:.2f}"
+
+    # Cache GET spatial responses in client browser to reduce repeat DoS pressure
+    if request.method == "GET" and not request.url.path.startswith("/health"):
+        response.headers.setdefault("Cache-Control", "public, max-age=3600, stale-while-revalidate=86400")
     return response
 
 
