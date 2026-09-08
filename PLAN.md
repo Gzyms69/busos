@@ -34,8 +34,8 @@
 ## 1. Rejestr Sprintów (Sprint Registry)
 
 ```
-[Sprint 0: Stabilizacja & H3] ──► [Sprint 1: Symetria Danych Potoku] ──► [Sprint 2: Modularne API] ──► [Sprint 3: Testy Pytest] ──► [Sprint 3.5: Universal Query Engine] ──► [Sprint 4: Palantir Blueprint UI]
-          [DONE]                                [DONE]                              [DONE]                          [DONE]                               [DONE]                           [NASTĘPNA SESJA]
+[Sprint 3.5: Universal API] ──► [Sprint 3.6: GTFS Routes & RCN Bridge] ──► [Sprint 3.7: Realistyczne Trasy & Mapa] ──► [Sprint 4: Palantir UI]
+           [DONE]                                    [DONE]                                     [NASTĘPNA SESJA]                     [PLANNED]
 ```
 
 ---
@@ -160,7 +160,58 @@
   - `uv run pytest backend/tests/ -v`: **78/78 testów PASSED w 19.52s** (100% zielone; 24/24 w `test_api_v1.py`).
   - Frontend build check: `npm run build --prefix urban-dashboard` przechodzi w **2.3s** (Turbopack, 0 błędów TypeScript).
 
+---
 
+### Sprint 3.6: GTFS Route Network & Pre-Materialized RCN Spatial Bridge (Definitive v6)
+- **Status:** `[DONE]` (Zrealizowano 2026-09-08, Commit `da2bc6c`)
+- **Cel:** Pełne wykorzystanie danych GTFS (ekstrakcja geometrii linii, sekwencji przystanków i grafu $u \to v$ z izolacją multi-feed), pre-materializowany most przestrzenny RCN (`stop_transactions_bridge.parquet`) oraz dynamiczne, sub-15ms zapytania w DuckDB z zachowaniem 100% transakcji od 2020 r.
+- **Wykonane zadania:**
+  1. **Dwupoziomowa Ekstrakcja GTFS (`scripts/pipeline/01b_extract_transit_routes.py`):**
+     - Canonical Trip Patterns z grupowaniem po `(feed_id, route_id, direction_id, pattern_hash)`.
+     - Multi-feed key isolation: `route_uid = f"{feed_id}_{route_id}"`.
+     - Obsługa Poziomu 1 (`shapes.txt` dla 23 miast) oraz Poziomu 2 (interpolacja przystankowa dla 7 miast).
+     - Czysty czas przejazdu netto: $\Delta t = \text{arrival}(v) - \text{departure}(u)$ (odrzucenie dwell time).
+     - Eksport: `transit_routes.gpkg`, `stop_route_matrix.parquet`, `transit_network_edges.parquet`.
+  2. **Normalizacja RCN & Koordynaty Parquet (`scripts/pipeline/10_unify_schemas.py`):**
+     - Rygorystyczny filtr jakościowy: `lok_funkcja == 'mieszkalna'`, `tran_rodzaj_trans == 'wolnyRynek'`.
+     - Ścisłe typowanie daty do kolumny `DATE`.
+     - Jawna ekstrakcja współrzędnych `lon`, `lat` i indeksu Uber H3 Res 8 przed usunięciem geometrii i zapisem do `transactions.parquet`.
+  3. **Zwektoryzowany Dystans GEOS & Mostek Parquet (`scripts/pipeline/15_compute_stop_dna.py`):**
+     - Jednorazowy offline spatial join w EPSG:2180.
+     - W pełni zwektoryzowane obliczanie dystansu w C/GEOS (`distance_m` w <0.2s zamiast pętli lambda).
+     - Fizyczne sortowanie `['stop_id', 'dok_data']` i `row_group_size=50000` pod sprzętowe Zone Maps w DuckDB.
+  4. **Metryczny BBox EPSG:2180 & Orkiestrator:**
+     - `02_collect_stops.py`: metryczny bufor 5 km w EPSG:2180 z automatyczną aktualizacją `config/extract_config.json`.
+     - `orchestrator.py`: dołączenie Kroku 01b (Krok 2) oraz Kroku 17 (`17_build_h3_grid.py --city all`).
+  5. **Serwis Domenowy DuckDB & Routery API:**
+     - `backend/app/domain/market_bridge.py`: dynamiczne składanie klauzuli `WHERE dok_data >= ?::DATE` bezpośrednio na `read_parquet(?)` (Zone Maps Predicate Pushdown).
+     - `backend/app/routers/routes.py`: `/api/v1/routes`, `/routes/geometry`, `/routes/stop/{id}`, `/routes/edges`.
+     - `backend/app/routers/market.py`: `/api/v1/market/stops-summary` (odpowiedź dla 10.4k słupków w 12 ms), `/stop/{id}/transactions`, `/h3-grid`.
+     - `backend/app/main.py`: rejestracja singletona DuckDB w cyklu życia FastAPI Lifespan.
+- **Dowody weryfikacji:**
+  - `uv run pytest backend/tests/ -v`: **89/89 testów PASSED w 19.81s** (100% green, 5 nowych dedykowanych plików testowych).
+  - `npm run build --prefix urban-dashboard`: sukces w **2.4s** (0 błędów TypeScript).
+  - Git Commit & Push: Commit `da2bc6c` na gałęzi `main`.
+
+---
+
+### Sprint 3.7: 100% Realistyczne Trasy (OSM Map-Matching) & Interaktywna Mapa Tras
+- **Status:** `[IN PROGRESS / NASTĘPNA SESJA]`
+- **Cel:** Maksymalnie realistyczna prezentacja tras autobusowych i tramwajowych na mapie BusOS (Deck.gl / MapLibre) z zachowaniem faktycznego przebiegu ulic i torowisk oraz sekwencją przystanków.
+- **Zakres:**
+  1. **Linear Referencing System (LRS) dla 23 miast z `shapes.txt`:**
+     - Obliczanie dokładnego dystansu drogowego wzdłuż geometrii trasy: $d_{\text{real}} = |\text{shape.project}(v) - \text{shape.project}(u)|$ w EPSG:2180.
+     - Obliczanie realnej prędkości handlowej $v = \frac{d}{t} \times 3.6$ (km/h) i zapis w `transit_network_edges.parquet`.
+  2. **OSM Transit Map-Matching (`01c_osm_transit_matcher.py` dla 7 miast bez shapes):**
+     - Trasowanie par przystanków po grafie drogowo-tramwajowym z `osm_bbox.pbf`.
+     - Generowanie syntetycznego, gładkiego śladu ulicznego i torowego (`synthetic_shapes.gpkg`).
+  3. **Backend API Route Details:**
+     - `GET /api/v1/routes/{route_uid}/details`: GeoJSON trasy, sekwencja przystanków z metrykami (czas dojazdu, odjazdy/h, ceny RCN).
+     - `GET /api/v1/routes/search`: wyszukiwarka i autouzupełnianie numerów linii.
+  4. **Interaktywny Komponent UI w `urban-dashboard`:**
+     - Warstwa `Deck.gl PathLayer` z oficjalnym kolorem linii (`route_color`), obwódką i animacją kierunku jazdy.
+     - Warstwa `Deck.gl ScatterplotLayer` z numerowanymi przystankami w kolejności jazdy.
+     - Panel boczny: statystyki linii (długość w km, czas przejazdu, prędkość handlowa), stepper przystankowy połączony z wycenami Stop DNA.
 
 ---
 

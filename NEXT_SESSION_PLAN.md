@@ -173,48 +173,80 @@
 4. **Mandat Gita**:
    - Każdy krok kończy się aktualizacją `PLAN.md`, `NEXT_SESSION_PLAN.md` oraz `git commit && git push origin main`.
 
+### Task 9 (Sprint 3.6 - Commit `da2bc6c`): GTFS Route Network & Pre-Materialized RCN Spatial Bridge (Definitive v6)
+- **Problem & Cele Rozwiązane:**
+  1. Wykorzystanie 100% danych GTFS: rekonstrukcja geometrii tras (`transit_routes.gpkg`), sekwencji przystanków (`stop_route_matrix.parquet`) oraz topologicznego grafu przesiadkowego (`transit_network_edges.parquet`).
+  2. Izolacja multi-feed GTFS (`route_uid = f"{feed_id}_{route_id}"`) i eliminacja kolizji linii o tych samych numerach u różnych przewoźników aglomeracji.
+  3. Czysty czas przejazdu $u \to v$: $\Delta t = \text{arrival}(v) - \text{departure}(u)$ (eliminacja dwell time na przystanku docelowym).
+  4. 100% retencji transakcji RCN od 2020 r. na backendzie z sub-15ms czasem odpowiedzi bez geometrycznych przecięć w runtime HTTP.
+  5. Rygorystyczny filtr jakościowy lokali mieszkalnych na wolnym rynku (`lok_funkcja == 'mieszkalna'`, `tran_rodzaj_trans == 'wolnyRynek'`) odrzucający garaże i wykupy bonifikatowe.
+  6. Jawna ekstrakcja współrzędnych `lon`, `lat` i indeksu Uber H3 Res 8 w `transactions.parquet`.
+  7. Zwektoryzowany dystans C/GEOS w `15_compute_stop_dna.py` oraz fizyczne sortowanie `['stop_id', 'dok_data']` z `row_group_size=50000` pod sprzętowe Zone Maps w DuckDB.
+  8. Metryczny bufor BBox w EPSG:2180 (5 km) z auto-synchronizacją `config/extract_config.json` w `02_collect_stops.py`.
+  9. Integracja orkiestratora: włączenie Kroku 01b i Kroku 17 do głównej pętli potoku w `orchestrator.py`.
+  10. Serwis domenowy DuckDB (`market_bridge.py`) z dynamicznym składaniem `WHERE dok_data >= ?::DATE` bezpośrednio na `read_parquet(?)` (brak race conditions, czysty Predicate Pushdown).
+  11. Nowe routery API: `/routes` (lista linii, GeoJSON geometrii, rozkłady per słupek, krawędzie grafu) oraz `/market` (`/market/stops-summary`, `/market/stop/{id}/transactions`, `/market/h3-grid`).
+  12. FastAPI Lifespan singleton DuckDB w `main.py`.
+- **Dowody Weryfikacji (100% Green):**
+  - `uv run pytest backend/tests/ -v`: **89/89 testów PASSED w 19.81s** (100% sukces, 5 dedykowanych nowych plików testowych).
+  - `npm run build --prefix urban-dashboard`: sukces w **2.4s** (0 błędów TypeScript).
+  - Git Commit & Push: Commit `da2bc6c` na gałęzi `main`.
+
 ---
 
-## 4. Action Items dla Kolejnej Sesji (Sprint 4: Palantir Foundry UI & Blueprint.js)
+## 4. Action Items dla Kolejnej Sesji (Sprint 3.7: 100% Realistyczne Trasy & Interaktywna Mapa)
 
-1. **Krok 1: Instalacja i konfiguracja Blueprint.js we frontendzie**:
-   - Instalacja pakietów `@blueprintjs/core@^6.16.0`, `@blueprintjs/table`, `@blueprintjs/icons`, `@blueprintjs/select`.
-   - Konfiguracja motywu Blueprint Dark Theme zintegrowanego z Tailwind CSS i ciemną paletą BusOS.
-2. **Krok 2: Foundry Split View (Deck.gl 3D + DataGrid)**:
-   - Podział ekranu: lewa strona mapa Deck.gl (komórki H3 / węzły / słupki), prawa strona interaktywny DataGrid.
-   - Dwustronna interakcja: kliknięcie w wiersz tabeli centruje kamerę mapy na obiekcie; kliknięcie na mapie podświetla i przewija do rekordu w tabeli.
-3. **Krok 3: Dedykowane Widoki Analityczne**:
-   - Widok **"The Axe List"**: tabela słupków z audytu TCRP Report 100 ($R \ge 0.70$) z metrykami oszczędności wozokilometrów i kanibalizacji.
-   - Widok **"The Investment List"**: ranking Pustyń Transportowych (heksy H3 z wysokim TDI, gęstą populacją i zerową obsługą).
-   - Widok **"Real Estate Correlation"**: korelacja cen mieszkań RCN z oceną Stop DNA.
-   - Widok **"POI Attractors"**: topowe magnesy miejskie z wagami grawitacji Huffa.
-4. **Krok 4: Weryfikacja jakościowa & Git Mandate**:
+1. **Krok 1: Linear Referencing System (LRS) w Krok 01b (23 Miasta z `shapes.txt`)**:
+   - Obliczanie dokładnego dystansu drogowego/torowego wzdłuż trasy w EPSG:2180: $d_{\text{real}} = |\text{shape.project}(v) - \text{shape.project}(u)|$.
+   - Wyliczenie prędkości handlowej $v_{\text{kmh}} = \frac{d_{\text{real}} / 1000}{t / 3600}$ i zapis kolumn `distance_m`, `speed_kmh`, `is_distance_real` w `transit_network_edges.parquet`.
+2. **Krok 2: Silnik Rekonstrukcji Geometrii OSM (`01c_osm_transit_matcher.py` dla 7 miast bez shapes)**:
+   - Budowa grafu drogowo-tramwajowego z `osm_bbox.pbf`.
+   - Trasowanie par przystanków i generowanie ciągłego, gładkiego śladu ulicznego `synthetic_shapes.gpkg` dla Bydgoszczy, Lublina, Olsztyna, Elbląga, Giżycka, Łomży i Świnoujścia.
+3. **Krok 3: Rozszerzenie Backend API dla Tras**:
+   - `GET /api/v1/routes/{route_uid}/details`: GeoJSON geometrii, sekwencja przystanków z metrykami (czas dojazdu, odjazdy/h, wyceny mieszkań RCN).
+   - `GET /api/v1/routes/search`: autouzupełnianie numeru linii w UI.
+4. **Krok 4: Interaktywna Wizualizacja Trasy na Mapie w `urban-dashboard`**:
+   - Warstwa `Deck.gl PathLayer` w oficjalnym kolorze przewoźnika (`route_color`) z obwódką i animacją kierunku jazdy.
+   - Warstwa `Deck.gl ScatterplotLayer` z numerowanymi przystankami w kolejności trasy.
+   - Panel boczny: statystyki linii (długość km, czas jazdy, prędkość handlowa) oraz stepper przystankowy powiązany z wycenami Stop DNA.
+5. **Krok 5: Weryfikacja jakościowa & Git Mandate**:
+   - `uv run pytest backend/tests/ -v` (100% green).
    - `npm run build --prefix urban-dashboard` (<3s, 0 błędów TS).
-   - Git commit & push do `origin/main`.
+   - Commit & push do `origin/main`.
 
 ---
 
 ## 5. Handoff Bootstrap Prompt (Kopiuj-Wklej do Nowej Sesji)
 
 ```markdown
-Kontynuujemy rozwój BusOS w NOWEJ SESJI zgodnie ze standardem PLAN.md (Sprint 4: Palantir Foundry UI & Blueprint.js).
+Kontynuujemy rozwój BusOS w NOWEJ SESJI zgodnie ze standardem PLAN.md (Sprint 3.7: 100% Realistyczne Trasy Komunikacji Miejskiej & Interaktywna Mapa w Dashboardzie).
 
-1. Załaduj wymagane skille: `spec-driven-development`, `skill-frontend-architect`, `skill-design-engineering`, `skill-qa-engineer`.
+1. Załaduj wymagane skille:
+   `view_file` na:
+   - `.agents/skills/skill-codebase-onboarding/SKILL.md`
+   - `.agents/skills/spec-driven-development/SKILL.md`
+   - `.agents/skills/skill-backend-architect/SKILL.md`
+   - `.agents/skills/skill-frontend-architect/SKILL.md`
+   - `.agents/skills/skill-qa-engineer/SKILL.md`
 2. Przeczytaj pliki SSOT:
    - `PLAN.md`
    - `NEXT_SESSION_PLAN.md`
    - `docs/contracts/DATA_DICTIONARY_AND_API_SSOT.md`
-3. Stan bazowy po Sprincie 3.5:
-   - Kompletny silnik zapytań backendu FastAPI zoptymalizowany pod kątem swobodnych rankingów (`/stops/ranking`, `/hubs/ranking`, `/hexagons/ranking`, `/market/transactions/ranking`), profilu 360° heksa H3, modułu POI (`/poi/magnets`, `/poi/categories`), karty audytowej miasta (`/analytics/audit-summary?include=...`) i tablicy liderów (`/analytics/national-ranking`).
-   - Pełny pakiet testów Pytest: 78/78 PASSED w 19.52s.
-   - Frontend Next.js: buduje się w 2.3s (0 błędów TypeScript).
+3. Stan bazowy po Sprincie 3.6 (Commit `da2bc6c`):
+   - Wdrożony i przetestowany potok `01b_extract_transit_routes.py` (izolacja multi-feed, canonical patterns, shapes + fallback, pure travel time).
+   - Wdrożony znormalizowany zbiór RCN (`10_unify_schemas.py`) oraz posortowany mostek `stop_transactions_bridge.parquet` (`15_compute_stop_dna.py`) z wektoryzacją C/GEOS i Zone Maps.
+   - Serwis DuckDB `market_bridge.py` z dynamicznym `WHERE` (<15ms zapytania).
+   - Routery `/routes` i `/market` w FastAPI.
+   - Testy: 89/89 Pytest PASSED, Next.js build PASSED (0 błędów TS).
 4. Pre-Flight Verification Command:
    `npm run build --prefix urban-dashboard && uv run pytest backend/tests/ -v`
-5. Cel sesji (Sprint 4): Przebudowa interfejsu analitycznego na styl Palantir Foundry z wykorzystaniem `@blueprintjs/core` i `@blueprintjs/table`:
-   - Dwudzielny layout split (Deck.gl 3D po lewej, zaawansowany DataGrid po prawej).
-   - Widoki analityczne dla audytu: The Axe List (TCRP 100), The Investment List (Pustynie Transportowe), Transakcje RCN, Magnesy POI.
-   - Dwukierunkowa synchronizacja mapa <-> tabela (hover, click, flyTo).
-   - Weryfikacja: `npm run build --prefix urban-dashboard` (<3s, 0 błędów TS), testy przeglądarkowe, git commit i push do `origin/main`.
+5. Cel sesji (Sprint 3.7):
+   Wdrożenie 100% realistycznego wyświetlania tras autobusowych i tramwajowych na mapie BusOS (Deck.gl / MapLibre) tak jak jeżdżą pojazdy w rzeczywistości:
+   - Krok 1: Linear Referencing System (LRS w EPSG:2180) w `01b_extract_transit_routes.py` dla 23 miast z `shapes.txt` (dystans drogowy w metrach, prędkość handlowa km/h w `transit_network_edges.parquet`).
+   - Krok 2: OSM Transit Map-Matching (`01c_osm_transit_matcher.py`) dla 7 miast bez shapes (Bydgoszcz, Lublin, Olsztyn etc.) z plików `osm_bbox.pbf`.
+   - Krok 3: API `GET /api/v1/routes/{route_uid}/details` i `/search`.
+   - Krok 4: Frontend UI w `urban-dashboard`: Deck.gl PathLayer + numerowane przystanki + boczny panel ze stepperem przystanków i Stop DNA.
+   - Krok 5: Weryfikacja (Pytest + TypeScript) oraz git commit i push do origin/main.
 ```
 
 
