@@ -3,6 +3,9 @@
 import React from "react";
 import { useFoundryStore } from "@/lib/store";
 import CommandCenterModule from "@/components/modules/command-center/CommandCenterModule";
+import NetworkModule from "@/components/modules/network/NetworkModule";
+import OptimizationModule from "@/components/modules/optimization/OptimizationModule";
+import RoutesModule from "@/components/modules/routes/RoutesModule";
 import EmptyStateView from "@/components/shared/EmptyStateView";
 
 export default function AnalyticalWorkspace() {
@@ -10,6 +13,18 @@ export default function AnalyticalWorkspace() {
 
   if (activeModule === "command-center") {
     return <CommandCenterModule />;
+  }
+
+  if (activeModule === "network") {
+    return <NetworkModule />;
+  }
+
+  if (activeModule === "optimization") {
+    return <OptimizationModule />;
+  }
+
+  if (activeModule === "routes") {
+    return <RoutesModule />;
   }
 
   const moduleNames: Record<string, { name: string; session: string; desc: string }> = {

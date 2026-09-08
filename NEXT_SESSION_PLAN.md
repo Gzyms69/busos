@@ -253,36 +253,56 @@
   - `npm run build --prefix urban-dashboard`: **sukces w 3.8s** (Turbopack Next.js 16).
   - `uv run pytest backend/tests/ -v`: **104/104 testów PASSED w 21.97s**.
 
+### Task 7 (Sprint 4.2): Silniki Analityczne DataGrids & Policy Audit
+- **Moduł 2: Network Explorer (`NetworkModule.tsx`)**:
+  - Pod-zakładki "Słupki Fizyczne (Micro)" i "Węzły Logiczne (Macro)".
+  - `StopsDataGrid.tsx`: Wirtualizowana tabela `@blueprintjs/table` `Table2` dla 60k słupków z sortowaniem po 53 metrykach, `JumpToRankInput` (#Rank), selekcją wierszy, dynamicznym centrowaniem mapy i wskaźnikami GradeBadge.
+  - `HubsDataGrid.tsx`: Wirtualizowana tabela `Table2` dla 28k węzłów ze wskaźnikami konsolidacji, filtrem `min_stops`, percentylem ogólnokrajowym i liczbą linii.
+  - `PoiSearchOverlay.tsx`: Wyszukiwarka POI w nagłówku tabeli z DuckDB predicate pushdown (`/api/v1/poi/search`), debounce 250ms i centrowaniem mapy na wybranym obiekcie.
+  - `FilterPillsBar.tsx`: Pasek aktywnych filtrów z możliwością usuwania pojedynczych filtrów i czyszczenia całości.
+  - `DataExportMenu.tsx`: Eksport danych z wirtualizowanej tabeli do CSV i JSON.
+- **Moduł 3: Optimization & Policy Audit (`OptimizationModule.tsx`)**:
+  - `AxeListGrid.tsx`: Audyt redukcji zbędnych słupków TCRP 100 ze suwakiem progu ($0.50, 0.70, 0.90$), kalkulatorem oszczędności budżetowych PLN (~12 000 PLN/słupek/rok) oraz wyborem pary do wizualizacji wektora kolizji na mapie.
+  - `MapCanvas.tsx`: Warstwa Deck.gl `cannibalization-vector` (PathLayer + ScatterplotLayer markerów końcowych) dynamicznie renderująca czerwoną linię wektora kanibalizacji pomiędzy słupkiem usuwanym a dominującym.
+  - `InvestmentGrid.tsx`: Ranking komórek H3 Res 8 według Wskaźnika Pustyni Transportowej (TDI), liczby mieszkańców wykluczonych GUS i wycen mieszkań RCN.
+- **Moduł 4: Route Analyzer (`RoutesModule.tsx`)**:
+  - `RouteCatalogGrid.tsx`: Katalog linii GTFS z filtrami środków transportu (Autobus/Tramwaj/Kolej), taktu i prędkości.
+  - `RouteStepperView.tsx`: Wertykalna oś czasu przystanków na linii z LRS, czasem netto $\Delta t$ i prędkościami handlowymi.
+  - `RouteSpeedGrid.tsx`: Tabela krawędzi skierowanych $u \to v$ z `transit_network_edges.parquet` z alertami wąskich gardeł (<15 km/h).
+- **Zustand Store & Formatters**:
+  - Dodano `selectedAxePair` i `setSelectedAxePair` w `selection-slice.ts`.
+  - Utworzono moduł formatowania `formatters.ts` (PLN, km/h, m, czas, CSV/JSON export).
+- **Dowody Weryfikacji (100% Green):**
+  - `npx tsc --noEmit`: **0 błędów**.
+  - `npm run build --prefix urban-dashboard`: **sukces w 3.9s** (Turbopack Next.js 16).
+  - `uv run pytest backend/tests/ -v`: **104/104 testów PASSED w 22.43s**.
+
 ---
 
-## 4. Action Items dla Kolejnej Sesji (Sprint 4.2: Silniki Analityczne DataGrids & Policy Audit)
+## 4. Action Items dla Kolejnej Sesji (Sprint 4.3: Rynek Nieruchomości, AI Radar, Mobilny Sheet & Wydanie)
 
-> **Główny dokument SSOT:** [`PLAN_FRONTEND.md`](PLAN_FRONTEND.md) (Sekcja 1: Podsesja 4.2).
+> **Główny dokument SSOT:** [`PLAN_FRONTEND.md`](PLAN_FRONTEND.md) (Sekcja 1: Podsesja 4.3 oraz specyfikacja tras Grupy 5, 6, 8, 9).
 
-1. **Krok 1: Moduł 2 — Network Explorer (Wirtualizowany DataGrid Table2)**:
-   - `NetworkModule.tsx`: Kontener z pod-zakładkami "Słupki Fizyczne (Micro)" i "Węzły Logiczne (Macro)".
-   - `StopsDataGrid.tsx`: `@blueprintjs/table` `Table2` dla 60k słupków z sortowaniem po 53 metrykach, `JumpToRankInput` (#Rank) oraz wirtualizacją GPU.
-   - `HubsDataGrid.tsx`: `Table2` dla 28k węzłów ze wskaźnikami konsolidacji, filtrem `min_stops` i percentylem krajowym.
-   - `PoiSearchOverlay.tsx`: Wyszukiwarka POI w nagłówku tabeli z DuckDB predicate pushdown (`/poi/search`).
-   - `FilterPillsBar.tsx`: Pasek aktywnych filtrów z możliwością usuwania jednym kliknięciem.
-2. **Krok 2: Moduł 3 — Optimization & Policy Audit**:
-   - `OptimizationModule.tsx`: Kontener pod-zakładek "The Axe List" i "The Investment List".
-   - `AxeListGrid.tsx`: Redukcja zbędnych słupków TCRP 100 ze suwakiem progu ($0.50, 0.70, 0.90$) oraz kalkulatorem oszczędności PLN (~12 000 PLN/słupek/rok). Rysowanie czerwonych wektorów kanibalizacji na mapie.
-   - `InvestmentGrid.tsx`: Ranking pustyń transportowych TDI w komórkach H3 Res 8 z populacją wykluczoną i cenami mieszkań.
-3. **Krok 3: Moduł 4 — Route Analyzer (Katalog Linii i Sekwencja)**:
-   - `RoutesModule.tsx`: Przeglądarka sieci GTFS.
-   - `RouteCatalogGrid.tsx`: Tabela linii z filtrami typu transportu (Autobus/Tramwaj/Kolej), taktu szczytowego i prędkości.
-   - `RouteStepperView.tsx`: Wertykalna oś czasu przystanków z LRS, czasem netto $\Delta t$ i prędkościami handlowymi.
-   - `RouteSpeedGrid.tsx`: Analiza wąskich gardeł prędkości na krawędziach skierowanych $u \to v$.
-4. **Krok 4: Weryfikacja Jakościowa & Commit Sesji 4.2**:
-   - `tsc` 0 błędów, build < 5s, 104/104 Pytest PASSED, commit i handoff do Sesji 4.3.
+1. **Krok 1: Moduł 5 — Market Intel (Wycena RCN & Mostek DuckDB)**:
+   - `MarketIntelModule.tsx`: Podgląd transakcji notarialnych RCN (`/api/v1/market/transactions`), wykres kwartalnych trendów cenowych 2020–2026 (`/api/v1/market/trends`) oraz analiza cen w heksach H3 (`/api/v1/market/h3-analysis`).
+2. **Krok 2: Moduł 6 — Benchmarking Krajowy (Leaderboard 30 Miast)**:
+   - `BenchmarkingModule.tsx`: Ogólnopolski ranking 30 aglomeracji (`/api/v1/analytics/national-ranking`), porównywarka side-by-side dwóch miast (`/api/v1/analytics/compare-cities`) oraz rozkład kwantylowy metryk (`/api/v1/analytics/metric-distribution`).
+3. **Krok 3: Dolny Inspektor 360° Profilu Obiektu**:
+   - `ObjectInspector360.tsx`: Asynchroniczny podgląd profilu klikniętego słupka (`/stops/{id}`), węzła (`/hubs/{id}`) lub heksa (`/hexagons/{id}/profile`), kafelki 4 filarów, lista słupków składowych (`POST /stops/batch`).
+4. **Krok 4: Integracja AI Radar (Qdrant Vector Similarity)**:
+   - `AiRadarWidget.tsx`: Wyszukiwanie podobieństwa wektorowego profilu Stop DNA w skali kraju (`POST /api/v1/ai/similar-hubs`).
+5. **Krok 5: Mobile Adaptive Bottom Sheet & Responsywność**:
+   - `MobileBottomSheet.tsx`: Adaptacyjny dolny arkusz (`vaul` / `motion`) z 3 snap-pointami (72px collapsed / 45% preview / 90% expanded) dla urządzeń mobilnych.
+6. **Krok 6: Usunięcie Legacy Kodu i Finalne Wydanie**:
+   - Usunięcie starych komponentów (`src/components/MapContainer.tsx`, `LeftSidebar.tsx`, `RightPanel.tsx`, stary `api-client.ts`).
+   - Weryfikacja jakościowa (TypeScript 0 błędów, Next.js build < 5s, Pytest 104/104 PASSED), aktualizacja SSOT, git commit i push na `main`.
 
 ---
 
 ## 5. Handoff Bootstrap Prompt (Kopiuj-Wklej do Nowej Sesji)
 
 ```markdown
-Kontynuujemy rozwój BusOS w NOWEJ SESJI (Sprint 4.2: Silniki Analityczne DataGrids & Policy Audit).
+Kontynuujemy rozwój BusOS w NOWEJ SESJI (Sprint 4.3: Rynek Nieruchomości, AI Radar, Mobilny Sheet & Wydanie Produkcyjne).
 
 1. Załaduj wymagane skille poprzez fizyczne odczytanie (view_file):
    - `.agents/skills/skill-codebase-onboarding/SKILL.md`
@@ -291,24 +311,26 @@ Kontynuujemy rozwój BusOS w NOWEJ SESJI (Sprint 4.2: Silniki Analityczne DataGr
    - `.agents/skills/skill-qa-engineer/SKILL.md`
 
 2. Przeczytaj pliki SSOT:
-   - `PLAN_FRONTEND.md` (Sekcja 1: Podsesja 4.2 oraz specyfikacja tras Grupy 2, 3, 4, 7 i 8)
-   - `PLAN.md` (Sekcja Sprint 4.2)
-   - `NEXT_SESSION_PLAN.md` (Sekcja 4: Zakres Sesji 4.2)
+   - `PLAN_FRONTEND.md` (Sekcja 1: Podsesja 4.3 oraz specyfikacja tras Grupy 5, 6, 8, 9)
+   - `PLAN.md` (Sekcja Sprint 4.3)
+   - `NEXT_SESSION_PLAN.md` (Sekcja 4: Zakres Sesji 4.3)
    - `docs/contracts/DATA_DICTIONARY_AND_API_SSOT.md`
 
 3. Stan bazowy:
-   - Sprint 4.1 zakończony sukcesem: Czysty stack Blueprint v6, typowany klient dla 45 tras (`src/lib/api/`), Zustand Store z Session Cache, Command Palette (`Ctrl+K`), FoundryShell, CommandCenterModule oraz refaktoryzacja Deck.gl MapCanvas.
+   - Sprint 4.1 & 4.2 zakończone sukcesem: Czysty stack Blueprint v6, typowany klient dla 45 tras, Zustand Store, Command Palette, FoundryShell, CommandCenterModule, NetworkModule (StopsDataGrid, HubsDataGrid, PoiSearchOverlay), OptimizationModule (AxeListGrid, InvestmentGrid, wektory na Deck.gl), RoutesModule (RouteCatalogGrid, RouteStepperView, RouteSpeedGrid).
    - Backend na OCI ARM64 w 100% online z 45 trasami.
-   - Testy bazowe: 104/104 Pytest PASSED (21.97s), frontend build PASSED w 3.8s (0 błędów TS).
+   - Testy bazowe: 104/104 Pytest PASSED (22.43s), frontend build PASSED w 3.9s (0 błędów TS).
 
 4. Pre-Flight Verification Command:
    npm run build --prefix urban-dashboard && uv run pytest backend/tests/ -v
 
-5. Zakres do wdrożenia w Sesji 4.2:
-   - Krok 1: Moduł 2: Network Explorer (StopsDataGrid Table2 z wirtualizacją, HubsDataGrid z konsolidacją, PoiSearchOverlay z DuckDB pushdown, FilterPillsBar, JumpToRankInput).
-   - Krok 2: Moduł 3: Optimization & Policy (AxeListGrid TCRP 100 z suwakiem progu i kalkulatorem PLN, InvestmentGrid pustyń TDI, rysowanie par kanibalizujących na mapie).
-   - Krok 3: Moduł 4: Route Analyzer (RouteCatalogGrid katalogu GTFS, RouteStepperView sekwencji z LRS, RouteSpeedGrid prędkości na krawędziach).
-   - Krok 4: Weryfikacja jakościowa (TypeScript 0 błędów, Next.js build < 5s, Pytest 104/104 passed), commit Git i handoff do Sesji 4.3.
+5. Zakres do wdrożenia w Sesji 4.3:
+   - Krok 1: Moduł 5: Market Intel (Wyceny RCN, transakcje, trendy kwartalne 2020–2026, mostek DuckDB w 15ms).
+   - Krok 2: Moduł 6: Benchmarking Krajowy (Ogólnopolski Leaderboard 30 miast, porównywarka side-by-side, rozkład metryk).
+   - Krok 3: Dolny Inspektor 360° Profilu Obiektu (Asynchroniczny podgląd słupka/huba/heksa, kafelki 4 filarów, batch lookup).
+   - Krok 4: Integracja AI Radar (Qdrant Vector Similarity & Stop DNA wektory).
+   - Krok 5: Mobile Adaptive Bottom Sheet (vaul / motion z 3 snap-pointami).
+   - Krok 6: Usunięcie starych plików legacy, finalny audyt jakości (0 błędów TS, build < 5s, 104/104 Pytest), commit Git i push origin main.
 ```
 
 

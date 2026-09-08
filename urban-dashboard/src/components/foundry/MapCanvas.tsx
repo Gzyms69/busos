@@ -62,6 +62,7 @@ export default function MapCanvas() {
     h3Metric,
     selectObject,
     activeRouteUid,
+    selectedAxePair,
   } = useFoundryStore();
 
   const [boundary, setBoundary] = useState<any>(null);
@@ -302,6 +303,47 @@ export default function MapCanvas() {
       );
     }
 
+    // Layer 6: Selected Axe Pair Cannibalization Vector
+    if (selectedAxePair && stops?.features) {
+      const domFeature = stops.features.find(
+        (f: any) => String(f.properties?.stop_id) === String(selectedAxePair.dominant_stop_id)
+      );
+      if (domFeature?.geometry?.coordinates && selectedAxePair.lon && selectedAxePair.lat) {
+        const pRedundant = [selectedAxePair.lon, selectedAxePair.lat];
+        const pDominant = domFeature.geometry.coordinates;
+
+        list.push(
+          new PathLayer({
+            id: "cannibalization-vector",
+            data: [{ path: [pRedundant, pDominant] }],
+            getPath: (d: any) => d.path,
+            getColor: [219, 55, 55, 255],
+            getWidth: 4,
+            widthUnits: "pixels",
+            capRounded: true,
+            jointRounded: true,
+            pickable: false,
+          }),
+          new ScatterplotLayer({
+            id: "cannibalization-endpoints",
+            data: [
+              { pos: pRedundant, color: [219, 55, 55, 255], radius: 10 },
+              { pos: pDominant, color: [15, 153, 96, 255], radius: 12 },
+            ],
+            getPosition: (d: any) => d.pos,
+            getFillColor: (d: any) => d.color,
+            getRadius: (d: any) => d.radius,
+            radiusUnits: "pixels",
+            stroked: true,
+            getLineColor: [255, 255, 255, 255],
+            getLineWidth: 2,
+            lineWidthUnits: "pixels",
+            pickable: false,
+          })
+        );
+      }
+    }
+
     return list;
   }, [
     boundary,
@@ -309,6 +351,7 @@ export default function MapCanvas() {
     stops,
     hubs,
     routeGeo,
+    selectedAxePair,
     showBoundary,
     showHexagons,
     showStops,

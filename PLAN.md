@@ -243,7 +243,7 @@
 ---
 
 ### Sprint 4: Frontend Palantir Foundry UI & Blueprint.js (SSOT: PLAN_FRONTEND.md)
-- **Status:** `[IN PROGRESS - SPRINT 4.1 DONE]`
+- **Status:** `[IN PROGRESS - SPRINT 4.1 & 4.2 DONE]`
 - **Specyfikacja Główna (SSOT):** Pełny plan implementacyjny, kontrakty 45 tras API oraz architektura komponentów znajdują się w dedykowanym dokumencie [`PLAN_FRONTEND.md`](PLAN_FRONTEND.md).
 - **Architektura Wykonawcza (3 Logiczne Podsesje):**
   - **Sesja 4.1 (Fundament & Shell):** `[DONE]` (Zrealizowano 2026-09-08)
@@ -256,7 +256,25 @@
     * Moduł 1: Command Center (`CommandCenterModule`, `CityScorecardCards`, `GradeDistributionChart`, `CityMagnetsList`) zasilany z OCI ARM64.
     * Refaktoryzacja Deck.gl v9 `MapCanvas.tsx` z mini-HUD `MapHud.tsx`, ekstruzją 3D `H3HexagonLayer`, warstwami `ScatterplotLayer`, `PathLayer`, `GeoJsonLayer`.
     * Dowody weryfikacji: `tsc --noEmit` = 0 błędów, `npm run build` = sukces w 3.8s, `uv run pytest` = 104/104 PASSED.
-  - **Sesja 4.2 (Silniki Analityczne):** `[PLANNED]` Network Explorer (wirtualizowany DataGrid Table2 dla 60k słupków i 28k hubów), Optimization (The Axe List TCRP 100 + The Investment List TDI), Route Analyzer (stepper sekwencji GTFS z LRS, prędkości).
+  - **Sesja 4.2 (Silniki Analityczne DataGrids & Policy Audit):** `[DONE]` (Zrealizowano 2026-09-08)
+    * **Moduł 2: Network Explorer:**
+      - `StopsDataGrid.tsx`: Wirtualizowana tabela `@blueprintjs/table` `Table2` dla 60k słupków z sortowaniem po 53 metrykach, `JumpToRankInput` (#Rank), selekcją wierszy i centrowaniem mapy.
+      - `HubsDataGrid.tsx`: Wirtualizowana tabela `Table2` dla 28k węzłów ze wskaźnikami konsolidacji, filtrem `min_stops` i percentylem ogólnokrajowym.
+      - `PoiSearchOverlay.tsx`: Wyszukiwarka POI w nagłówku tabeli z DuckDB predicate pushdown (`/api/v1/poi/search`).
+      - `FilterPillsBar.tsx`: Pasek aktywnych filtrów z usuwaniem pojedynczych i czyszczeniem całości.
+      - `DataExportMenu.tsx`: Eksport danych do CSV i JSON bezpośrednio z nagłówka tabeli.
+    * **Moduł 3: Optimization & Policy Audit:**
+      - `AxeListGrid.tsx`: Audyt redukcji zbędnych słupków TCRP 100 z suwakiem progu ($0.50, 0.70, 0.90$) oraz kalkulatorem oszczędności PLN (~12 000 PLN/słupek/rok).
+      - `MapCanvas.tsx`: Warstwa `cannibalization-vector` (PathLayer + ScatterplotLayer markerów końcowych) renderująca czerwoną linię wektora między słupkiem zbędnym a dominującym.
+      - `InvestmentGrid.tsx`: Ranking pustyń transportowych TDI w komórkach H3 Res 8 z populacją wykluczoną GUS i wycenami RCN.
+    * **Moduł 4: Route Analyzer:**
+      - `RouteCatalogGrid.tsx`: Katalog linii GTFS z filtrami środków transportu (Autobus/Tramwaj/Kolej), taktu i prędkości.
+      - `RouteStepperView.tsx`: Wertykalna oś czasu przystanków z LRS, czasem netto $\Delta t$ i prędkościami handlowymi.
+      - `RouteSpeedGrid.tsx`: Analiza krawędzi $u \to v$ z `transit_network_edges.parquet` z alertami wąskich gardeł (<15 km/h).
+    * **Dowody weryfikacji:**
+      - `npx tsc --noEmit`: **0 błędów**.
+      - `npm run build --prefix urban-dashboard`: **sukces w 3.9s** (Turbopack Next.js 16).
+      - `uv run pytest backend/tests/ -v`: **104/104 testów PASSED w 22.43s**.
   - **Sesja 4.3 (Rynki, AI & Mobile):** `[PLANNED]` Market Intel (mostek DuckDB RCN i trendy), Benchmarking Krajowy (leaderboard 30 miast, porównywarka side-by-side), Inspektor 360° (AI Radar Qdrant), Mobile Adaptive Bottom Sheet (`vaul` / `motion`), usunięcie legacy kodu i release.
 
 ---

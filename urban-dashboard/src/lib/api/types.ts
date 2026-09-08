@@ -583,7 +583,9 @@ export interface StopDestinationsResponse {
 
 export interface NetworkEdgeItem {
   from_stop_id: string;
+  from_stop_name?: string;
   to_stop_id: string;
+  to_stop_name?: string;
   route_uid: string;
   direction_id: number;
   avg_travel_time_sec: number;

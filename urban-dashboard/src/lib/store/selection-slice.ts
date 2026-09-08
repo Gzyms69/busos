@@ -1,4 +1,5 @@
 import type { StateCreator } from "zustand";
+import type { AxeStopItem } from "@/lib/api/types";
 
 export type SelectionType = "stop" | "hub" | "hex" | "route" | null;
 
@@ -13,11 +14,15 @@ export interface SelectionSlice {
   activeDirectionId: number | null;
   activeRouteData: any | null;
 
+  // Selected Axe List pair for map vector
+  selectedAxePair: AxeStopItem | null;
+
   selectObject: (type: SelectionType, id: string | number | null, data?: any) => void;
   clearSelection: () => void;
   setInspectorOpen: (open: boolean) => void;
   setActiveRoute: (routeUid: string | null, directionId?: number | null) => void;
   setActiveRouteData: (data: any | null) => void;
+  setSelectedAxePair: (pair: AxeStopItem | null) => void;
 }
 
 export const createSelectionSlice: StateCreator<SelectionSlice, [], [], SelectionSlice> = (set) => ({
@@ -29,6 +34,7 @@ export const createSelectionSlice: StateCreator<SelectionSlice, [], [], Selectio
   activeRouteUid: null,
   activeDirectionId: null,
   activeRouteData: null,
+  selectedAxePair: null,
 
   selectObject: (type, id, data = null) =>
     set({
@@ -44,6 +50,7 @@ export const createSelectionSlice: StateCreator<SelectionSlice, [], [], Selectio
       selectedId: null,
       selectedData: null,
       isInspectorOpen: false,
+      selectedAxePair: null,
     }),
 
   setInspectorOpen: (open: boolean) =>
@@ -62,5 +69,10 @@ export const createSelectionSlice: StateCreator<SelectionSlice, [], [], Selectio
   setActiveRouteData: (data) =>
     set({
       activeRouteData: data,
+    }),
+
+  setSelectedAxePair: (pair) =>
+    set({
+      selectedAxePair: pair,
     }),
 });
