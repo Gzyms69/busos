@@ -30,6 +30,9 @@ export default function FoundryShell() {
 
   // Initialize store from URL and load baseline cities & health
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      (window as any).__FOUNDRY_STORE__ = useFoundryStore;
+    }
     initializeStoreFromUrl((updates) => {
       useFoundryStore.setState(updates);
     });
@@ -120,38 +123,25 @@ export default function FoundryShell() {
       {/* 1. Foundry Top Navbar (48px) */}
       <FoundryNavbar />
 
-      {/* 2. Main Layout (Mobile vs Desktop) */}
-      {isMobile ? (
-        <div style={{ flex: 1, position: "relative", overflow: "hidden", display: "flex", flexDirection: "column" }}>
-          {/* Map Canvas full screen */}
-          <div style={{ flex: 1, position: "relative", height: "100%" }}>
-            <MapCanvas />
-          </div>
-
-          {/* Mobile Gestural Bottom Sheet */}
-          <AdaptiveBottomSheet />
-
-          {/* Mobile Bottom Navigation Bar (54px) */}
-          <MobileSegmentedNav />
+      {/* 2. Main Layout (Unified Tree for MapCanvas WebGL Stability) */}
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        {/* Left / Full: Map Canvas with Docked Object Inspector */}
+        <div style={{ flex: 1, height: "100%", position: "relative", minHeight: 0 }}>
+          <MapCanvas />
+          {!isMobile && <ObjectInspector />}
         </div>
-      ) : (
-        <>
-          {/* Central Split Layout for Desktop */}
-          <div
-            style={{
-              flex: 1,
-              display: "flex",
-              position: "relative",
-              overflow: "hidden",
-            }}
-          >
-            {/* Left: Map Canvas with Docked Object Inspector */}
-            <div style={{ flex: 1, height: "100%", position: "relative" }}>
-              <MapCanvas />
-              <ObjectInspector />
-            </div>
 
-            {/* Resizable Splitter */}
+        {/* Desktop Splitter & Analytical Workspace */}
+        {!isMobile && (
+          <>
             <div
               onMouseDown={handleMouseDown}
               style={{
@@ -165,8 +155,6 @@ export default function FoundryShell() {
               }}
               title="Przeciągnij, aby zmienić szerokość panelu"
             />
-
-            {/* Right: Analytical Workspace Panel */}
             <div
               style={{
                 width: panelWidth,
@@ -180,12 +168,20 @@ export default function FoundryShell() {
             >
               <AnalyticalWorkspace />
             </div>
-          </div>
+          </>
+        )}
 
-          {/* 3. Bottom Status Bar (28px) */}
-          <StatusBar />
-        </>
-      )}
+        {/* Mobile Gestural Bottom Sheet & Nav */}
+        {isMobile && (
+          <>
+            <AdaptiveBottomSheet />
+            <MobileSegmentedNav />
+          </>
+        )}
+      </div>
+
+      {/* 3. Bottom Status Bar (28px) - Desktop only */}
+      {!isMobile && <StatusBar />}
 
       {/* Global Spotlight Omnibar */}
       <CommandPalette />

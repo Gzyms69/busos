@@ -43,3 +43,7 @@ next-env.d.ts
 # dev daemon
 dev.log*
 .dev.pid
+
+# playwright artifacts
+/playwright-report/
+/test-results/

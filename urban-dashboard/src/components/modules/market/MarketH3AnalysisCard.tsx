@@ -88,7 +88,7 @@ export default function MarketH3AnalysisCard() {
           title="Korelacja z Transportem"
           value={loading ? "..." : (data?.transport_correlation != null ? data.transport_correlation.toFixed(3) : "—")}
           subtitle="Współczynnik Pearsona: Ceny mieszkań vs Transport"
-          icon="correlation"
+          icon="trending-up"
           intent={
             data?.transport_correlation != null && data.transport_correlation > 0.3
               ? "success"

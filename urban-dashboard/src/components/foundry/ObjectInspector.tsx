@@ -69,8 +69,11 @@ export default function ObjectInspector() {
         if (!signal.aborted) {
           if (profRes.status === "fulfilled") setStopProfile(profRes.value);
           if (destRes.status === "fulfilled") setStopDestinations(destRes.value);
-          if (txRes.status === "fulfilled") setStopTransactions(txRes.value || []);
-          if (routesRes.status === "fulfilled") setStopRoutes(routesRes.value || []);
+          if (txRes.status === "fulfilled") {
+            const raw = txRes.value;
+            setStopTransactions(Array.isArray(raw) ? raw : (raw as any)?.items || []);
+          }
+          if (routesRes.status === "fulfilled") setStopRoutes(Array.isArray(routesRes.value) ? routesRes.value : []);
           setLoading(false);
         }
       });

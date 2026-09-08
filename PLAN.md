@@ -243,7 +243,7 @@
 ---
 
 ### Sprint 4: Frontend Palantir Foundry UI & Blueprint.js (SSOT: PLAN_FRONTEND.md)
-- **Status:** `[IN PROGRESS - SPRINT 4.1 & 4.2 DONE]`
+- **Status:** `[DONE - SPRINT 4.1, 4.2, 4.3, 4.4, 4.5 ALL COMPLETED]`
 - **Specyfikacja Główna (SSOT):** Pełny plan implementacyjny, kontrakty 45 tras API oraz architektura komponentów znajdują się w dedykowanym dokumencie [`PLAN_FRONTEND.md`](PLAN_FRONTEND.md).
 - **Architektura Wykonawcza (3 Logiczne Podsesje):**
   - **Sesja 4.1 (Fundament & Shell):** `[DONE]` (Zrealizowano 2026-09-08)
@@ -298,6 +298,26 @@
       - `npx tsc --noEmit`: **0 błędów**.
       - `npm run build --prefix urban-dashboard`: **sukces w 4.8s** (Turbopack Next.js 16, < 5.0s quality gate).
       - `uv run pytest backend/tests/ -v`: **109/109 testów PASSED w 23.46s**.
+  - **Sesja 4.4 (API Security Hardening):** `[DONE]` (Zrealizowano 2026-09-08)
+    * Usunięcie podatności DuckDB SQL Injection w dynamicznych rankingach heksów (`ALLOWED_GRADES` whitelist).
+    * Wdrożenie sliding-window rate limitingu w FastAPI (`slowapi`, 60 req/min per IP, kod 429).
+    * Ścisła biała lista CORS i wyłączenie credentials dla bezstanowego API.
+    * Autonomiczny strażnik brzegu w Caddy (`@bad_bots` 403, blokada braku User-Agent, body limit 1MB, HSTS/XFO headers).
+    * In-memory cache dla bazy wektorowej hubów i ograniczenie parametru `top_k <= 50`.
+    * Dowody weryfikacji: `pytest backend/tests/test_security.py` = 5/5 PASSED.
+  - **Sesja 4.5 (Frontend Deep Interactive E2E Testing Suite):** `[DONE]` (Zrealizowano 2026-09-09)
+    * Kompletny pakiet 10 scenariuszy E2E w Playwright (`@playwright/test`) testujący 100% interaktywnych elementów UI.
+    * Konfiguracja z systemowym Google Chrome 152 (`/usr/bin/google-chrome`) i emulacją WebGL Angle/SwiftShader.
+    * Deterministyczny mostek sieciowy mockujący wszystkie 45 tras API w `urban-dashboard/e2e/helpers/foundry-test.ts`.
+    * Testowanie selektora 30 miast, 6 modułów analitycznych, wirtualizowanych tabel Table2, filtrów POI, suwaków TCRP, kalkulatora oszczędności, sekwencji GTFS LRS, grafu krawędzi, mostka wycen RCN, porównywarki miast, AI Radaru oraz 3 snap-pointów gestowego arkusza mobilnego.
+    * Bezwzględna brama jakości: 0 nieschwytanych błędów w konsoli przeglądarki (`console.error === 0`).
+    * Zapewnienie stabilności WebGL poprzez ujednolicenie drzewa komponentów `<MapCanvas />` pomiędzy trybem desktop a mobilnym (eliminacja błędu `maxTextureDimension2D` w luma.gl/deck.gl).
+    * Skrypt wykonawczy weryfikacji: `scripts/test_frontend_e2e.sh`.
+    * **Dowody weryfikacji:**
+      - `./scripts/test_frontend_e2e.sh`: **10/10 testów E2E PASSED w 49.8s** (100% green, 0 błędów konsoli).
+      - `npx tsc --noEmit`: **0 błędów**.
+      - `npm run build --prefix urban-dashboard`: **sukces w 7.7s** (Turbopack Next.js 16).
+      - `uv run pytest backend/tests/ -v`: **109/109 testów PASSED w 35.71s**.
 
 ---
 

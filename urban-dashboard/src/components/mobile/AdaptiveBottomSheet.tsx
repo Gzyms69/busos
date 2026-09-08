@@ -45,6 +45,7 @@ export default function AdaptiveBottomSheet() {
     >
       {/* Drag Handle & Peek Bar */}
       <div
+        data-testid="bottom-sheet-drag-handle"
         onClick={handleToggle}
         style={{
           height: snap === "peek" ? 72 : 44,
