@@ -72,6 +72,7 @@ class SimilarHubResponse(BaseModel):
 
 class HexagonCell(BaseModel):
     hex: str = Field(..., description="H3 cell index string")
+    city: Optional[str] = None
     lat: float
     lon: float
     stop_count: int
@@ -113,6 +114,14 @@ class StopProfileResponse(BaseModel):
     stop_infra_score: float = 0.0
     stop_pop_val: float = 0.0
     stop_market_val: float = 0.0
+    h3_index: Optional[str] = None
+    stop_entropy: float = 0.0
+    stop_liquidity: int = 0
+    stop_raw_gravity: float = 0.0
+    hub_routes: Optional[str] = None
+    hub_raw_gravity: float = 0.0
+    hub_entropy: float = 0.0
+    hub_liquidity: int = 0
     properties: Dict[str, Any] = Field(default_factory=dict)
 
 
@@ -133,6 +142,10 @@ class HubCardResponse(BaseModel):
     hub_infra_score: float = 0.0
     hub_pop_val: float = 0.0
     hub_market_val: float = 0.0
+    h3_index: Optional[str] = None
+    hub_raw_gravity: float = 0.0
+    hub_entropy: float = 0.0
+    hub_liquidity: int = 0
     grade: str = "F"
     local_score_raw: float = 0.0
     properties: Dict[str, Any] = Field(default_factory=dict)
@@ -491,3 +504,56 @@ class CityComparisonResponse(BaseModel):
     city_b: CityKpi
 
 
+class PoiSearchItem(BaseModel):
+    poi_id: int
+    name: Optional[str] = None
+    category: str
+    tier: str
+    lat: float
+    lon: float
+    w: float
+    sum_pull: float
+
+
+class PoiSearchResponse(BaseModel):
+    city: str
+    total: int
+    limit: int
+    offset: int
+    items: List[PoiSearchItem] = Field(default_factory=list)
+
+
+class MarketTrendPeriodItem(BaseModel):
+    period: str
+    tx_count: int
+    median_price_m2: float
+    avg_price_m2: float
+    q1_price_m2: Optional[float] = None
+    q3_price_m2: Optional[float] = None
+
+
+class MarketTrendsResponse(BaseModel):
+    city: str
+    stop_id: Optional[str] = None
+    interval: str
+    total_periods: int
+    periods: List[MarketTrendPeriodItem] = Field(default_factory=list)
+
+
+class StopDestinationItem(BaseModel):
+    to_stop_id: str
+    to_stop_name: str
+    lat: float
+    lon: float
+    min_travel_time_sec: int
+    distance_m: Optional[float] = None
+    speed_kmh: Optional[float] = None
+    routes: List[str] = Field(default_factory=list)
+
+
+class StopDestinationsResponse(BaseModel):
+    city: str
+    from_stop_id: str
+    from_stop_name: str
+    destinations_count: int
+    destinations: List[StopDestinationItem] = Field(default_factory=list)

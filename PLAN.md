@@ -34,8 +34,8 @@
 ## 1. Rejestr Sprintów (Sprint Registry)
 
 ```
-[Sprint 3.6: GTFS Routes & RCN Bridge] ──► [Sprint 3.7: Realistyczne Trasy & LRS] ──► [Sprint 4: Palantir UI & DataGrid] ──► [Sprint 5: AI Qdrant]
-           [DONE]                                     [DONE]                                      [NASTĘPNA SESJA]                     [PLANNED]
+[Sprint 3.6: GTFS & RCN] ──► [Sprint 3.7: Trasy & LRS] ──► [Sprint 3.8: 100% Data Access] ──► [Sprint 4: Palantir UI] ──► [Sprint 5: AI Qdrant]
+         [DONE]                         [DONE]                          [DONE]                       [NASTĘPNA SESJA]            [PLANNED]
 ```
 
 ---
@@ -217,6 +217,28 @@
   - `python3 scripts/tools/verify_nationwide_data.py`: **30/30 miast (100.0%), 210/210 wygenerowanych plików**.
   - OCI Live Telemetry: `{"status":"healthy","version":"9.5.0","active_cities_count":30,"qdrant_connected":true}` (HTTP 200).
   - Git Commit & Push: Commit `86fed85` na gałęzi `main`.
+
+---
+
+### Sprint 3.8: 100% Data Access & API Gap Closure (Pelna Dostępność Danych)
+- **Status:** `[DONE]`
+- **Cel:** Wyeliminowanie 6 zidentyfikowanych luk pomiędzy zbiorem danych na dysku a API przed przystąpieniem do przebudowy interfejsu (Sprint 4).
+- **Zrealizowany zakres:**
+  1. **Granica Strefy Transportowej (`GET /api/v1/cities/{city}/boundary`):**
+     - Geometria WGS84 GeoJSON FeatureCollection z `transport_zone.gpkg` wraz z polem właściwości `area_km2` obliczanym w rzutowaniu EPSG:2180.
+  2. **Wyszukiwarka i Filtr POI (`GET /api/v1/poi/search`):**
+     - Substring search i dokładne filtrowanie po kategoriach w DuckDB na `poi_matrix.parquet` z predicate pushdown i paginacją.
+  3. **Szeregi Czasowe i Trendy Cenowe RCN 2020–2026 (`GET /api/v1/market/trends`):**
+     - Agregacja roczna i kwartalna median cen m², wolumenu transakcji i kwartyli (Q1, Q3) na poziomie całego miasta lub pojedynczego słupka.
+  4. **Graf Bezpośredniej Osiągalności 1-Hop (`GET /api/v1/routes/stop/{stop_id}/destinations`):**
+     - Odpytanie `transit_network_edges.parquet` z agregacją docelowych słupków, minimalnego czasu przejazdu, dystansu, prędkości handlowej i linii.
+  5. **Ogólnokrajowy Benchmark Rozkładu Metryk (`GET /api/v1/analytics/metric-distribution?city=all`):**
+     - Obliczanie statystyk kwantylowych i 10-kubełkowego histogramu w skali całej Polski (60k+ słupków i 36k+ heksów).
+  6. **Silne Typowanie w Schematach Pydantic:**
+     - Dodanie jawnych pól `h3_index`, `stop_entropy`, `stop_liquidity`, `hub_raw_gravity`, `hub_entropy`, `hub_liquidity` do schematów odpowiedzi.
+- **Dowody weryfikacji:**
+  - `uv run pytest backend/tests/ -v`: **104/104 testów PASSED w 21.92s** (100% green, w tym 9 nowych dedykowanych testów w `test_100_percent_data_access.py`).
+  - `npm run build --prefix urban-dashboard`: sukces w **4.6s** (0 błędów TypeScript).
 
 ---
 

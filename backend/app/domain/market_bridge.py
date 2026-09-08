@@ -196,3 +196,78 @@ def get_h3_grid_market_val(
         }
         for r in rows
     ]
+
+
+def get_market_trends(
+    city: str,
+    stop_id: Optional[str] = None,
+    interval: str = "year",
+    market_type: Optional[str] = None,
+    app_state = None
+) -> Dict[str, Any]:
+    """
+    Computes time-series price trends (annual or quarterly) for a city or specific stop via DuckDB.
+    """
+    interval_clean = interval.strip().lower()
+    if interval_clean not in ["year", "quarter", "month"]:
+        interval_clean = "year"
+
+    con = get_duckdb_con(app_state)
+    where_clauses = ["dok_data IS NOT NULL", "price_m2 > 0"]
+    
+    if stop_id:
+        target_path = get_bridge_path(city)
+        if not target_path:
+            return {"city": city, "stop_id": stop_id, "interval": interval_clean, "total_periods": 0, "periods": []}
+        where_clauses.append("stop_id = ?")
+        params = [str(target_path), str(stop_id)]
+    else:
+        target_path = get_transactions_path(city)
+        if not target_path:
+            target_path = get_bridge_path(city)
+        if not target_path:
+            return {"city": city, "stop_id": None, "interval": interval_clean, "total_periods": 0, "periods": []}
+        params = [str(target_path)]
+
+    if market_type:
+        where_clauses.append("tran_rodzaj_rynku = ?")
+        params.append(market_type)
+
+    where_sql = f"WHERE {' AND '.join(where_clauses)}"
+
+    query = f"""
+    SELECT 
+        date_trunc('{interval_clean}', dok_data)::DATE::VARCHAR AS period,
+        COUNT(*) AS tx_count,
+        ROUND(MEDIAN(price_m2), 2) AS median_price_m2,
+        ROUND(AVG(price_m2), 2) AS avg_price_m2,
+        ROUND(PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY price_m2), 2) AS q1_price_m2,
+        ROUND(PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY price_m2), 2) AS q3_price_m2
+    FROM read_parquet(?)
+    {where_sql}
+    GROUP BY 1
+    ORDER BY 1 ASC;
+    """
+
+    rows = con.execute(query, params).fetchall()
+
+    periods = [
+        {
+            "period": str(r[0]),
+            "tx_count": int(r[1]),
+            "median_price_m2": float(r[2]) if r[2] is not None else 0.0,
+            "avg_price_m2": float(r[3]) if r[3] is not None else 0.0,
+            "q1_price_m2": float(r[4]) if r[4] is not None else None,
+            "q3_price_m2": float(r[5]) if r[5] is not None else None,
+        }
+        for r in rows
+    ]
+
+    return {
+        "city": city,
+        "stop_id": stop_id,
+        "interval": interval_clean,
+        "total_periods": len(periods),
+        "periods": periods
+    }
+

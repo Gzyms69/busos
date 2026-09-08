@@ -121,7 +121,9 @@ Warstwa zawiera zagregowane węzły logiczne (zespoły przystankowe) na współr
 
 Architektura API zostaje podzielona na wyspecjalizowane routery domenowe z pełną kompatybilnością wsteczną.
 
-### 2.0 Router Fizycznych Słupków Przystankowych (`/api/v1/stops`)
+### 2.0 Router Fizycznych Słupków Przystankowych (`/api/v1/stops`) oraz Granic Miast
+*   `GET /api/v1/cities`: Lista wszystkich dostępnych, przetworzonych aglomeracji.
+*   `GET /api/v1/cities/{city}/boundary`: GeoJSON FeatureCollection z geometrią strefy transportowej aglomeracji (`transport_zone.gpkg`, EPSG:4326) oraz metadanymi powierzchni w kilometrach kwadratowych (`area_km2` z rzutowania EPSG:2180).
 *   `GET /api/v1/stops?city={city}`: GeoJSON FeatureCollection ze wszystkimi fizycznymi słupkami przystankowymi.
 *   `GET /api/v1/stops/ranking?city={city}&order_by=...&order_dir=...&limit=N&rank=N&grade=...`: Uniwersalny ranking fizycznych słupków z dynamicznym sortowaniem po dowolnej z metryk filarowych, filtrowaniem po grade (`A+` do `F`), `is_hub_anchor`, `min_departures`, `min_pop`, `h3_index` oraz wsparciem dla pobierania konkretnej pozycji (`rank=N`).
 *   `POST /api/v1/stops/batch`: Masowy lookup pełnych profili przystanków po liście `stop_ids: string[]`.
@@ -142,6 +144,7 @@ Architektura API zostaje podzielona na wyspecjalizowane routery domenowe z pełn
 
 ### 2.3 Router Rynku Nieruchomości (`/api/v1/market`)
 *   `GET /api/v1/market/summary?city={city}`: Globalne statystyki transakcyjne miasta z `rcn_stats.json` (mediana ceny m², wolumen, przedziały IQR).
+*   `GET /api/v1/market/trends?city={city}&stop_id=...&interval=year|quarter`: Historyczne szeregi czasowe i trendy cenowe transakcji RCN z lat 2020–2026 na poziomie miasta lub pojedynczego słupka z medianami cen m², wolumenem transakcji i kwartylami cenowymi (Q1, Q3).
 *   `GET /api/v1/market/stops-summary?city={city}&date_from=...&date_to=...&market_type=...`: Odpytanie silnika DuckDB po pre-materializowanym mostku `stop_transactions_bridge.parquet` (czas odpowiedzi 12–26 ms dla 10k+ słupków).
 *   `GET /api/v1/market/stop/{stop_id}/transactions?city={city}&date_from=...`: Lista transakcji notarialnych w strefie 500m wokół wybranego słupka.
 *   `GET /api/v1/market/transactions/ranking?city={city}&order_by=price_m2&order_dir=...&limit=N&rank=N&market_type=...`: Paginowany ranking transakcji notarialnych RCN z dynamicznym sortowaniem, filtrowaniem po rynku (`pierwotny` / `wtorny`), funkcji nieruchomości i cenie.
@@ -150,13 +153,14 @@ Architektura API zostaje podzielona na wyspecjalizowane routery domenowe z pełn
 *   `GET /api/v1/market/transactions?city={city}`: [Legacy] GeoJSON ze znormalizowanymi punktami transakcji RCN.
 
 ### 2.4 Router Punktów Zainteresowania (`/api/v1/poi`)
+*   `GET /api/v1/poi/search?city={city}&query=...&category=...&tier=...&min_w=...&limit=N&offset=N`: Wyszukiwarka i filtr POI po nazwie lub kategorii z predicate pushdown na `poi_matrix.parquet` w DuckDB.
 *   `GET /api/v1/poi/magnets?city={city}&limit=N&tier=...&category=...`: Ranking kluczowych miejskich atraktorów/magnesów POI posortowanych wagą grawitacji Huffa, z odfiltrowanymi nazwami zastępczymi.
 *   `GET /api/v1/poi/categories?city={city}&limit=N&order_by=final_value`: Zestawienie wyceny i wolumenu kategorii POI.
 
 ### 2.5 Router Analityki Miejskiej & Policy Audit (`/api/v1/analytics`)
 *   `GET /api/v1/analytics/audit-summary?city={city}&include=summary,zscore,grades,h3,rcn,tcrp,poi,samples,all`: Pełna karta audytowa miasta (City Audit Scorecard) z modularnym parametrem `include`, umożliwiającym pobranie całości lub wybranych podsystemów.
 *   `GET /api/v1/analytics/national-ranking?scope=stops|hubs|hexagons|cities&rank=N&limit=N`: Ogólnopolska tablica liderów dla 60k słupków, 28k hubów, 36k hexów lub 30 miast.
-*   `GET /api/v1/analytics/metric-distribution?city={city}&metric={metric}`: Generator statystyk kwantylowych (min, p10, p25, median, p75, p90, max, mean, std) i 10-kubełkowego histogramu do wykresów sparkline.
+*   `GET /api/v1/analytics/metric-distribution?city={city|all}&metric={metric}`: Generator statystyk kwantylowych (min, p10, p25, median, p75, p90, max, mean, std) i 10-kubełkowego histogramu; obsługa `city=all` generuje ogólnokrajowy benchmark rozkładu z bazy `master_stop_dna_poland.gpkg` lub siatek H3.
 *   `GET /api/v1/analytics/compare-cities?city_a={city}&city_b={city}`: Porównanie kluczowych KPI dwóch miast side-by-side.
 *   `GET /api/v1/analytics/transit-deserts?city={city}`: [The Investment List] Ranking komórek H3 o najwyższym wskaźniku wykluczenia (duża populacja GUS, brak oferty transportowej).
 *   `GET /api/v1/analytics/axe-list?city={city}`: [The Axe List] Przystanki zidentyfikowane jako zbędne wg standardu TCRP Report 100 ($R_{\max} \ge 0.70$).
@@ -167,6 +171,7 @@ Architektura API zostaje podzielona na wyspecjalizowane routery domenowe z pełn
 *   `GET /api/v1/routes/geometry?city={city}&route_uid={uid}`: Precyzyjny GeoJSON geometrii wybranej trasy (MultiLineString EPSG:4326) z LRS.
 *   `GET /api/v1/routes/{route_uid}/details?city={city}&direction_id={dir}`: Złożony payload zawierający sekwencję przystanków, czasy przejazdu, odległości drogowe w metrach i wyceny Stop DNA.
 *   `GET /api/v1/routes/stop/{stop_id}?city={city}`: Wykaz wszystkich linii i kierunków obsługujących dany słupek przystankowy.
+*   `GET /api/v1/routes/stop/{stop_id}/destinations?city={city}`: Graf bezpośredniej osiągalności 1-hop ze słupka z `transit_network_edges.parquet` (docelowe słupki, minimalny czas przejazdu, odległość w metrach, prędkość handlowa, obsługujące linie).
 *   `GET /api/v1/routes/edges?city={city}&route_uid={uid}`: Odcinki grafu sieci $u \to v$ z czasami netto i prędkościami handlowymi w km/h.
 
 ### 2.7 Router Wektorowy & AI (`/api/v1/ai`)

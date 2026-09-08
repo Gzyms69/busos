@@ -6,16 +6,40 @@ from app.schemas import (
     MarketTransactionsRankingResponse,
     MarketTransactionsNearbyResponse,
     MarketH3AnalysisResponse,
+    MarketTrendsResponse,
 )
 from app import spatial_engine
 from app.domain.market_bridge import (
     get_bulk_stops_summary,
     get_stop_transactions_list,
-    get_h3_grid_market_val
+    get_h3_grid_market_val,
+    get_market_trends,
 )
 
 router = APIRouter(tags=["Real Estate Modeling"])
 
+
+@router.get("/market/trends", response_model=MarketTrendsResponse)
+async def get_market_trends_endpoint(
+    request: Request,
+    city: str = Query(..., description="City slug"),
+    stop_id: Optional[str] = Query(None, description="Optional stop ID to scope transactions to its 500m catchment"),
+    interval: str = Query("year", description="'year' or 'quarter'"),
+    market_type: Optional[str] = Query(None, description="'pierwotny' or 'wtorny'"),
+):
+    """Computes time-series median price and transaction volume trends across years or quarters via DuckDB."""
+    try:
+        return get_market_trends(
+            city=city,
+            stop_id=stop_id,
+            interval=interval,
+            market_type=market_type,
+            app_state=request.app.state
+        )
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Market trends error: {str(e)}")
 
 
 @router.get("/market/summary", response_model=MarketSummaryResponse)

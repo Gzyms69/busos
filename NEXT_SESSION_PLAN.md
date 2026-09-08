@@ -1,7 +1,7 @@
 # BusOS Tactical Roadmap & Session State (SSOT)
 
-> **Document Status:** `ACTIVE SSOT` (Updated after Task 10 / Sprint 3.7 Completion)  
-> **Target Scale:** 30 Calibrated Cities Live on OCI Cloud & Vercel Global Edge (210 Data Files, 95/95 Pytest Passed).
+> **Document Status:** `ACTIVE SSOT` (Updated after Sprint 3.8 Completion — 100% Data Access)  
+> **Target Scale:** 30 Calibrated Cities Live on OCI Cloud & Vercel Global Edge (210 Data Files, 104/104 Pytest Passed, 28 REST Routes).
 
 ---
 
@@ -11,7 +11,7 @@
   - **Build Status**: `npm run build` succeeds in **4.6s**; `npx tsc --noEmit` passes with **0 errors**.
 - **Backend**: Live on Oracle Cloud Infrastructure Ampere A1 ARM64 ([https://api.busos.czerwinskidawid.pl](https://api.busos.czerwinskidawid.pl)), FastAPI 0.115+, DuckDB 1.2+, Qdrant Vector Engine (port 6333), Caddy 2 with auto Let's Encrypt TLS 1.3 / HTTP/3.
   - **Health Telemetry**: `{"status":"healthy","version":"9.5.0","active_cities_count":30,"qdrant_connected":true}`.
-  - **Automated CI/CD**: GitHub Actions workflow (`.github/workflows/deploy-oci.yml`) deploys to OCI ARM64 in 2m 1s.
+  - **Automated CI/CD**: GitHub Actions workflow (`.github/workflows/deploy-backend.yml`) deploys to OCI ARM64 in 2m 1s.
 - **Contract SSOT**: `docs/contracts/DATA_DICTIONARY_AND_API_SSOT.md` locked.
 
 ---
@@ -251,14 +251,17 @@ Kontynuujemy rozwój BusOS w NOWEJ SESJI zgodnie ze standardem PLAN.md (Sprint 4
    - `PLAN.md`
    - `NEXT_SESSION_PLAN.md`
    - `docs/contracts/DATA_DICTIONARY_AND_API_SSOT.md`
-3. Stan bazowy po Sprincie 3.7 (Commit `86fed85`):
-   - Ogólnopolska baza 30 miast w 100% wygenerowana i zweryfikowana (210 plików GPKG/Parquet, 60 265 słupków, 28 317 hubów, 36 784 heksy H3).
-   - Izolacja subprocesów (`subprocess.run`) w potoku ETL eliminująca Swap Death i wycieki pamięci sterty C++ `glibc`.
-   - Zoptymalizowane złączenia przestrzenne C-GEOS `shapely.STRtree(predicate='dwithin')` (<200 MB RAM, 6 ms na miasto).
-   - Ekstrakcja tras GTFS DuckDB C++ z obsługą kursów nocnych $\ge 24:00:00$.
-   - Universal Query Engine z paginacją `rank=N` 1-based i SQL injection whitelisting.
+3. Stan bazowy po Sprincie 3.8 (100% Data Access & API Gap Closure):
+   - Ogólnopolska baza 30 miast w 100% wygenerowana i dostępna przez 28 tras API (210 plików GPKG/Parquet, 60 265 słupków, 28 317 hubów, 36 784 heksy H3).
+   - Nowe trasy API wdrożone i zweryfikowane:
+     * `GET /api/v1/cities/{city}/boundary` (geometria granicy z `transport_zone.gpkg` + `area_km2`).
+     * `GET /api/v1/poi/search` (wyszukiwarka i filtr POI po nazwie i kategorii na `poi_matrix.parquet`).
+     * `GET /api/v1/market/trends` (agregaty roczne i kwartalne RCN 2020–2026 na poziomie miasta lub słupka).
+     * `GET /api/v1/routes/stop/{stop_id}/destinations` (1-hop bezpośrednia osiągalność z `transit_network_edges.parquet`).
+     * `GET /api/v1/analytics/metric-distribution?city=all` (ogólnopolski benchmark rozkładu z bazy krajowej).
+     * Pełna parzystość typów Pydantic: `h3_index`, `stop_entropy`, `stop_liquidity`, `hub_raw_gravity`, `hub_entropy`, `hub_liquidity`.
    - Produkcyjne środowisko OCI ARM64 w pełni ustabilizowane z automatycznym CI/CD GitHub Actions (2m 1s).
-   - Testy: 95/95 Pytest PASSED (22.2s), Next.js build PASSED w 4.6s (0 błędów TS).
+   - Testy: 104/104 Pytest PASSED (21.9s), Next.js build PASSED w 4.6s (0 błędów TS).
 4. Pre-Flight Verification Command:
    `npm run build --prefix urban-dashboard && uv run pytest backend/tests/ -v`
 5. Cel sesji (Sprint 4):
@@ -267,7 +270,7 @@ Kontynuujemy rozwój BusOS w NOWEJ SESJI zgodnie ze standardem PLAN.md (Sprint 4
    - Krok 2: Interaktywna tabela "The Axe List" (redukcja słupków wg TCRP 100) z linkowaniem do mapy.
    - Krok 3: Interaktywna tabela "The Investment List" (pustynie transportowe z TDI) z wycenami mieszkań RCN.
    - Krok 4: Przełącznik analityczny: Słupki (Micro) vs Huby (Macro) vs Siatka H3 (Meso).
-   - Krok 5: Weryfikacja jakościowa (Pytest 95/95, TypeScript 0 błędów) oraz git commit i push do origin/main.
+   - Krok 5: Weryfikacja jakościowa (Pytest 104/104, TypeScript 0 błędów) oraz git commit i push do origin/main.
 ```
 
 

@@ -4,8 +4,10 @@ import json
 import sqlite3
 import duckdb
 import pyproj
+import shapely
 import shapely.wkb
 import shapely.geometry
+import shapely.ops
 import numpy as np
 import pandas as pd
 from scipy.spatial import cKDTree
@@ -13,6 +15,7 @@ from typing import Dict, Any, List, Optional
 
 # Transformer for Polish Cadastral/Demographic metric CRS (EPSG:2180) to WGS84 (EPSG:4326)
 transformer_2180_to_4326 = pyproj.Transformer.from_crs("EPSG:2180", "EPSG:4326", always_xy=True)
+transformer_4326_to_2180 = pyproj.Transformer.from_crs("EPSG:4326", "EPSG:2180", always_xy=True)
 
 # Path resolution: works inside Docker container (/data/cities) or local development
 DEFAULT_DATA_PATHS = [
@@ -49,6 +52,57 @@ def get_available_cities() -> List[str]:
         if os.path.isdir(city_dir) and os.path.exists(os.path.join(city_dir, "04_results", "stop_dna.gpkg")):
             cities.append(d)
     return cities
+
+
+def get_city_boundary(city: str) -> Dict[str, Any]:
+    """Reads transport_zone.gpkg and returns WGS84 GeoJSON FeatureCollection with area metadata."""
+    tz_path = os.path.join(DATA_DIR, city, "transport_zone.gpkg")
+    if not os.path.exists(tz_path):
+        raise FileNotFoundError(f"transport_zone.gpkg not found for city '{city}' at {tz_path}")
+
+    con = sqlite3.connect(f"file:{tz_path}?mode=ro", uri=True)
+    cur = con.cursor()
+    cur.execute("SELECT table_name FROM gpkg_contents WHERE data_type = 'features'")
+    tbl = cur.fetchone()
+    if not tbl:
+        con.close()
+        raise FileNotFoundError(f"No features table in transport_zone.gpkg for '{city}'")
+    table = tbl[0]
+
+    cur.execute(f'PRAGMA table_info("{table}")')
+    cols = [c[1] for c in cur.fetchall()]
+    geom_col = "geom" if "geom" in cols else "geometry"
+
+    cur.execute(f'SELECT "{geom_col}" FROM "{table}" LIMIT 1')
+    row = cur.fetchone()
+    con.close()
+
+    if not row or not row[0]:
+        raise FileNotFoundError(f"Empty geometry in transport_zone.gpkg for '{city}'")
+
+    wkb_data = _extract_gpkg_wkb(row[0])
+    shp = shapely.wkb.loads(wkb_data)
+
+    try:
+        shp_2180 = shapely.ops.transform(transformer_4326_to_2180.transform, shp)
+        area_km2 = round(float(shp_2180.area / 1_000_000.0), 2)
+    except Exception:
+        area_km2 = 0.0
+
+    geojson_geom = shapely.geometry.mapping(shp)
+    return {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "geometry": geojson_geom,
+                "properties": {
+                    "city": city,
+                    "area_km2": area_km2
+                }
+            }
+        ]
+    }
 
 
 def get_stops(city: str) -> Dict[str, Any]:
@@ -154,6 +208,14 @@ def get_stop_profile(city: str, stop_id: str) -> Dict[str, Any]:
         "stop_infra_score": float(d.get("stop_infra_score") or d.get("infra_score") or 0.0),
         "stop_pop_val": float(d.get("stop_pop_val") or d.get("pop_val") or 0.0),
         "stop_market_val": float(d.get("stop_market_val") or d.get("market_val") or 0.0),
+        "h3_index": str(d.get("h3_index")) if d.get("h3_index") is not None else None,
+        "stop_entropy": float(d.get("stop_entropy") or 0.0),
+        "stop_liquidity": int(d.get("stop_liquidity") or 0),
+        "stop_raw_gravity": float(d.get("stop_raw_gravity") or 0.0),
+        "hub_routes": str(d.get("hub_routes") or "") if d.get("hub_routes") is not None else None,
+        "hub_raw_gravity": float(d.get("hub_raw_gravity") or 0.0),
+        "hub_entropy": float(d.get("hub_entropy") or 0.0),
+        "hub_liquidity": int(d.get("hub_liquidity") or 0),
         "properties": d
     }
 
@@ -270,6 +332,10 @@ def get_hub_card(city: str, hub_id: str) -> Dict[str, Any]:
         "hub_infra_score": float(d.get("hub_infra_score") or d.get("infra_score") or 0.0),
         "hub_pop_val": float(d.get("hub_pop_val") or d.get("pop_val") or 0.0),
         "hub_market_val": float(d.get("hub_market_val") or d.get("market_val") or 0.0),
+        "h3_index": str(d.get("h3_index")) if d.get("h3_index") is not None else None,
+        "hub_raw_gravity": float(d.get("hub_raw_gravity") or 0.0),
+        "hub_entropy": float(d.get("hub_entropy") or 0.0),
+        "hub_liquidity": int(d.get("hub_liquidity") or 0),
         "grade": str(d.get("grade") or d.get("hub_grade") or "F"),
         "local_score_raw": float(d.get("local_score_raw") or d.get("hub_local_score_raw") or 0.0),
         "properties": d
@@ -1840,6 +1906,84 @@ def get_poi_categories(
     }
 
 
+def search_pois(
+    city: str,
+    query: Optional[str] = None,
+    category: Optional[str] = None,
+    tier: Optional[str] = None,
+    min_w: Optional[float] = None,
+    limit: int = 50,
+    offset: int = 0
+) -> Dict[str, Any]:
+    """Searches and filters POIs in poi_matrix.parquet via DuckDB with high-performance predicate pushdown."""
+    poi_file = os.path.join(DATA_DIR, city, "04_results", "poi_matrix.parquet")
+    if not os.path.exists(poi_file):
+        raise FileNotFoundError(f"poi_matrix.parquet not found for city '{city}'")
+
+    limit = max(1, min(limit, 500))
+    offset = max(0, offset)
+
+    con = duckdb.connect(":memory:")
+    where_clauses = ["1=1"]
+    params = [str(poi_file)]
+
+    if query and query.strip():
+        q_clean = f"%{query.strip().lower()}%"
+        where_clauses.append("(LOWER(COALESCE(name, '')) LIKE ? OR LOWER(category) LIKE ?)")
+        params.append(q_clean)
+        params.append(q_clean)
+
+    if category and category.strip():
+        where_clauses.append("LOWER(category) = ?")
+        params.append(category.strip().lower())
+
+    if tier and tier.strip():
+        where_clauses.append("LOWER(tier) = ?")
+        params.append(tier.strip().lower())
+
+    if min_w is not None:
+        where_clauses.append("w >= ?")
+        params.append(float(min_w))
+
+    where_sql = " AND ".join(where_clauses)
+
+    count_sql = f"SELECT COUNT(*) FROM read_parquet(?) WHERE {where_sql}"
+    total = con.execute(count_sql, params).fetchone()[0]
+
+    select_params = params + [limit, offset]
+    select_sql = f"""
+    SELECT poi_id, name, category, tier, lat, lon, w, sum_pull
+    FROM read_parquet(?)
+    WHERE {where_sql}
+    ORDER BY w DESC
+    LIMIT ? OFFSET ?
+    """
+    rows = con.execute(select_sql, select_params).fetchall()
+    con.close()
+
+    items = [
+        {
+            "poi_id": int(r[0]),
+            "name": str(r[1]) if r[1] is not None else None,
+            "category": str(r[2]),
+            "tier": str(r[3]),
+            "lat": float(r[4]),
+            "lon": float(r[5]),
+            "w": float(r[6]),
+            "sum_pull": float(r[7]),
+        }
+        for r in rows
+    ]
+
+    return {
+        "city": city,
+        "total": total,
+        "limit": limit,
+        "offset": offset,
+        "items": items
+    }
+
+
 def get_city_kpi(city: str) -> Dict[str, Any]:
     city_dir = os.path.join(DATA_DIR, city)
     dna_path = os.path.join(city_dir, "04_results", "stop_dna.gpkg")
@@ -2282,28 +2426,51 @@ def get_national_ranking(
 
 def get_metric_distribution(city: str, metric: str) -> Dict[str, Any]:
     metric_clean = metric.strip().lower()
-    city_dir = os.path.join(DATA_DIR, city)
     vals = []
+    is_national = (city.strip().lower() in ["all", "national", "_national", "polska", "poland"])
 
-    if metric_clean in STOP_METRIC_MAP:
-        col = STOP_METRIC_MAP[metric_clean]
-        dna_path = os.path.join(city_dir, "04_results", "stop_dna.gpkg")
-        if os.path.exists(dna_path):
-            con = sqlite3.connect(f"file:{dna_path}?mode=ro", uri=True)
-            cur = con.cursor()
-            cur.execute(f'SELECT {col} FROM stop_dna WHERE {col} IS NOT NULL')
-            vals = [float(r[0]) for r in cur.fetchall() if r[0] is not None]
-            con.close()
-    elif metric_clean in HEX_METRIC_MAP:
-        col = HEX_METRIC_MAP[metric_clean]
-        h3_file = os.path.join(city_dir, "04_results", "h3_grid.parquet")
-        if os.path.exists(h3_file):
+    if is_national:
+        if metric_clean in STOP_METRIC_MAP:
+            col = STOP_METRIC_MAP[metric_clean]
+            master_path = os.path.join(os.path.dirname(DATA_DIR), "database", "master_stop_dna_poland.gpkg")
+            if os.path.exists(master_path):
+                con = sqlite3.connect(f"file:{master_path}?mode=ro", uri=True)
+                cur = con.cursor()
+                cur.execute("SELECT table_name FROM gpkg_contents WHERE data_type = 'features'")
+                tbl = cur.fetchone()[0]
+                cur.execute(f'SELECT {col} FROM "{tbl}" WHERE {col} IS NOT NULL')
+                vals = [float(r[0]) for r in cur.fetchall() if r[0] is not None and not math.isnan(r[0])]
+                con.close()
+        elif metric_clean in HEX_METRIC_MAP:
+            col = HEX_METRIC_MAP[metric_clean]
+            pattern = os.path.join(DATA_DIR, "*", "04_results", "h3_grid.parquet")
             db = duckdb.connect(":memory:")
-            res = db.execute(f"SELECT {col} FROM read_parquet('{h3_file}') WHERE {col} IS NOT NULL").fetchall()
+            res = db.execute(f"SELECT {col} FROM read_parquet('{pattern}') WHERE {col} IS NOT NULL").fetchall()
             db.close()
             vals = [float(r[0]) for r in res if r[0] is not None and not math.isnan(r[0])]
+        else:
+            raise ValueError(f"Unknown metric '{metric}' for distribution calculation")
     else:
-        raise ValueError(f"Unknown metric '{metric}' for distribution calculation")
+        city_dir = os.path.join(DATA_DIR, city)
+        if metric_clean in STOP_METRIC_MAP:
+            col = STOP_METRIC_MAP[metric_clean]
+            dna_path = os.path.join(city_dir, "04_results", "stop_dna.gpkg")
+            if os.path.exists(dna_path):
+                con = sqlite3.connect(f"file:{dna_path}?mode=ro", uri=True)
+                cur = con.cursor()
+                cur.execute(f'SELECT {col} FROM stop_dna WHERE {col} IS NOT NULL')
+                vals = [float(r[0]) for r in cur.fetchall() if r[0] is not None and not math.isnan(r[0])]
+                con.close()
+        elif metric_clean in HEX_METRIC_MAP:
+            col = HEX_METRIC_MAP[metric_clean]
+            h3_file = os.path.join(city_dir, "04_results", "h3_grid.parquet")
+            if os.path.exists(h3_file):
+                db = duckdb.connect(":memory:")
+                res = db.execute(f"SELECT {col} FROM read_parquet('{h3_file}') WHERE {col} IS NOT NULL").fetchall()
+                db.close()
+                vals = [float(r[0]) for r in res if r[0] is not None and not math.isnan(r[0])]
+        else:
+            raise ValueError(f"Unknown metric '{metric}' for distribution calculation")
 
     if not vals:
         return {

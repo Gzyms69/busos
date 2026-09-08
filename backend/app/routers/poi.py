@@ -1,9 +1,36 @@
 from typing import Optional
 from fastapi import APIRouter, Query, HTTPException
-from app.schemas import PoiMagnetsResponse, PoiCategoriesResponse
+from app.schemas import PoiMagnetsResponse, PoiCategoriesResponse, PoiSearchResponse
 from app import spatial_engine
 
 router = APIRouter(tags=["Points of Interest (Attractors & Gravity)"])
+
+
+@router.get("/poi/search", response_model=PoiSearchResponse)
+async def search_pois(
+    city: str = Query(..., description="City slug"),
+    query: Optional[str] = Query(None, description="Search term for POI name or category"),
+    category: Optional[str] = Query(None, description="Exact category filter"),
+    tier: Optional[str] = Query(None, description="Tier filter (e.g. T0_KRAJOWY, T1_REGIONALNY)"),
+    min_w: Optional[float] = Query(None, description="Minimum weight W threshold"),
+    limit: int = Query(50, ge=1, le=500, description="Max POIs to return"),
+    offset: int = Query(0, ge=0, description="Pagination offset"),
+):
+    """Searches and filters named POIs from poi_matrix.parquet using high-performance DuckDB pushdown."""
+    try:
+        return spatial_engine.search_pois(
+            city=city,
+            query=query,
+            category=category,
+            tier=tier,
+            min_w=min_w,
+            limit=limit,
+            offset=offset,
+        )
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"POI search error: {str(e)}")
 
 
 @router.get("/poi/magnets", response_model=PoiMagnetsResponse)
@@ -48,3 +75,4 @@ async def get_poi_categories(
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"POI categories error: {str(e)}")
+

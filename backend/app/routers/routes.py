@@ -14,6 +14,7 @@ import pandas as pd
 import numpy as np
 import duckdb
 from shapely.geometry import mapping
+from app.schemas import StopDestinationsResponse, StopDestinationItem
 
 router = APIRouter(prefix="/routes", tags=["Transit Route Networks (GTFS 100%)"])
 
@@ -194,6 +195,62 @@ async def get_stop_serving_routes(city: str = Query(...), stop_id: str = ...):
     df = pd.read_parquet(matrix_p)
     stop_routes = df[df['stop_id'] == stop_id]
     return stop_routes.to_dict(orient="records")
+
+
+@router.get("/stop/{stop_id}/destinations", response_model=StopDestinationsResponse, summary="1-hop reachable direct destination stops from a transit stop")
+async def get_stop_destinations(stop_id: str, city: str = Query(..., description="City slug")):
+    edges_p = DATA_DIR / city / "04_results" / "transit_network_edges.parquet"
+    if not edges_p.exists():
+        raise HTTPException(status_code=404, detail=f"Brak grafu transit_network_edges dla miasta {city}")
+
+    stops_dict = _get_stops_dict(city)
+    from_info = stops_dict.get(str(stop_id))
+    from_stop_name = from_info["stop_name"] if from_info else f"Przystanek {stop_id}"
+
+    conn = duckdb.connect(":memory:")
+    try:
+        rows = conn.execute(
+            """
+            SELECT 
+                CAST(to_stop_id AS VARCHAR) AS to_stop_id,
+                CAST(ROUND(MIN(avg_travel_time_sec)) AS INTEGER) AS min_travel_time_sec,
+                ROUND(AVG(distance_m), 1) AS distance_m,
+                ROUND(AVG(speed_kmh), 1) AS speed_kmh,
+                LIST(DISTINCT CAST(route_id AS VARCHAR)) AS routes
+            FROM read_parquet(?)
+            WHERE CAST(from_stop_id AS VARCHAR) = ?
+            GROUP BY to_stop_id
+            ORDER BY min_travel_time_sec ASC
+            """,
+            [str(edges_p), str(stop_id)]
+        ).fetchall()
+    finally:
+        conn.close()
+
+    destinations = []
+    for r in rows:
+        to_sid = str(r[0])
+        s_info = stops_dict.get(to_sid)
+        destinations.append(
+            StopDestinationItem(
+                to_stop_id=to_sid,
+                to_stop_name=s_info["stop_name"] if s_info else f"Słupek {to_sid}",
+                lat=float(s_info["lat"]) if s_info else 0.0,
+                lon=float(s_info["lon"]) if s_info else 0.0,
+                min_travel_time_sec=int(r[1]) if r[1] is not None else 0,
+                distance_m=float(r[2]) if r[2] is not None else None,
+                speed_kmh=float(r[3]) if r[3] is not None else None,
+                routes=[str(x) for x in r[4]] if r[4] else []
+            )
+        )
+
+    return StopDestinationsResponse(
+        city=city,
+        from_stop_id=str(stop_id),
+        from_stop_name=from_stop_name,
+        destinations_count=len(destinations),
+        destinations=destinations
+    )
 
 
 @router.get("/edges", summary="Transit network graph edges for AI and routing")

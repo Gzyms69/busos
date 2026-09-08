@@ -86,6 +86,17 @@ async def list_cities():
     return CitiesResponse(cities=cities, total=len(cities))
 
 
+@app.get("/api/v1/cities/{city}/boundary", response_model=GeoJsonFeatureCollection, tags=["Urban Analytics"])
+async def get_city_boundary(city: str):
+    """Returns official metropolitan transport zone boundary polygon in WGS84 GeoJSON."""
+    try:
+        return spatial_engine.get_city_boundary(city)
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Boundary error: {str(e)}")
+
+
 @app.get("/api/v1/population", response_model=GeoJsonFeatureCollection, tags=["Demographics"])
 async def get_population(city: str = Query(..., description="City slug")):
     """Returns GUS National Census 250m demographic grid reprojected into WGS84 GeoJSON."""
