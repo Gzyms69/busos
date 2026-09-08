@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Button, Popover, Menu, MenuItem, Position } from "@blueprintjs/core";
+import { Button, PopoverNext, Menu, MenuItem, Position } from "@blueprintjs/core";
 import { exportToCsv, exportToJson } from "@/lib/utils/formatters";
 
 interface DataExportMenuProps {
@@ -55,7 +55,7 @@ export default function DataExportMenu({
   );
 
   return (
-    <Popover content={menu} position={Position.BOTTOM_RIGHT}>
+    <PopoverNext content={menu} placement="bottom-end">
       <Button
         small
         icon="download"
@@ -63,6 +63,6 @@ export default function DataExportMenu({
         text="Eksport"
         style={{ fontSize: 11 }}
       />
-    </Popover>
+    </PopoverNext>
   );
 }

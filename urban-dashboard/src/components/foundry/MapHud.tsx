@@ -7,7 +7,7 @@ import {
   Button,
   ButtonGroup,
   Switch,
-  Popover,
+  PopoverNext,
   Menu,
   MenuItem,
   Tag,
@@ -112,7 +112,7 @@ export default function MapHud() {
         <div style={{ width: 1, height: 16, background: "#383e47" }} />
 
         {/* Layer Visibility Popover */}
-        <Popover
+        <PopoverNext
           isOpen={isLayersOpen}
           onInteraction={(next) => setIsLayersOpen(next)}
           content={
@@ -182,10 +182,10 @@ export default function MapHud() {
           >
             Warstwy
           </Button>
-        </Popover>
+        </PopoverNext>
 
         {/* H3 Metric Selector Popover */}
-        <Popover
+        <PopoverNext
           isOpen={isMetricOpen}
           onInteraction={(next) => setIsMetricOpen(next)}
           content={
@@ -232,7 +232,7 @@ export default function MapHud() {
           >
             Metryka H3
           </Button>
-        </Popover>
+        </PopoverNext>
       </Card>
     </div>
   );

@@ -8,7 +8,7 @@ import {
   NavbarDivider,
   Button,
   ButtonGroup,
-  Popover,
+  PopoverNext,
   Menu,
   MenuItem,
   InputGroup,
@@ -80,7 +80,7 @@ export default function FoundryNavbar() {
         <NavbarDivider style={{ margin: "0 12px" }} />
 
         {/* City Selector Popover */}
-        <Popover
+        <PopoverNext
           isOpen={isCityOpen}
           onInteraction={(nextOpen) => setIsCityOpen(nextOpen)}
           content={
@@ -120,7 +120,7 @@ export default function FoundryNavbar() {
           >
             {selectedCity.toUpperCase()}
           </Button>
-        </Popover>
+        </PopoverNext>
       </NavbarGroup>
 
       {/* Center: Module Navigation Tabs */}

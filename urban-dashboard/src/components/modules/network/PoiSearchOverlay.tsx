@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { InputGroup, Popover, Menu, MenuItem, Tag, Position, Spinner } from "@blueprintjs/core";
+import { InputGroup, PopoverNext, Menu, MenuItem, Tag, Position, Spinner } from "@blueprintjs/core";
 import { searchPoi } from "@/lib/api";
 import type { PoiSearchItem } from "@/lib/api/types";
 import { useFoundryStore } from "@/lib/store";
@@ -67,6 +67,8 @@ export default function PoiSearchOverlay({ onPoiSelect }: PoiSearchOverlayProps)
 
   const handleSelectPoi = (poi: PoiSearchItem) => {
     setIsOpen(false);
+    setItems([]);
+    setQuery(poi.name);
     setViewState({
       longitude: poi.lon,
       latitude: poi.lat,
@@ -112,16 +114,15 @@ export default function PoiSearchOverlay({ onPoiSelect }: PoiSearchOverlayProps)
 
   return (
     <div style={{ position: "relative", width: 260 }}>
-      <Popover
+      <PopoverNext
         isOpen={isOpen && (items.length > 0 || loading)}
         onInteraction={(nextOpen) => {
           if (!nextOpen) setIsOpen(false);
         }}
         content={resultsMenu}
-        position={Position.BOTTOM_LEFT}
+        placement="bottom-start"
         autoFocus={false}
-        enforceFocus={false}
-        minimal
+        arrow={false}
       >
         <InputGroup
           small
@@ -152,7 +153,7 @@ export default function PoiSearchOverlay({ onPoiSelect }: PoiSearchOverlayProps)
           }}
           style={{ width: "100%", fontSize: 11 }}
         />
-      </Popover>
+      </PopoverNext>
     </div>
   );
 }

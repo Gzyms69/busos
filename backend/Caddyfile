@@ -5,8 +5,7 @@
 api.busos.czerwinskidawid.pl, busos.duckdns.org {
     # 1. Block automated vulnerability scanners & aggressive scraper libraries
     @bad_bots {
-        header_regexp User-Agent "(?i)(sqlmap|nikto|masscan|nmap|zgrab|censys|shodan|acunetix|nessus|dirbuster|gobuster|scrapy)"
-        header_regexp User-Agent "(?i)(python-requests|aiohttp|urllib|libwww)"
+        header_regexp User-Agent "(?i)(sqlmap|nikto|masscan|nmap|zgrab|censys|shodan|acunetix|nessus|dirbuster|gobuster|scrapy|python-requests|aiohttp|urllib|libwww)"
     }
     @empty_ua {
         not header User-Agent *
