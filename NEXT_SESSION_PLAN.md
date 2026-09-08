@@ -217,52 +217,72 @@
 
 ---
 
-## 4. Action Items dla Kolejnej Sesji (Sprint 4.1: Fundament, Shell, Command Center & Mapa)
+### Task 11 (Sprint 4.1): Fundament Palantir Foundry, Typowany Klient 45 Tras, Command Center & Deck.gl MapCanvas
+- **Status:** `[DONE]` (Zrealizowano 2026-09-08)
+- **Zrealizowany zakres:**
+  1. **Instalacja Pakietów i Konfiguracja Czystego Stacku Blueprint v6:**
+     - Zainstalowano `@blueprintjs/core@^6.16.0`, `@blueprintjs/table@latest`, `@blueprintjs/icons@latest`, `@blueprintjs/select@latest`, `recharts`, `vaul`, `motion`.
+     - Całkowicie usunięto legacy `src/components/ui/` (eliminacja shadcn/ui).
+     - Skonfigurowano motyw `bp6-dark` w `urban-dashboard/src/app/globals.css` oraz `layout.tsx`.
+  2. **Silnie Typowany Klient API dla 45 Tras (`src/lib/api/`):**
+     - Zbudowano 11 modułów klienckich (`types.ts`, `client.ts`, `cities.ts`, `stops.ts`, `hubs.ts`, `hexagons.ts`, `market.ts`, `poi.ts`, `analytics.ts`, `routes.ts`, `ai.ts`, `index.ts`) z obsługą timeoutów i `AbortController`.
+  3. **Zustand Store z Session Cache per City & URL State (`src/lib/store/`):**
+     - Zbudowano modułowe slajsy: `city-slice.ts`, `module-slice.ts`, `map-slice.ts`, `selection-slice.ts`, `grid-slice.ts`, `session-cache.ts` z dwukierunkową synchronizacją parametrów `searchParams`.
+  4. **Globalny Command Palette (`src/components/foundry/CommandPalette.tsx`):**
+     - Wdrożono Spotlight `Ctrl+K` przeszukujący 30 miast, 6 modułów analitycznych oraz narzędzia mapowe.
+  5. **Trójstrefowy Layout Foundry (`src/components/foundry/`):**
+     - `FoundryShell.tsx`: orkiestrator z regulowanym splitterem myszą.
+     - `FoundryNavbar.tsx`: górny pasek z marką, selektorem 30 miast, 6 modułami i telemetrią OCI.
+     - `StatusBar.tsx`: dolny pasek statusu z latencją API, środowiskiem i stanem zaznaczenia.
+     - `AnalyticalWorkspace.tsx`: router prawego panelu modułów.
+  6. **Moduł 1: Command Center (`src/components/modules/command-center/`):**
+     - `CommandCenterModule.tsx`: główny kontener.
+     - `CityScorecardCards.tsx`: 4 kafelki KPI (Konsolidacja sieci, Popyt demograficzny, Rynek RCN, Spójność audytu DNA).
+     - `GradeDistributionChart.tsx`: wykres rozkładu klas Stop DNA w Recharts z kolorami Foundry.
+     - `CityMagnetsList.tsx`: lista głównych punktów ciążenia miejskiego (Top Attractors T0–T2) z przyciskiem skoku na mapie.
+     - Współdzielone komponenty atomowe: `GradeBadge.tsx`, `KpiMetricCard.tsx`, `SvgSparkline.tsx`, `EmptyStateView.tsx`.
+  7. **Refaktoryzacja Deck.gl v9 `MapCanvas.tsx` & `MapHud.tsx`:**
+     - Silnik Deck.gl v9 + MapLibre GL v5.
+     - Warstwa 1: obrys aglomeracji (`GeoJsonLayer` EPSG:4326).
+     - Warstwa 2: ekstruzja 3D komórek H3 Res 8 (`H3HexagonLayer`) z dynamiczną metryką (transport_score, pop_total, transit_desert, rcn).
+     - Warstwa 3: słupki fizyczne micro (`ScatterplotLayer`) oraz węzły macro z kolorami Stop DNA.
+     - Warstwa 4: ślady geometrii linii GTFS (`PathLayer`).
+     - Mini-HUD `MapHud.tsx`: przełączniki satelity, 3D, warstw i wyboru metryki H3.
+- **Dowody Weryfikacji (100% Green):**
+  - `npx tsc --noEmit --project urban-dashboard/tsconfig.json`: **0 błędów**.
+  - `npm run build --prefix urban-dashboard`: **sukces w 3.8s** (Turbopack Next.js 16).
+  - `uv run pytest backend/tests/ -v`: **104/104 testów PASSED w 21.97s**.
 
-> **Główny dokument SSOT:** [`PLAN_FRONTEND.md`](PLAN_FRONTEND.md) (Pełna specyfikacja 45 tras, tokenów Blueprint v6 i architektury ~60 plików).
+---
 
-1. **Krok 1: Instalacja Pakietów i Konfiguracja Czystego Stacku Blueprint v6**:
-   - `npm install @blueprintjs/core@^6.16.0 @blueprintjs/table@latest @blueprintjs/icons@latest recharts vaul motion --prefix urban-dashboard`
-   - Usunięcie katalogu legacy `src/components/ui/` (100% Blueprint, eliminacja shadcn/ui).
-   - Aktualizacja `src/app/globals.css` (importy styli Blueprint, reset Tailwind v4, motyw `bp6-dark`) oraz `src/app/layout.tsx`.
-2. **Krok 2: Silnie Typowany Klient API dla 45 Tras (`src/lib/api/`)**:
-   - `types.ts`: 100% interfejsów TypeScript modeli Pydantic dla 45 zarejestrowanych tras HTTP.
-   - `client.ts`: Baza fetch z `AbortController`, timeoutem, obsługą błędów i fallbackiem do `/data/showcase/`.
-   - Moduły domenowe: `cities.ts`, `stops.ts`, `hubs.ts`, `hexagons.ts`, `market.ts`, `poi.ts`, `analytics.ts`, `routes.ts`, `ai.ts`.
-3. **Krok 3: Zustand Store z Session Cache per City & URL State (`src/lib/store/`)**:
-   - Slajsy: `city-slice.ts`, `module-slice.ts`, `map-slice.ts`, `selection-slice.ts`, `grid-slice.ts`.
-   - Zapamiętywanie stanu, filtrów i zaznaczeń dla 30 aglomeracji w `Session Cache`.
-   - Dwukierunkowa synchronizacja parametrów z `window.location.search` (`searchParams`).
-4. **Krok 4: Globalny Command Palette (`src/components/foundry/CommandPalette.tsx`)**:
-   - Implementacja Blueprint `Omnibar` (`Ctrl+K` / `Cmd+K`) ze skrótami do 30 miast, modułów i akcji.
-5. **Krok 5: Trójstrefowy Layout Foundry & Pasek Statusu (`src/components/foundry/`)**:
-   - `FoundryShell.tsx`: Orkiestrator z regulowanym splitterem myszą (desktop split) i adapterem mobilnym.
-   - `FoundryNavbar.tsx`: Selektor 30 miast, przełącznik 6 modułów, tag zdrowia OCI, przycisk Omnibar.
-   - `StatusBar.tsx`: Pasek dolny ze statystykami obiektów (słupki, huby, heksy, latencja API).
-   - `AnalyticalWorkspace.tsx`: Router prawego panelu modułów.
-6. **Krok 6: Moduł 1 — Command Center (Scorecard Miasta & KPI)**:
-   - `CommandCenterModule.tsx`: Kontener widoku głównego.
-   - `CityScorecardCards.tsx`: 4 kafelki KPI (Konsolidacja sieci, Podaż kursów/h szczytu, Wycena mieszkań, Spójność danych 0 nulli) zasilane z `GET /api/v1/analytics/audit-summary?include=summary`.
-   - `GradeDistributionChart.tsx`: Wykres rozkładu ocen Stop DNA (A+..F) w Recharts zasilany z `/audit-summary?include=grades`.
-   - `CityMagnetsList.tsx`: Karta kluczowych magnesów miejskich zasilana z `GET /api/v1/poi/magnets`.
-   - Komponenty współdzielone: `GradeBadge.tsx`, `KpiMetricCard.tsx`, `SvgSparkline.tsx`.
-7. **Krok 7: Refaktoryzacja `MapCanvas.tsx` (Deck.gl v9 + MapLibre GL v5)**:
-   - Podkład Carto Dark Matter + mini-HUD mapy (`MapHud.tsx`) z przełącznikiem satelity i budynków 3D.
-   - Dynamiczne przełączanie warstw wg aktywnego modułu: `GeoJsonLayer` (obrys `/boundary`), `H3HexagonLayer` (ekstruzja 3D i oceny), `ScatterplotLayer` (słupki/huby), `PathLayer` (trasy GTFS).
-   - Asynchroniczny model interakcji: kliknięcie obiektu na mapie podświetla element bez resetowania stanu tabel.
-8. **Krok 8: Weryfikacja Jakościowa & Commit Sesji 4.1**:
-   - `npx tsc --noEmit --project urban-dashboard/tsconfig.json` = 0 błędów.
-   - `npm run build --prefix urban-dashboard` = sukces w < 5.0s.
-   - `uv run pytest backend/tests/ -v` = 95/95 testów PASSED.
-   - Commit Git: `feat(core): sprint 4.1 - blueprint shell, typed api, command center & map canvas`.
-   - Aktualizacja `PLAN_FRONTEND.md` oraz `NEXT_SESSION_PLAN.md` z promptem handoff dla Sesji 4.2.
+## 4. Action Items dla Kolejnej Sesji (Sprint 4.2: Silniki Analityczne DataGrids & Policy Audit)
+
+> **Główny dokument SSOT:** [`PLAN_FRONTEND.md`](PLAN_FRONTEND.md) (Sekcja 1: Podsesja 4.2).
+
+1. **Krok 1: Moduł 2 — Network Explorer (Wirtualizowany DataGrid Table2)**:
+   - `NetworkModule.tsx`: Kontener z pod-zakładkami "Słupki Fizyczne (Micro)" i "Węzły Logiczne (Macro)".
+   - `StopsDataGrid.tsx`: `@blueprintjs/table` `Table2` dla 60k słupków z sortowaniem po 53 metrykach, `JumpToRankInput` (#Rank) oraz wirtualizacją GPU.
+   - `HubsDataGrid.tsx`: `Table2` dla 28k węzłów ze wskaźnikami konsolidacji, filtrem `min_stops` i percentylem krajowym.
+   - `PoiSearchOverlay.tsx`: Wyszukiwarka POI w nagłówku tabeli z DuckDB predicate pushdown (`/poi/search`).
+   - `FilterPillsBar.tsx`: Pasek aktywnych filtrów z możliwością usuwania jednym kliknięciem.
+2. **Krok 2: Moduł 3 — Optimization & Policy Audit**:
+   - `OptimizationModule.tsx`: Kontener pod-zakładek "The Axe List" i "The Investment List".
+   - `AxeListGrid.tsx`: Redukcja zbędnych słupków TCRP 100 ze suwakiem progu ($0.50, 0.70, 0.90$) oraz kalkulatorem oszczędności PLN (~12 000 PLN/słupek/rok). Rysowanie czerwonych wektorów kanibalizacji na mapie.
+   - `InvestmentGrid.tsx`: Ranking pustyń transportowych TDI w komórkach H3 Res 8 z populacją wykluczoną i cenami mieszkań.
+3. **Krok 3: Moduł 4 — Route Analyzer (Katalog Linii i Sekwencja)**:
+   - `RoutesModule.tsx`: Przeglądarka sieci GTFS.
+   - `RouteCatalogGrid.tsx`: Tabela linii z filtrami typu transportu (Autobus/Tramwaj/Kolej), taktu szczytowego i prędkości.
+   - `RouteStepperView.tsx`: Wertykalna oś czasu przystanków z LRS, czasem netto $\Delta t$ i prędkościami handlowymi.
+   - `RouteSpeedGrid.tsx`: Analiza wąskich gardeł prędkości na krawędziach skierowanych $u \to v$.
+4. **Krok 4: Weryfikacja Jakościowa & Commit Sesji 4.2**:
+   - `tsc` 0 błędów, build < 5s, 104/104 Pytest PASSED, commit i handoff do Sesji 4.3.
 
 ---
 
 ## 5. Handoff Bootstrap Prompt (Kopiuj-Wklej do Nowej Sesji)
 
 ```markdown
-Kontynuujemy rozwój BusOS w NOWEJ SESJI (Sprint 4.1: Fundament, Shell, Command Center & Mapa).
+Kontynuujemy rozwój BusOS w NOWEJ SESJI (Sprint 4.2: Silniki Analityczne DataGrids & Policy Audit).
 
 1. Załaduj wymagane skille poprzez fizyczne odczytanie (view_file):
    - `.agents/skills/skill-codebase-onboarding/SKILL.md`
@@ -271,28 +291,24 @@ Kontynuujemy rozwój BusOS w NOWEJ SESJI (Sprint 4.1: Fundament, Shell, Command 
    - `.agents/skills/skill-qa-engineer/SKILL.md`
 
 2. Przeczytaj pliki SSOT:
-   - `PLAN_FRONTEND.md` (Kompletna specyfikacja Sprintu 4: 45 tras API, tokeny Blueprint v6, architektura 60 plików)
-   - `PLAN.md` (Sekcja Sprint 4)
-   - `NEXT_SESSION_PLAN.md` (Sekcja 4: Zakres Sesji 4.1)
+   - `PLAN_FRONTEND.md` (Sekcja 1: Podsesja 4.2 oraz specyfikacja tras Grupy 2, 3, 4, 7 i 8)
+   - `PLAN.md` (Sekcja Sprint 4.2)
+   - `NEXT_SESSION_PLAN.md` (Sekcja 4: Zakres Sesji 4.2)
    - `docs/contracts/DATA_DICTIONARY_AND_API_SSOT.md`
 
 3. Stan bazowy:
-   - Planowanie architektoniczne Sprintu 4 zakończone i zablokowane (14 decyzji projektowych z sesji /grill-me).
-   - Backend na OCI ARM64 (FastAPI 0.115+, DuckDB, Qdrant) w 100% online z 45 zarejestrowanymi trasami HTTP.
-   - Testy bazowe: 95/95 Pytest PASSED (22.2s), frontend build PASSED w 4.6s (0 błędów TS).
+   - Sprint 4.1 zakończony sukcesem: Czysty stack Blueprint v6, typowany klient dla 45 tras (`src/lib/api/`), Zustand Store z Session Cache, Command Palette (`Ctrl+K`), FoundryShell, CommandCenterModule oraz refaktoryzacja Deck.gl MapCanvas.
+   - Backend na OCI ARM64 w 100% online z 45 trasami.
+   - Testy bazowe: 104/104 Pytest PASSED (21.97s), frontend build PASSED w 3.8s (0 błędów TS).
 
 4. Pre-Flight Verification Command:
    npm run build --prefix urban-dashboard && uv run pytest backend/tests/ -v
 
-5. Zakres do wdrożenia w bieżącej Sesji 4.1:
-   - Krok 1: Instalacja pakietów Blueprint v6 (@blueprintjs/core, @blueprintjs/table, @blueprintjs/icons, recharts, vaul, motion), usunięcie legacy shadcn/ui (src/components/ui/*), konfiguracja bp6-dark w globals.css i layout.tsx.
-   - Krok 2: Silnie typowany klient API dla 45 tras w src/lib/api/ (types.ts, client.ts, cities, stops, hubs, hexagons, market, poi, analytics, routes, ai).
-   - Krok 3: Zustand Store z Session Cache per City i synchronizacją URL searchParams w src/lib/store/.
-   - Krok 4: Globalny Command Palette (Blueprint Omnibar Ctrl+K) w src/components/foundry/CommandPalette.tsx.
-   - Krok 5: Główny szkielet Foundry: FoundryShell, FoundryNavbar, StatusBar, AnalyticalWorkspace.
-   - Krok 6: Moduł 1: Command Center (CommandCenterModule, CityScorecardCards, GradeDistributionChart, CityMagnetsList) zasilany z /analytics/audit-summary i /poi/magnets.
-   - Krok 7: Refaktoryzacja MapCanvas Deck.gl v9 (H3HexagonLayer, Scatterplot, Path, Boundary GeoJson, mini-HUD MapHud.tsx).
-   - Krok 8: Weryfikacja jakościowa (TypeScript 0 błędów, Next.js build < 5s, Pytest 95/95 passed), commit Git i handoff do Sesji 4.2.
+5. Zakres do wdrożenia w Sesji 4.2:
+   - Krok 1: Moduł 2: Network Explorer (StopsDataGrid Table2 z wirtualizacją, HubsDataGrid z konsolidacją, PoiSearchOverlay z DuckDB pushdown, FilterPillsBar, JumpToRankInput).
+   - Krok 2: Moduł 3: Optimization & Policy (AxeListGrid TCRP 100 z suwakiem progu i kalkulatorem PLN, InvestmentGrid pustyń TDI, rysowanie par kanibalizujących na mapie).
+   - Krok 3: Moduł 4: Route Analyzer (RouteCatalogGrid katalogu GTFS, RouteStepperView sekwencji z LRS, RouteSpeedGrid prędkości na krawędziach).
+   - Krok 4: Weryfikacja jakościowa (TypeScript 0 błędów, Next.js build < 5s, Pytest 104/104 passed), commit Git i handoff do Sesji 4.3.
 ```
 
 

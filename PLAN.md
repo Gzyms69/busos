@@ -243,12 +243,21 @@
 ---
 
 ### Sprint 4: Frontend Palantir Foundry UI & Blueprint.js (SSOT: PLAN_FRONTEND.md)
-- **Status:** `[PLANNED / ZAPLANOWANY W 3 PODSESJACH]`
+- **Status:** `[IN PROGRESS - SPRINT 4.1 DONE]`
 - **Specyfikacja Główna (SSOT):** Pełny plan implementacyjny, kontrakty 45 tras API oraz architektura komponentów znajdują się w dedykowanym dokumencie [`PLAN_FRONTEND.md`](PLAN_FRONTEND.md).
 - **Architektura Wykonawcza (3 Logiczne Podsesje):**
-  - **Sesja 4.1 (Fundament & Shell):** Czysty stack Blueprint v6, typowany klient dla 45 tras (`src/lib/api/`), Zustand Store z Session Cache per City, Command Palette (`Ctrl+K` Omnibar), FoundryShell, moduł Command Center (Scorecard) oraz refaktoryzacja Deck.gl MapCanvas.
-  - **Sesja 4.2 (Silniki Analityczne):** Network Explorer (wirtualizowany DataGrid Table2 dla 60k słupków i 28k hubów), Optimization (The Axe List TCRP 100 + The Investment List TDI), Route Analyzer (stepper sekwencji GTFS z LRS, prędkości).
-  - **Sesja 4.3 (Rynki, AI & Mobile):** Market Intel (mostek DuckDB RCN i trendy), Benchmarking Krajowy (leaderboard 30 miast, porównywarka side-by-side), Inspektor 360° (AI Radar Qdrant), Mobile Adaptive Bottom Sheet (`vaul` / `motion`), usunięcie legacy kodu i release.
+  - **Sesja 4.1 (Fundament & Shell):** `[DONE]` (Zrealizowano 2026-09-08)
+    * Czysty stack Blueprint v6 (`@blueprintjs/core@^6.16.0`, `@blueprintjs/table`, `@blueprintjs/icons`, `@blueprintjs/select`, `recharts`, `vaul`, `motion`).
+    * Usunięcie legacy `shadcn/ui` (`src/components/ui/*`) i konfiguracja `bp6-dark` w `globals.css` oraz `layout.tsx`.
+    * Silnie typowany klient API dla 45 tras HTTP w `src/lib/api/` (11 dedykowanych modułów).
+    * Zustand Store z Session Cache per City i dwukierunkową synchronizacją URL (`searchParams`) w `src/lib/store/`.
+    * Globalny Command Palette (Blueprint Omnibar `Ctrl+K`) w `src/components/foundry/CommandPalette.tsx`.
+    * Trójstrefowy szkielet Foundry (`FoundryShell`, `FoundryNavbar`, `StatusBar`, `AnalyticalWorkspace`).
+    * Moduł 1: Command Center (`CommandCenterModule`, `CityScorecardCards`, `GradeDistributionChart`, `CityMagnetsList`) zasilany z OCI ARM64.
+    * Refaktoryzacja Deck.gl v9 `MapCanvas.tsx` z mini-HUD `MapHud.tsx`, ekstruzją 3D `H3HexagonLayer`, warstwami `ScatterplotLayer`, `PathLayer`, `GeoJsonLayer`.
+    * Dowody weryfikacji: `tsc --noEmit` = 0 błędów, `npm run build` = sukces w 3.8s, `uv run pytest` = 104/104 PASSED.
+  - **Sesja 4.2 (Silniki Analityczne):** `[PLANNED]` Network Explorer (wirtualizowany DataGrid Table2 dla 60k słupków i 28k hubów), Optimization (The Axe List TCRP 100 + The Investment List TDI), Route Analyzer (stepper sekwencji GTFS z LRS, prędkości).
+  - **Sesja 4.3 (Rynki, AI & Mobile):** `[PLANNED]` Market Intel (mostek DuckDB RCN i trendy), Benchmarking Krajowy (leaderboard 30 miast, porównywarka side-by-side), Inspektor 360° (AI Radar Qdrant), Mobile Adaptive Bottom Sheet (`vaul` / `motion`), usunięcie legacy kodu i release.
 
 ---
 
