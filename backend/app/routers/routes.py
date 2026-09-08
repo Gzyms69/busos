@@ -35,6 +35,8 @@ _ROUTES_CACHE: Dict[str, Tuple[float, gpd.GeoDataFrame]] = {}
 def _get_stops_dict(city: str) -> Dict[str, Dict[str, Any]]:
     stops_p = DATA_DIR / city / "02_spatial" / "stops.gpkg"
     if not stops_p.exists():
+        stops_p = DATA_DIR / city / "04_results" / "stop_dna.gpkg"
+    if not stops_p.exists():
         return {}
     mtime = stops_p.stat().st_mtime
     if city in _STOPS_CACHE:
@@ -46,11 +48,16 @@ def _get_stops_dict(city: str) -> Dict[str, Dict[str, Any]]:
     stops_map = {}
     for _, row in gdf.iterrows():
         sid = str(row['stop_id'])
+        lat = row.get('stop_lat', None)
+        lon = row.get('stop_lon', None)
+        if lat is None or lon is None or pd.isna(lat) or pd.isna(lon):
+            lat = row.geometry.y
+            lon = row.geometry.x
         stops_map[sid] = {
             "stop_id": sid,
             "stop_name": str(row.get('stop_name', f"Słupek {sid}")),
-            "lat": round(float(row.geometry.y), 6),
-            "lon": round(float(row.geometry.x), 6)
+            "lat": round(float(lat), 6),
+            "lon": round(float(lon), 6)
         }
     _STOPS_CACHE[city] = (mtime, stops_map)
     return stops_map
