@@ -262,16 +262,52 @@ def calculate_h3_dna(city_name):
             hubs['hub_liquidity'] = hubs['hub_liquidity'].fillna(0).astype(int)
 
             # Stops RCN
-            joined_rcn_stops = gpd.sjoin(rcn, stops.set_geometry('catchment')[['stop_id', 'catchment']], how="inner", predicate="intersects")
+            joined_rcn_stops = gpd.sjoin(rcn, stops.set_geometry('catchment')[['stop_id', 'hub_id', 'catchment']], how="inner", predicate="intersects")
             rcn_stats_stops = joined_rcn_stops.groupby('stop_id')['price_m2'].agg(stop_market_val='median', stop_liquidity='count').reset_index()
             stops = stops.merge(rcn_stats_stops, on='stop_id', how='left')
             stops['stop_market_val'] = stops['stop_market_val'].fillna(city_median_price)
             stops['stop_liquidity'] = stops['stop_liquidity'].fillna(0).astype(int)
+
+            # Materializacja tabeli mostkowej stop_transactions_bridge.parquet
+            # z zwektoryzowanym dystansem (C/GEOS) i sortowaniem pod DuckDB Zone Maps
+            try:
+                stop_point_map = stops.set_index('stop_id')['geometry']
+                joined_stop_pts = joined_rcn_stops['stop_id'].map(stop_point_map)
+                
+                bridge_df = pd.DataFrame({
+                    'stop_id': joined_rcn_stops['stop_id'].astype(str),
+                    'hub_id': joined_rcn_stops['hub_id'].astype(int) if 'hub_id' in joined_rcn_stops.columns else 0,
+                    'tx_id': joined_rcn_stops.index.astype(str),
+                    'dok_data': joined_rcn_stops['dok_data'] if 'dok_data' in joined_rcn_stops.columns else pd.NaT,
+                    'price_m2': joined_rcn_stops['price_m2'].astype(float),
+                    'distance_m': joined_rcn_stops.geometry.distance(joined_stop_pts).round(1),
+                    'tran_rodzaj_rynku': joined_rcn_stops['tran_rodzaj_rynku'].fillna('nieznany') if 'tran_rodzaj_rynku' in joined_rcn_stops.columns else 'nieznany'
+                })
+                
+                if 'dok_data' in bridge_df.columns:
+                    bridge_df['dok_data'] = pd.to_datetime(bridge_df['dok_data'].astype(str).str.slice(0, 10), errors='coerce').dt.date
+                    bridge_df = bridge_df[bridge_df['dok_data'].notna()]
+                
+                bridge_df = bridge_df.sort_values(by=['stop_id', 'dok_data'])
+                bridge_out = results_dir / "stop_transactions_bridge.parquet"
+                bridge_df.to_parquet(
+                    bridge_out,
+                    index=False,
+                    engine="pyarrow",
+                    row_group_size=50000,
+                    use_dictionary=['tran_rodzaj_rynku', 'hub_id']
+                )
+                print(f"    [✓] [15_dna] Zmaterializowano {len(bridge_df)} rekordów w {bridge_out.name}")
+            except Exception as bridge_err:
+                print(f"    [WARN] [15_dna] Błąd materializacji stop_transactions_bridge: {bridge_err}")
         else:
             hubs['hub_market_val'] = city_median_price
             hubs['hub_liquidity'] = 0
             stops['stop_market_val'] = city_median_price
             stops['stop_liquidity'] = 0
+            pd.DataFrame(columns=[
+                'stop_id', 'hub_id', 'tx_id', 'dok_data', 'price_m2', 'distance_m', 'tran_rodzaj_rynku'
+            ]).to_parquet(results_dir / "stop_transactions_bridge.parquet", index=False)
 
         # Step 5 & 7: Pełne Poligony POI + Kanibalizacja Popytu (Model Huffa & Tuning Decay)
         poi_weights_path = city_dir / "03_config" / "poi_valuation.json"

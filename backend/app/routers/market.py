@@ -1,5 +1,5 @@
-from typing import Optional
-from fastapi import APIRouter, Query, HTTPException
+from typing import Optional, Dict, Any, List
+from fastapi import APIRouter, Query, HTTPException, Request
 from app.schemas import (
     MarketSummaryResponse,
     GeoJsonFeatureCollection,
@@ -8,8 +8,14 @@ from app.schemas import (
     MarketH3AnalysisResponse,
 )
 from app import spatial_engine
+from app.domain.market_bridge import (
+    get_bulk_stops_summary,
+    get_stop_transactions_list,
+    get_h3_grid_market_val
+)
 
 router = APIRouter(tags=["Real Estate Modeling"])
+
 
 
 @router.get("/market/summary", response_model=MarketSummaryResponse)
@@ -132,3 +138,55 @@ async def get_transactions_legacy_alias(
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Transactions error: {str(e)}")
+
+
+@router.get("/market/stops-summary", summary="City-wide stops valuation summary in a single pass (Anti-N+1)")
+async def get_city_stops_summary(
+    request: Request,
+    city: str = Query(..., description="City slug"),
+    date_from: Optional[str] = Query(None, description="Start date YYYY-MM-DD"),
+    date_to: Optional[str] = Query(None, description="End date YYYY-MM-DD"),
+    market_type: Optional[str] = Query(None, description="pierwotny or wtorny")
+) -> Dict[str, Dict[str, Any]]:
+    return get_bulk_stops_summary(
+        city=city,
+        date_from=date_from,
+        date_to=date_to,
+        market_type=market_type,
+        app_state=request.app.state
+    )
+
+
+@router.get("/market/stop/{stop_id}/transactions", summary="List raw transactions linked to a stop")
+async def get_stop_transactions(
+    request: Request,
+    city: str = Query(...),
+    stop_id: str = ...,
+    date_from: Optional[str] = None,
+    date_to: Optional[str] = None
+) -> List[Dict[str, Any]]:
+    return get_stop_transactions_list(
+        city=city,
+        stop_id=stop_id,
+        date_from=date_from,
+        date_to=date_to,
+        app_state=request.app.state
+    )
+
+
+@router.get("/market/h3-grid", summary="H3 hexagonal market density and valuation")
+async def get_h3_grid(
+    request: Request,
+    city: str = Query(...),
+    date_from: Optional[str] = None,
+    date_to: Optional[str] = None,
+    market_type: Optional[str] = None
+) -> List[Dict[str, Any]]:
+    return get_h3_grid_market_val(
+        city=city,
+        date_from=date_from,
+        date_to=date_to,
+        market_type=market_type,
+        app_state=request.app.state
+    )
+

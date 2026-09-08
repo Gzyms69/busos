@@ -215,12 +215,13 @@ def main():
     pipeline = [
         (0, "scripts/pipeline/00_init_environment.py", True),
         (1, "scripts/pipeline/01_fetch_gtfs.py", True),
-        (2, "scripts/pipeline/02_collect_stops.py", False),
-        (3, "scripts/pipeline/03_download_osm_pbf.py", True),
-        (4, "scripts/pipeline/04_download_population.py", True),
-        (5, "scripts/pipeline/05_extract_infrastructure.py", True),
-        (6, "scripts/pipeline/06_identify_rcn_teryt.py", True),
-        (7, "scripts/pipeline/07_harvest_rcn_omnibus.py", True),
+        (2, "scripts/pipeline/01b_extract_transit_routes.py", False),
+        (3, "scripts/pipeline/02_collect_stops.py", False),
+        (4, "scripts/pipeline/03_download_osm_pbf.py", True),
+        (5, "scripts/pipeline/04_download_population.py", True),
+        (6, "scripts/pipeline/05_extract_infrastructure.py", True),
+        (7, "scripts/pipeline/06_identify_rcn_teryt.py", True),
+        (8, "scripts/pipeline/07_harvest_rcn_omnibus.py", True),
         # POPRAWKA P1-2: Krok 08 usuniety (dead code -- czytal z nieistniejacej sciezki rcn/)
         # (8, "scripts/pipeline/08_fix_relational_data.py", False),
         (9, "scripts/pipeline/09_fix_suwalki_geometry.py", True),   # POPRAWKA P1-4: Global zamiast 29x parallel
@@ -230,7 +231,8 @@ def main():
         (13, "scripts/pipeline/13_isolate_city_data.py", False),
         (14, "scripts/pipeline/14_build_isc_valuation.py", False),
         (15, "scripts/pipeline/15_compute_stop_dna.py", False),
-        (16, "scripts/pipeline/15_compute_stop_dna.py --stitch", True)
+        (16, "scripts/pipeline/15_compute_stop_dna.py --stitch", True),
+        (17, "scripts/pipeline/17_build_h3_grid.py --city all", True)
     ]
 
     orch.logger.info("=== PANCERNY ORKIESTRATOR 3.2 - SYSTEM TRANSPARENTNY ===")

@@ -46,6 +46,49 @@ except ImportError:
         n = re.sub(r'osobow[ya]', '', n)
         return re.sub(r'[^a-z0-9]', '', n).strip()
 
+def compute_city_bbox_metric(stops_gdf: gpd.GeoDataFrame, buffer_meters: float = 5000.0) -> list[float]:
+    """
+    Oblicza obwiednie miasta w polskim ukladzie metrycznym EPSG:2180
+    z buforem w metrach, a nastepnie bezpiecznie rzutuje z powrotem do WGS84.
+    """
+    if stops_gdf.crs != "EPSG:2180":
+        stops_metric = stops_gdf.to_crs(epsg=2180)
+    else:
+        stops_metric = stops_gdf
+    
+    convex_hull = stops_metric.union_all().convex_hull
+    buffered_hull = convex_hull.buffer(buffer_meters)
+    
+    zone_wgs84 = gpd.GeoSeries([buffered_hull], crs=2180).to_crs(epsg=4326).iloc[0]
+    min_lon, min_lat, max_lon, max_lat = zone_wgs84.bounds
+    return [round(min_lon, 6), round(min_lat, 6), round(max_lon, 6), round(max_lat, 6)]
+
+def sync_city_bbox_config(city_slug: str, stops_gdf: gpd.GeoDataFrame, config_path: Path):
+    """Automatycznie uzupelnia brakujacy bbox w extract_config.json."""
+    if not config_path.exists():
+        return
+    try:
+        with open(config_path, "r", encoding="utf-8") as f:
+            config = json.load(f)
+            
+        extracts = config.get("extracts", [])
+        existing_cities = {e.get("description"): e for e in extracts if "description" in e}
+        
+        if city_slug not in existing_cities:
+            bbox = compute_city_bbox_metric(stops_gdf, buffer_meters=5000.0)
+            extracts.append({
+                "output": f"data/cities/{city_slug}/osm_bbox.pbf",
+                "description": city_slug,
+                "bbox": bbox
+            })
+            config["extracts"] = extracts
+            with open(config_path, "w", encoding="utf-8") as f:
+                json.dump(config, f, indent=2, ensure_ascii=False)
+            print(f"  [✓] [02_stops] Auto-skalibrowano BBox dla {city_slug}: {bbox}")
+    except Exception as e:
+        print(f"  [WARN] Failed to sync bbox config for {city_slug}: {e}", file=sys.stderr)
+
+
 def load_national_rail():
     NATIONAL_RAIL_ROOT = get_data_dir() / "poland" / "gtfs_national"
     rail_gdfs = []
@@ -188,6 +231,9 @@ def process_city(city_name, global_rail_gdf):
     spatial_dir.mkdir(parents=True, exist_ok=True)
     transport_zone.to_crs("EPSG:4326").to_file(city_dir / "transport_zone.gpkg", driver="GPKG")
     final_city_stops.to_crs("EPSG:4326").to_file(spatial_dir / "stops.gpkg", driver="GPKG")
+    
+    # Auto-synchronizacja obwiedni w extract_config.json
+    sync_city_bbox_config(city_name, final_city_stops, PROJECT_ROOT / "config" / "extract_config.json")
     
     area_km2 = round(transport_zone.area.sum() / 1_000_000, 1)
     

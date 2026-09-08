@@ -1,5 +1,7 @@
 import time
 import os
+from contextlib import asynccontextmanager
+import duckdb
 import httpx
 from fastapi import FastAPI, Request, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,19 +12,32 @@ from app.schemas import (
     GeoJsonFeatureCollection,
 )
 from app import spatial_engine
-from app.routers import stops, hubs, hexagons, market, analytics, ai, poi
+from app.routers import stops, hubs, hexagons, market, analytics, ai, poi, routes
 
 
 QDRANT_HOST = os.getenv("QDRANT_HOST", "qdrant")
 QDRANT_PORT = int(os.getenv("QDRANT_PORT", "6333"))
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Inicjalizacja persistent singleton DuckDB in-memory
+    app.state.duckdb = duckdb.connect(":memory:", read_only=False)
+    yield
+    # Zamykanie połączenia przy wyłączeniu serwera
+    if hasattr(app.state, "duckdb") and app.state.duckdb:
+        app.state.duckdb.close()
+
 
 app = FastAPI(
     title="BusOS Spatial Intelligence Engine API",
     description="High-throughput spatial analytical API serving 30 Polish metropolitan hubs with DuckDB, GeoPackage, and GNN Vector Embeddings.",
     version="9.5.0",
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
+    lifespan=lifespan
 )
+
 
 # Open CORS policy for Vercel and local development
 app.add_middleware(
@@ -90,4 +105,6 @@ app.include_router(market.router, prefix="/api/v1")
 app.include_router(poi.router, prefix="/api/v1")
 app.include_router(analytics.router, prefix="/api/v1")
 app.include_router(ai.router, prefix="/api/v1")
+app.include_router(routes.router, prefix="/api/v1")
+
 
