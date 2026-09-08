@@ -357,3 +357,24 @@
      - 5 testów weryfikujących SQLi, Path Traversal, CORS, `top_k` bounds oraz Rate Limiter.
 - **Dowody Weryfikacji (100% Green):**
   - `uv run pytest backend/tests/test_security.py backend/tests/test_api_v1.py -v`: **29/29 testów PASSED w 21.97s**.
+
+---
+
+### Task 14 (Sprint 4.5 Plan): Frontend Deep Interactive E2E Testing Suite (Playwright + WebGL + Zero Console Errors)
+- **Status:** `[NEXT SESSION ROADMAP]`
+- **Cel:** Zapewnienie bezwzględnej pewności działania interfejsu Foundry: weryfikacja, czy kliknięcie dosłownie każdego elementu UI na frontendzie daje autentyczny, pożądany efekt wizualny i stanowy oraz czy konsola przeglądarki jest w 100% wolna od nieschwytanych błędów (`console.error === 0`).
+- **Architektura & Narzędzia:**
+  - `@playwright/test` zintegrowany z systemowym Google Chrome 152 (`channel: 'chrome'`).
+  - Flagi WebGL: `--use-gl=angle`, `--use-angle=swiftshader`, `--enable-webgl`, `--ignore-gpu-blocklist` (bezbłędne renderowanie Deck.gl v9 i MapLibre GL w trybie headless).
+  - Brama jakości: Zero Uncaught Console Errors (`console.error` == 0).
+- **10 Dedykowanych Scenariuszy Testowych (`urban-dashboard/e2e/`):**
+  1. `01-shell-navigation.spec.ts`: Selektor 30 miast, 6 modułów analitycznych, Command Palette `Ctrl+K`, Splitter, kontrolki mapy `MapHud` (3D pitch, styl mapy, warstwy, metryka H3).
+  2. `02-command-center.spec.ts`: Kafelki KPI, tooltipy wykresu Grade Distribution Recharts, kliknięcie magnesów miejskich ze skokiem kamery (`flyTo`).
+  3. `03-network-explorer.spec.ts`: Wirtualizowana tabela `Table2`, przełączanie Słupki vs Węzły, sortowanie kolumn, skok do rangi `#Rank`, wyszukiwarka POI z podpowiedziami, eksport CSV/JSON oraz otwarcie dolnego profilu 360°.
+  4. `04-optimization-policy.spec.ts`: Suwak TCRP 100 ($0.50 \to 0.70 \to 0.90$), dynamiczny kalkulator oszczędności PLN, kliknięcie pary słupków z aktywacją wektora kanibalizacji na mapie, tabela pustyń TDI.
+  5. `05-route-analyzer.spec.ts`: Filtry środków transportu (Autobus/Tramwaj/Kolej), wybór linii GTFS ze śladem na mapie, stepper sekwencji przystanków z $\Delta t$, analiza wąskich gardeł w tabeli prędkości.
+  6. `06-market-intel.spec.ts`: Filtry wykresu szeregów czasowych 2020–2026 (interwał i rynek), tabela wycen wokół słupków, ranking transakcji notarialnych RCN.
+  7. `07-national-benchmark.spec.ts`: Przycisk "Przełącz miasto" w ogólnopolskim Leaderboardzie 30 miast, porównywarka side-by-side z tagami delta (`+X%` / `-Y%`), histogram rozkładu metryki z przełącznikiem wskaźników.
+  8. `08-object-inspector-ai-radar.spec.ts`: Zmiana wysokości dolnego panelu (Compact 250px vs Expanded 480px), przełączanie 4 zakładek, skok do węzła bliźniaczego w innym mieście z AI Radaru, przycisk zamknięcia `(X)`.
+  9. `09-mobile-bottom-sheet.spec.ts`: Emulacja mobilna (390x844px), 3 snap-pointy arkusza gestowego (Peek 72px / Half 45vh / Full 88vh), dotykowy pasek nawigacji min. 44x44px (WCAG AA).
+  10. `10-full-click-stability-sweep.spec.ts`: Bezwzględny audyt stabilności: kliknięcie we wszystkie interaktywne elementy i asercja zero nieschwytanych błędów w konsoli przeglądarki (`console.error === 0`).
