@@ -1,16 +1,28 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import DeckGL from '@deck.gl/react';
-import { ScatterplotLayer, GeoJsonLayer } from '@deck.gl/layers';
+import { ScatterplotLayer, GeoJsonLayer, PathLayer, TextLayer } from '@deck.gl/layers';
 import { HexagonLayer } from '@deck.gl/aggregation-layers';
 import { H3HexagonLayer } from '@deck.gl/geo-layers';
 import { Map, Layer } from 'react-map-gl/maplibre';
 import { useTheme } from 'next-themes';
 import { useStore, ViewState } from '@/lib/store';
-import { fetchHubs, fetchPopulation, fetchTransactions, fetchHexagons } from '@/lib/api-client';
+import { fetchHubs, fetchPopulation, fetchTransactions, fetchHexagons, fetchRouteDetails } from '@/lib/api-client';
 import type { PickingInfo } from '@deck.gl/core';
 import type { Feature, FeatureCollection, Geometry } from 'geojson';
 import 'maplibre-gl/dist/maplibre-gl.css';
+
+function hexToRgb(hex: string, fallback: [number, number, number] = [255, 140, 0]): [number, number, number] {
+  if (!hex || typeof hex !== 'string') return fallback;
+  const clean = hex.replace('#', '').trim();
+  if (clean.length === 6) {
+    const num = parseInt(clean, 16);
+    if (!isNaN(num)) {
+      return [(num >> 16) & 255, (num >> 8) & 255, num & 255];
+    }
+  }
+  return fallback;
+}
 
 interface HubProperties {
   hub_id: number | string;
@@ -55,7 +67,18 @@ export interface H3CellData {
 const emptySubscribe = () => () => {};
 
 export default function MapContainer() {
-  const { selectedCity, mapViewState, setMapViewState, setActiveHub, mapType, show3DBuildings } = useStore();
+  const {
+    selectedCity,
+    mapViewState,
+    setMapViewState,
+    setActiveHub,
+    mapType,
+    show3DBuildings,
+    activeRouteUid,
+    activeDirectionId,
+    activeRouteData,
+    setActiveRouteData
+  } = useStore();
   const [hubs, setHubs] = useState<FeatureCollection<Geometry, HubProperties> | null>(null);
   const [pop, setPop] = useState<FeatureCollection<Geometry, PopProperties> | null>(null);
   const [transactions, setTransactions] = useState<FeatureCollection<Geometry, TxProperties> | null>(null);
@@ -87,6 +110,32 @@ export default function MapContainer() {
       controller.abort();
     };
   }, [selectedCity]);
+
+  // Efekt pobierania szczegółów aktywnej trasy (geometria i sekwencja przystanków)
+  useEffect(() => {
+    if (!selectedCity || !activeRouteUid) {
+      setActiveRouteData(null);
+      return;
+    }
+    const controller = new AbortController();
+    fetchRouteDetails(selectedCity, activeRouteUid, activeDirectionId ?? 0, controller.signal).then((data) => {
+      if (!controller.signal.aborted && data) {
+        setActiveRouteData(data);
+        if (data.stops && data.stops.length > 0) {
+          const firstStop = data.stops[0];
+          setMapViewState({
+            ...mapViewState,
+            longitude: firstStop.lon,
+            latitude: firstStop.lat,
+            zoom: 13
+          });
+        }
+      }
+    });
+    return () => {
+      controller.abort();
+    };
+  }, [selectedCity, activeRouteUid, activeDirectionId]);
 
   const txData: TxPoint[] = transactions?.features?.map((f) => {
     let pos: unknown = f.geometry && 'coordinates' in f.geometry ? f.geometry.coordinates : null;
@@ -160,7 +209,54 @@ export default function MapContainer() {
           });
         }
       }
-    })
+    }),
+    ...(activeRouteData && activeRouteData.geometry && activeRouteData.geometry.coordinates ? [
+      new PathLayer({
+        id: 'transit-route-path',
+        data: [{ path: activeRouteData.geometry.coordinates }],
+        getPath: (d: any) => d.path,
+        getColor: hexToRgb(activeRouteData.color),
+        getWidth: 6,
+        widthMinPixels: 4,
+        capRounded: true,
+        jointRounded: true,
+        pickable: true
+      }),
+      new ScatterplotLayer({
+        id: 'transit-route-stops',
+        data: activeRouteData.stops || [],
+        pickable: true,
+        radiusScale: 1,
+        radiusMinPixels: 5,
+        getPosition: (d: any) => [d.lon, d.lat],
+        getFillColor: (d: any) => d.is_terminal ? [255, 255, 255] : hexToRgb(activeRouteData.color),
+        getLineColor: [15, 23, 42],
+        stroked: true,
+        lineWidthMinPixels: 2,
+        getRadius: (d: any) => d.is_terminal ? 10 : 7,
+        onClick: (info: any) => {
+          if (info.object) {
+            setMapViewState({
+              ...mapViewState,
+              longitude: info.object.lon,
+              latitude: info.object.lat,
+              zoom: 15.5
+            });
+          }
+        }
+      }),
+      new TextLayer({
+        id: 'transit-route-numbers',
+        data: activeRouteData.stops || [],
+        pickable: false,
+        getPosition: (d: any) => [d.lon, d.lat],
+        getText: (d: any) => String(d.sequence),
+        getSize: 10,
+        getColor: (d: any) => d.is_terminal ? [15, 23, 42] : [255, 255, 255],
+        getTextAnchor: 'middle',
+        getAlignmentBaseline: 'center'
+      })
+    ] : [])
   ];
 
   const flatStyle = isDark 

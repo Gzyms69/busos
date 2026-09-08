@@ -71,7 +71,7 @@ def get_bulk_stops_summary(
     SELECT 
         stop_id,
         hub_id,
-        COUNT(DISTINCT tx_id) AS tx_count,
+        COUNT(*) AS tx_count,
         ROUND(MEDIAN(price_m2), 2) AS median_price_m2,
         ROUND(AVG(price_m2), 2) AS avg_price_m2,
         ROUND(PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY price_m2), 2) AS q1_price_m2,

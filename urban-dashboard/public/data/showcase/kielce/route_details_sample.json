@@ -1,0 +1,3308 @@
+{
+  "kielce_34": {
+    "route_uid": "kielce_34",
+    "route_id": "34",
+    "feed_id": "kielce",
+    "short_name": "34",
+    "long_name": "nan",
+    "type": 3,
+    "type_name": "Autobus",
+    "color": "#F5BB37",
+    "text_color": "#FFFFFF",
+    "direction_id": 0,
+    "headsign": "Bukówka",
+    "daily_trips": 380,
+    "stop_count": 37,
+    "total_length_km": 16.61,
+    "total_travel_time_min": 50.7,
+    "commercial_speed_kmh": 19.66,
+    "service_hours": {
+      "first_departure": "04:30",
+      "last_departure": "22:55",
+      "peak_headway_min": 8,
+      "offpeak_headway_min": 6
+    },
+    "geometry_source": "gtfs_shape",
+    "geometry": {
+      "type": "LineString",
+      "coordinates": [
+        [
+          20.63951,
+          50.85132
+        ],
+        [
+          20.63964,
+          50.85156
+        ],
+        [
+          20.63977,
+          50.8517
+        ],
+        [
+          20.63982,
+          50.85181
+        ],
+        [
+          20.6398,
+          50.85187
+        ],
+        [
+          20.63971,
+          50.85197
+        ],
+        [
+          20.63901,
+          50.85205
+        ],
+        [
+          20.63831,
+          50.85215
+        ],
+        [
+          20.63831,
+          50.85215
+        ],
+        [
+          20.63631,
+          50.85252
+        ],
+        [
+          20.6356,
+          50.85257
+        ],
+        [
+          20.63326,
+          50.8526
+        ],
+        [
+          20.63327,
+          50.85261
+        ],
+        [
+          20.63254,
+          50.85262
+        ],
+        [
+          20.63211,
+          50.85264
+        ],
+        [
+          20.63146,
+          50.85272
+        ],
+        [
+          20.63039,
+          50.85281
+        ],
+        [
+          20.63019,
+          50.85284
+        ],
+        [
+          20.63011,
+          50.85291
+        ],
+        [
+          20.63003,
+          50.85295
+        ],
+        [
+          20.62993,
+          50.85295
+        ],
+        [
+          20.62985,
+          50.85295
+        ],
+        [
+          20.62972,
+          50.85289
+        ],
+        [
+          20.62953,
+          50.85288
+        ],
+        [
+          20.62918,
+          50.85289
+        ],
+        [
+          20.62918,
+          50.85288
+        ],
+        [
+          20.62839,
+          50.85293
+        ],
+        [
+          20.62778,
+          50.85293
+        ],
+        [
+          20.62695,
+          50.85288
+        ],
+        [
+          20.62582,
+          50.85282
+        ],
+        [
+          20.62526,
+          50.8528
+        ],
+        [
+          20.62478,
+          50.85284
+        ],
+        [
+          20.62425,
+          50.85295
+        ],
+        [
+          20.62397,
+          50.85302
+        ],
+        [
+          20.62398,
+          50.8538
+        ],
+        [
+          20.62399,
+          50.8538
+        ],
+        [
+          20.62404,
+          50.85464
+        ],
+        [
+          20.62407,
+          50.85507
+        ],
+        [
+          20.6241,
+          50.85586
+        ],
+        [
+          20.62416,
+          50.85606
+        ],
+        [
+          20.62437,
+          50.85649
+        ],
+        [
+          20.6248,
+          50.8573
+        ],
+        [
+          20.62496,
+          50.85759
+        ],
+        [
+          20.62495,
+          50.85759
+        ],
+        [
+          20.62508,
+          50.85784
+        ],
+        [
+          20.6253,
+          50.85822
+        ],
+        [
+          20.62584,
+          50.85918
+        ],
+        [
+          20.62595,
+          50.85937
+        ],
+        [
+          20.62598,
+          50.85949
+        ],
+        [
+          20.62678,
+          50.86097
+        ],
+        [
+          20.62678,
+          50.86097
+        ],
+        [
+          20.62709,
+          50.86159
+        ],
+        [
+          20.62723,
+          50.86187
+        ],
+        [
+          20.62744,
+          50.86228
+        ],
+        [
+          20.62747,
+          50.86234
+        ],
+        [
+          20.62758,
+          50.86268
+        ],
+        [
+          20.62769,
+          50.86297
+        ],
+        [
+          20.62777,
+          50.86322
+        ],
+        [
+          20.62782,
+          50.86338
+        ],
+        [
+          20.62788,
+          50.86357
+        ],
+        [
+          20.62809,
+          50.86421
+        ],
+        [
+          20.62816,
+          50.86446
+        ],
+        [
+          20.62836,
+          50.86506
+        ],
+        [
+          20.62837,
+          50.86507
+        ],
+        [
+          20.62857,
+          50.86573
+        ],
+        [
+          20.62866,
+          50.86601
+        ],
+        [
+          20.6287,
+          50.86614
+        ],
+        [
+          20.62849,
+          50.8661
+        ],
+        [
+          20.62831,
+          50.86614
+        ],
+        [
+          20.6283,
+          50.86614
+        ],
+        [
+          20.62827,
+          50.86614
+        ],
+        [
+          20.62814,
+          50.86616
+        ],
+        [
+          20.62808,
+          50.86617
+        ],
+        [
+          20.62804,
+          50.86617
+        ],
+        [
+          20.62784,
+          50.86617
+        ],
+        [
+          20.62762,
+          50.86623
+        ],
+        [
+          20.62758,
+          50.86624
+        ],
+        [
+          20.62553,
+          50.86674
+        ],
+        [
+          20.62511,
+          50.8668
+        ],
+        [
+          20.6249,
+          50.86689
+        ],
+        [
+          20.62476,
+          50.86693
+        ],
+        [
+          20.62463,
+          50.86698
+        ],
+        [
+          20.62443,
+          50.86707
+        ],
+        [
+          20.62423,
+          50.86717
+        ],
+        [
+          20.62332,
+          50.86765
+        ],
+        [
+          20.62296,
+          50.86779
+        ],
+        [
+          20.62202,
+          50.8682
+        ],
+        [
+          20.62163,
+          50.8684
+        ],
+        [
+          20.62169,
+          50.86842
+        ],
+        [
+          20.6217,
+          50.86849
+        ],
+        [
+          20.62171,
+          50.86849
+        ],
+        [
+          20.62171,
+          50.86856
+        ],
+        [
+          20.62171,
+          50.8686
+        ],
+        [
+          20.6217,
+          50.8686
+        ],
+        [
+          20.62168,
+          50.86866
+        ],
+        [
+          20.62166,
+          50.86869
+        ],
+        [
+          20.62163,
+          50.86873
+        ],
+        [
+          20.62159,
+          50.86875
+        ],
+        [
+          20.62155,
+          50.86878
+        ],
+        [
+          20.62149,
+          50.8688
+        ],
+        [
+          20.62145,
+          50.86882
+        ],
+        [
+          20.62135,
+          50.86883
+        ],
+        [
+          20.62129,
+          50.86883
+        ],
+        [
+          20.62124,
+          50.86883
+        ],
+        [
+          20.62117,
+          50.86883
+        ],
+        [
+          20.62113,
+          50.86883
+        ],
+        [
+          20.62107,
+          50.8688
+        ],
+        [
+          20.62102,
+          50.8688
+        ],
+        [
+          20.62096,
+          50.86876
+        ],
+        [
+          20.62048,
+          50.86899
+        ],
+        [
+          20.61965,
+          50.86932
+        ],
+        [
+          20.61965,
+          50.86932
+        ],
+        [
+          20.6179,
+          50.87008
+        ],
+        [
+          20.61779,
+          50.87016
+        ],
+        [
+          20.61768,
+          50.87028
+        ],
+        [
+          20.61761,
+          50.87047
+        ],
+        [
+          20.61821,
+          50.87146
+        ],
+        [
+          20.6184,
+          50.87178
+        ],
+        [
+          20.61865,
+          50.87236
+        ],
+        [
+          20.61864,
+          50.87245
+        ],
+        [
+          20.61945,
+          50.87402
+        ],
+        [
+          20.61962,
+          50.8743
+        ],
+        [
+          20.61993,
+          50.87468
+        ],
+        [
+          20.62019,
+          50.87473
+        ],
+        [
+          20.62064,
+          50.87473
+        ],
+        [
+          20.62111,
+          50.87468
+        ],
+        [
+          20.62156,
+          50.87462
+        ],
+        [
+          20.62182,
+          50.8746
+        ],
+        [
+          20.62182,
+          50.87459
+        ],
+        [
+          20.62229,
+          50.87457
+        ],
+        [
+          20.62268,
+          50.87457
+        ],
+        [
+          20.62303,
+          50.87459
+        ],
+        [
+          20.62347,
+          50.87468
+        ],
+        [
+          20.62361,
+          50.87468
+        ],
+        [
+          20.62433,
+          50.87485
+        ],
+        [
+          20.62485,
+          50.87495
+        ],
+        [
+          20.62507,
+          50.87499
+        ],
+        [
+          20.62518,
+          50.87499
+        ],
+        [
+          20.62532,
+          50.87499
+        ],
+        [
+          20.62548,
+          50.87495
+        ],
+        [
+          20.62555,
+          50.87492
+        ],
+        [
+          20.62569,
+          50.87485
+        ],
+        [
+          20.62586,
+          50.87482
+        ],
+        [
+          20.62609,
+          50.87486
+        ],
+        [
+          20.62625,
+          50.87503
+        ],
+        [
+          20.62622,
+          50.87522
+        ],
+        [
+          20.62639,
+          50.87548
+        ],
+        [
+          20.62645,
+          50.87558
+        ],
+        [
+          20.62661,
+          50.8758
+        ],
+        [
+          20.62661,
+          50.8758
+        ],
+        [
+          20.62684,
+          50.87612
+        ],
+        [
+          20.62698,
+          50.87639
+        ],
+        [
+          20.62725,
+          50.87702
+        ],
+        [
+          20.62749,
+          50.87767
+        ],
+        [
+          20.62762,
+          50.87808
+        ],
+        [
+          20.62767,
+          50.87914
+        ],
+        [
+          20.62767,
+          50.87948
+        ],
+        [
+          20.62764,
+          50.87979
+        ],
+        [
+          20.62754,
+          50.8804
+        ],
+        [
+          20.62731,
+          50.88193
+        ],
+        [
+          20.62725,
+          50.88238
+        ],
+        [
+          20.62726,
+          50.88252
+        ],
+        [
+          20.62724,
+          50.88265
+        ],
+        [
+          20.62723,
+          50.88271
+        ],
+        [
+          20.62715,
+          50.88283
+        ],
+        [
+          20.62705,
+          50.88288
+        ],
+        [
+          20.6268,
+          50.88297
+        ],
+        [
+          20.62667,
+          50.88301
+        ],
+        [
+          20.62656,
+          50.8831
+        ],
+        [
+          20.62743,
+          50.88521
+        ],
+        [
+          20.62769,
+          50.8856
+        ],
+        [
+          20.62769,
+          50.8856
+        ],
+        [
+          20.62789,
+          50.88622
+        ],
+        [
+          20.62803,
+          50.8865
+        ],
+        [
+          20.62851,
+          50.88728
+        ],
+        [
+          20.6294,
+          50.88713
+        ],
+        [
+          20.6294,
+          50.88711
+        ],
+        [
+          20.63107,
+          50.88684
+        ],
+        [
+          20.63205,
+          50.88667
+        ],
+        [
+          20.63234,
+          50.88659
+        ],
+        [
+          20.63256,
+          50.88656
+        ],
+        [
+          20.63307,
+          50.88641
+        ],
+        [
+          20.63416,
+          50.8861
+        ],
+        [
+          20.63443,
+          50.88605
+        ],
+        [
+          20.63462,
+          50.88607
+        ],
+        [
+          20.63473,
+          50.88612
+        ],
+        [
+          20.63498,
+          50.88632
+        ],
+        [
+          20.63544,
+          50.88684
+        ],
+        [
+          20.63586,
+          50.88726
+        ],
+        [
+          20.63586,
+          50.88726
+        ],
+        [
+          20.63607,
+          50.88747
+        ],
+        [
+          20.63621,
+          50.88766
+        ],
+        [
+          20.63634,
+          50.88789
+        ],
+        [
+          20.63653,
+          50.88821
+        ],
+        [
+          20.63662,
+          50.88851
+        ],
+        [
+          20.63675,
+          50.88896
+        ],
+        [
+          20.6369,
+          50.88956
+        ],
+        [
+          20.63695,
+          50.88972
+        ],
+        [
+          20.63701,
+          50.88989
+        ],
+        [
+          20.63715,
+          50.89016
+        ],
+        [
+          20.63736,
+          50.89044
+        ],
+        [
+          20.63736,
+          50.89044
+        ],
+        [
+          20.63743,
+          50.89052
+        ],
+        [
+          20.63881,
+          50.89203
+        ],
+        [
+          20.63945,
+          50.89275
+        ],
+        [
+          20.64044,
+          50.8938
+        ],
+        [
+          20.64044,
+          50.8938
+        ],
+        [
+          20.64096,
+          50.89438
+        ],
+        [
+          20.64126,
+          50.89472
+        ],
+        [
+          20.64138,
+          50.89482
+        ],
+        [
+          20.64153,
+          50.89491
+        ],
+        [
+          20.64168,
+          50.89497
+        ],
+        [
+          20.64195,
+          50.89501
+        ],
+        [
+          20.64224,
+          50.89501
+        ],
+        [
+          20.64404,
+          50.89496
+        ],
+        [
+          20.64584,
+          50.89489
+        ],
+        [
+          20.64584,
+          50.89489
+        ],
+        [
+          20.65017,
+          50.89472
+        ],
+        [
+          20.65038,
+          50.89471
+        ],
+        [
+          20.65056,
+          50.89469
+        ],
+        [
+          20.65092,
+          50.89464
+        ],
+        [
+          20.65131,
+          50.89456
+        ],
+        [
+          20.65184,
+          50.89443
+        ],
+        [
+          20.65203,
+          50.89436
+        ],
+        [
+          20.65225,
+          50.89426
+        ],
+        [
+          20.6525,
+          50.89411
+        ],
+        [
+          20.6525,
+          50.89411
+        ],
+        [
+          20.65288,
+          50.8939
+        ],
+        [
+          20.65312,
+          50.89373
+        ],
+        [
+          20.65325,
+          50.89364
+        ],
+        [
+          20.65395,
+          50.8931
+        ],
+        [
+          20.65432,
+          50.89278
+        ],
+        [
+          20.65452,
+          50.89255
+        ],
+        [
+          20.65462,
+          50.89237
+        ],
+        [
+          20.65472,
+          50.89215
+        ],
+        [
+          20.65475,
+          50.89191
+        ],
+        [
+          20.65473,
+          50.89156
+        ],
+        [
+          20.6546,
+          50.89061
+        ],
+        [
+          20.65453,
+          50.89041
+        ],
+        [
+          20.65453,
+          50.88999
+        ],
+        [
+          20.65465,
+          50.88965
+        ],
+        [
+          20.65467,
+          50.88954
+        ],
+        [
+          20.65482,
+          50.88936
+        ],
+        [
+          20.65504,
+          50.88914
+        ],
+        [
+          20.6553,
+          50.88893
+        ],
+        [
+          20.65572,
+          50.88869
+        ],
+        [
+          20.65605,
+          50.88855
+        ],
+        [
+          20.65648,
+          50.88843
+        ],
+        [
+          20.65682,
+          50.88834
+        ],
+        [
+          20.65735,
+          50.88821
+        ],
+        [
+          20.65824,
+          50.88797
+        ],
+        [
+          20.65824,
+          50.88798
+        ],
+        [
+          20.65856,
+          50.88791
+        ],
+        [
+          20.65881,
+          50.88783
+        ],
+        [
+          20.65905,
+          50.88773
+        ],
+        [
+          20.65917,
+          50.88764
+        ],
+        [
+          20.65924,
+          50.88758
+        ],
+        [
+          20.65936,
+          50.88739
+        ],
+        [
+          20.65938,
+          50.88729
+        ],
+        [
+          20.65936,
+          50.88713
+        ],
+        [
+          20.65927,
+          50.88699
+        ],
+        [
+          20.65914,
+          50.88685
+        ],
+        [
+          20.65852,
+          50.88632
+        ],
+        [
+          20.65805,
+          50.88589
+        ],
+        [
+          20.6572,
+          50.88515
+        ],
+        [
+          20.657,
+          50.88499
+        ],
+        [
+          20.6564,
+          50.88459
+        ],
+        [
+          20.65606,
+          50.88431
+        ],
+        [
+          20.65506,
+          50.88373
+        ],
+        [
+          20.65507,
+          50.88373
+        ],
+        [
+          20.65431,
+          50.88328
+        ],
+        [
+          20.65219,
+          50.88201
+        ],
+        [
+          20.6509,
+          50.88121
+        ],
+        [
+          20.65023,
+          50.88083
+        ],
+        [
+          20.6498,
+          50.88051
+        ],
+        [
+          20.64622,
+          50.87771
+        ],
+        [
+          20.64622,
+          50.87772
+        ],
+        [
+          20.64557,
+          50.87723
+        ],
+        [
+          20.64477,
+          50.87663
+        ],
+        [
+          20.64413,
+          50.87617
+        ],
+        [
+          20.64391,
+          50.876
+        ],
+        [
+          20.64368,
+          50.87582
+        ],
+        [
+          20.64337,
+          50.87558
+        ],
+        [
+          20.64302,
+          50.87529
+        ],
+        [
+          20.64271,
+          50.87495
+        ],
+        [
+          20.6425,
+          50.87468
+        ],
+        [
+          20.64233,
+          50.87446
+        ],
+        [
+          20.64222,
+          50.8743
+        ],
+        [
+          20.64222,
+          50.87431
+        ],
+        [
+          20.6407,
+          50.87188
+        ],
+        [
+          20.64064,
+          50.87169
+        ],
+        [
+          20.64061,
+          50.87146
+        ],
+        [
+          20.64066,
+          50.87119
+        ],
+        [
+          20.64089,
+          50.87062
+        ],
+        [
+          20.64089,
+          50.87062
+        ],
+        [
+          20.64122,
+          50.86986
+        ],
+        [
+          20.64152,
+          50.86912
+        ],
+        [
+          20.64177,
+          50.86856
+        ],
+        [
+          20.64201,
+          50.86803
+        ],
+        [
+          20.6422,
+          50.86757
+        ],
+        [
+          20.64226,
+          50.86729
+        ],
+        [
+          20.64224,
+          50.86711
+        ],
+        [
+          20.64211,
+          50.8668
+        ],
+        [
+          20.64151,
+          50.86569
+        ],
+        [
+          20.64152,
+          50.8657
+        ],
+        [
+          20.64108,
+          50.8649
+        ],
+        [
+          20.64092,
+          50.86458
+        ],
+        [
+          20.64074,
+          50.86426
+        ],
+        [
+          20.64068,
+          50.86414
+        ],
+        [
+          20.6406,
+          50.86398
+        ],
+        [
+          20.64053,
+          50.86382
+        ],
+        [
+          20.64048,
+          50.86369
+        ],
+        [
+          20.64038,
+          50.86342
+        ],
+        [
+          20.64018,
+          50.86284
+        ],
+        [
+          20.64004,
+          50.86246
+        ],
+        [
+          20.63982,
+          50.86175
+        ],
+        [
+          20.63955,
+          50.86097
+        ],
+        [
+          20.63946,
+          50.86072
+        ],
+        [
+          20.63919,
+          50.86018
+        ],
+        [
+          20.63893,
+          50.85963
+        ],
+        [
+          20.63838,
+          50.85847
+        ],
+        [
+          20.6381,
+          50.8579
+        ],
+        [
+          20.63782,
+          50.85732
+        ],
+        [
+          20.63759,
+          50.85685
+        ],
+        [
+          20.63748,
+          50.8566
+        ],
+        [
+          20.63719,
+          50.85604
+        ],
+        [
+          20.6372,
+          50.85605
+        ],
+        [
+          20.63706,
+          50.85578
+        ],
+        [
+          20.63693,
+          50.85549
+        ],
+        [
+          20.63647,
+          50.85452
+        ],
+        [
+          20.63601,
+          50.85361
+        ],
+        [
+          20.63559,
+          50.85273
+        ],
+        [
+          20.63531,
+          50.8521
+        ],
+        [
+          20.63491,
+          50.85103
+        ],
+        [
+          20.63491,
+          50.85103
+        ],
+        [
+          20.6343,
+          50.84939
+        ],
+        [
+          20.63411,
+          50.84881
+        ],
+        [
+          20.63395,
+          50.84841
+        ],
+        [
+          20.63387,
+          50.84822
+        ],
+        [
+          20.63387,
+          50.84822
+        ],
+        [
+          20.63381,
+          50.84809
+        ],
+        [
+          20.63336,
+          50.847
+        ],
+        [
+          20.63289,
+          50.84596
+        ],
+        [
+          20.63285,
+          50.84589
+        ],
+        [
+          20.63312,
+          50.84584
+        ],
+        [
+          20.63324,
+          50.84584
+        ],
+        [
+          20.63362,
+          50.84584
+        ],
+        [
+          20.63395,
+          50.84582
+        ],
+        [
+          20.63445,
+          50.84577
+        ],
+        [
+          20.63445,
+          50.84577
+        ],
+        [
+          20.63596,
+          50.84566
+        ],
+        [
+          20.63725,
+          50.84556
+        ],
+        [
+          20.63845,
+          50.84546
+        ],
+        [
+          20.63948,
+          50.84539
+        ],
+        [
+          20.63948,
+          50.84539
+        ],
+        [
+          20.6419,
+          50.84521
+        ],
+        [
+          20.64349,
+          50.84505
+        ],
+        [
+          20.64612,
+          50.84487
+        ],
+        [
+          20.65231,
+          50.84352
+        ],
+        [
+          20.65243,
+          50.84335
+        ],
+        [
+          20.65254,
+          50.84322
+        ],
+        [
+          20.65334,
+          50.8425
+        ],
+        [
+          20.65396,
+          50.84197
+        ],
+        [
+          20.65465,
+          50.84136
+        ],
+        [
+          20.65555,
+          50.84057
+        ],
+        [
+          20.65669,
+          50.83957
+        ],
+        [
+          20.65695,
+          50.83931
+        ]
+      ]
+    },
+    "variants": [
+      {
+        "direction_id": 0,
+        "headsign": "Bukówka",
+        "stop_count": 29,
+        "daily_trips": 4,
+        "is_canonical": false,
+        "pattern_hash": "8fcf966b"
+      },
+      {
+        "direction_id": 0,
+        "headsign": "Żytnia I",
+        "stop_count": 9,
+        "daily_trips": 14,
+        "is_canonical": false,
+        "pattern_hash": "98944b81"
+      },
+      {
+        "direction_id": 0,
+        "headsign": "Bukówka",
+        "stop_count": 37,
+        "daily_trips": 380,
+        "is_canonical": true,
+        "pattern_hash": "d6f06ecb"
+      },
+      {
+        "direction_id": 0,
+        "headsign": "Bukówka",
+        "stop_count": 8,
+        "daily_trips": 22,
+        "is_canonical": false,
+        "pattern_hash": "f3396325"
+      },
+      {
+        "direction_id": 1,
+        "headsign": "Pileckiego",
+        "stop_count": 33,
+        "daily_trips": 372,
+        "is_canonical": true,
+        "pattern_hash": "1228df8e"
+      },
+      {
+        "direction_id": 1,
+        "headsign": "Popiełuszki Wapiennikowa",
+        "stop_count": 6,
+        "daily_trips": 12,
+        "is_canonical": false,
+        "pattern_hash": "2c26c4c8"
+      },
+      {
+        "direction_id": 1,
+        "headsign": "Żytnia",
+        "stop_count": 27,
+        "daily_trips": 22,
+        "is_canonical": false,
+        "pattern_hash": "c147ed24"
+      },
+      {
+        "direction_id": 1,
+        "headsign": "Pileckiego",
+        "stop_count": 7,
+        "daily_trips": 20,
+        "is_canonical": false,
+        "pattern_hash": "d2721d3d"
+      }
+    ],
+    "stops": [
+      {
+        "sequence": 1,
+        "stop_id": "1397",
+        "stop_name": "Pileckiego",
+        "lat": 50.8513,
+        "lon": 20.63968,
+        "segment_distance_m": 0.0,
+        "cumulative_distance_km": 0.0,
+        "segment_travel_time_sec": 0.0,
+        "cumulative_travel_time_min": 0.0,
+        "segment_speed_kmh": null,
+        "is_terminal": true
+      },
+      {
+        "sequence": 2,
+        "stop_id": "1390",
+        "stop_name": "Pileckiego / Tarnowska",
+        "lat": 50.8522,
+        "lon": 20.63833,
+        "segment_distance_m": 177.6,
+        "cumulative_distance_km": 0.18,
+        "segment_travel_time_sec": 60.0,
+        "cumulative_travel_time_min": 1.0,
+        "segment_speed_kmh": 10.66,
+        "is_terminal": false
+      },
+      {
+        "sequence": 3,
+        "stop_id": "436",
+        "stop_name": "Wapiennikowa",
+        "lat": 50.85271,
+        "lon": 20.63328,
+        "segment_distance_m": 362.8,
+        "cumulative_distance_km": 0.54,
+        "segment_travel_time_sec": 120.0,
+        "cumulative_travel_time_min": 3.0,
+        "segment_speed_kmh": 10.88,
+        "is_terminal": false
+      },
+      {
+        "sequence": 4,
+        "stop_id": "1369",
+        "stop_name": "Wapiennikowa os. Kochanowskiego",
+        "lat": 50.85293,
+        "lon": 20.62919,
+        "segment_distance_m": 297.1,
+        "cumulative_distance_km": 0.84,
+        "segment_travel_time_sec": 60.0,
+        "cumulative_travel_time_min": 4.0,
+        "segment_speed_kmh": 17.83,
+        "is_terminal": false
+      },
+      {
+        "sequence": 5,
+        "stop_id": "423",
+        "stop_name": "Ściegiennego / Wapiennikowa",
+        "lat": 50.85379,
+        "lon": 20.62405,
+        "segment_distance_m": 460.3,
+        "cumulative_distance_km": 1.3,
+        "segment_travel_time_sec": 75.5,
+        "cumulative_travel_time_min": 5.3,
+        "segment_speed_kmh": 21.96,
+        "is_terminal": false
+      },
+      {
+        "sequence": 6,
+        "stop_id": "424",
+        "stop_name": "Ściegiennego / cmentarz",
+        "lat": 50.85758,
+        "lon": 20.62508,
+        "segment_distance_m": 431.0,
+        "cumulative_distance_km": 1.73,
+        "segment_travel_time_sec": 66.9,
+        "cumulative_travel_time_min": 6.4,
+        "segment_speed_kmh": 23.18,
+        "is_terminal": false
+      },
+      {
+        "sequence": 7,
+        "stop_id": "1318",
+        "stop_name": "Ściegiennego / I LO Żeromskiego",
+        "lat": 50.86097,
+        "lon": 20.62684,
+        "segment_distance_m": 399.5,
+        "cumulative_distance_km": 2.13,
+        "segment_travel_time_sec": 60.0,
+        "cumulative_travel_time_min": 7.4,
+        "segment_speed_kmh": 23.97,
+        "is_terminal": false
+      },
+      {
+        "sequence": 8,
+        "stop_id": "426",
+        "stop_name": "Jana Pawła II",
+        "lat": 50.86506,
+        "lon": 20.62842,
+        "segment_distance_m": 468.8,
+        "cumulative_distance_km": 2.6,
+        "segment_travel_time_sec": 87.2,
+        "cumulative_travel_time_min": 8.8,
+        "segment_speed_kmh": 19.36,
+        "is_terminal": false
+      },
+      {
+        "sequence": 9,
+        "stop_id": "1041",
+        "stop_name": "Żytnia I",
+        "lat": 50.86938,
+        "lon": 20.61969,
+        "segment_distance_m": 899.9,
+        "cumulative_distance_km": 3.5,
+        "segment_travel_time_sec": 179.4,
+        "cumulative_travel_time_min": 11.8,
+        "segment_speed_kmh": 18.06,
+        "is_terminal": false
+      },
+      {
+        "sequence": 10,
+        "stop_id": "1424",
+        "stop_name": "Dworzec Kolejowy",
+        "lat": 50.87358,
+        "lon": 20.61925,
+        "segment_distance_m": 562.3,
+        "cumulative_distance_km": 4.06,
+        "segment_travel_time_sec": 96.3,
+        "cumulative_travel_time_min": 13.4,
+        "segment_speed_kmh": 21.02,
+        "is_terminal": false
+      },
+      {
+        "sequence": 11,
+        "stop_id": "67",
+        "stop_name": "Czarnowska / Dworzec Autobusowy",
+        "lat": 50.87458,
+        "lon": 20.62182,
+        "segment_distance_m": 268.0,
+        "cumulative_distance_km": 4.33,
+        "segment_travel_time_sec": 66.9,
+        "cumulative_travel_time_min": 14.5,
+        "segment_speed_kmh": 14.41,
+        "is_terminal": false
+      },
+      {
+        "sequence": 12,
+        "stop_id": "286",
+        "stop_name": "Okrzei rondo",
+        "lat": 50.87579,
+        "lon": 20.62666,
+        "segment_distance_m": 427.2,
+        "cumulative_distance_km": 4.75,
+        "segment_travel_time_sec": 100.7,
+        "cumulative_travel_time_min": 16.2,
+        "segment_speed_kmh": 15.27,
+        "is_terminal": false
+      },
+      {
+        "sequence": 13,
+        "stop_id": "351",
+        "stop_name": "Okrzei / Zagnańska",
+        "lat": 50.88129,
+        "lon": 20.62743,
+        "segment_distance_m": 621.2,
+        "cumulative_distance_km": 5.38,
+        "segment_travel_time_sec": 60.0,
+        "cumulative_travel_time_min": 17.2,
+        "segment_speed_kmh": 37.27,
+        "is_terminal": false
+      },
+      {
+        "sequence": 14,
+        "stop_id": "1170",
+        "stop_name": "Zagnańska I",
+        "lat": 50.88558,
+        "lon": 20.62786,
+        "segment_distance_m": 514.9,
+        "cumulative_distance_km": 5.89,
+        "segment_travel_time_sec": 101.7,
+        "cumulative_travel_time_min": 18.9,
+        "segment_speed_kmh": 18.23,
+        "is_terminal": false
+      },
+      {
+        "sequence": 15,
+        "stop_id": "189",
+        "stop_name": "Jesionowa / Zagnańska",
+        "lat": 50.88693,
+        "lon": 20.62934,
+        "segment_distance_m": 263.7,
+        "cumulative_distance_km": 6.15,
+        "segment_travel_time_sec": 82.4,
+        "cumulative_travel_time_min": 20.3,
+        "segment_speed_kmh": 11.52,
+        "is_terminal": false
+      },
+      {
+        "sequence": 16,
+        "stop_id": "94",
+        "stop_name": "Klonowa os. Szydłówek",
+        "lat": 50.88722,
+        "lon": 20.63592,
+        "segment_distance_m": 544.7,
+        "cumulative_distance_km": 6.7,
+        "segment_travel_time_sec": 120.3,
+        "cumulative_travel_time_min": 22.3,
+        "segment_speed_kmh": 16.3,
+        "is_terminal": false
+      },
+      {
+        "sequence": 17,
+        "stop_id": "97",
+        "stop_name": "Klonowa / Turystyczna",
+        "lat": 50.89039,
+        "lon": 20.63761,
+        "segment_distance_m": 377.2,
+        "cumulative_distance_km": 7.08,
+        "segment_travel_time_sec": 60.0,
+        "cumulative_travel_time_min": 23.3,
+        "segment_speed_kmh": 22.63,
+        "is_terminal": false
+      },
+      {
+        "sequence": 18,
+        "stop_id": "91",
+        "stop_name": "Klonowa / Orkana",
+        "lat": 50.89377,
+        "lon": 20.64052,
+        "segment_distance_m": 428.2,
+        "cumulative_distance_km": 7.5,
+        "segment_travel_time_sec": 67.3,
+        "cumulative_travel_time_min": 24.4,
+        "segment_speed_kmh": 22.92,
+        "is_terminal": false
+      },
+      {
+        "sequence": 19,
+        "stop_id": "293",
+        "stop_name": "Orkana os. Związkowiec",
+        "lat": 50.89482,
+        "lon": 20.64584,
+        "segment_distance_m": 452.3,
+        "cumulative_distance_km": 7.96,
+        "segment_travel_time_sec": 60.0,
+        "cumulative_travel_time_min": 25.4,
+        "segment_speed_kmh": 27.14,
+        "is_terminal": false
+      },
+      {
+        "sequence": 20,
+        "stop_id": "243",
+        "stop_name": "Orkana / os. Uroczysko",
+        "lat": 50.89411,
+        "lon": 20.65249,
+        "segment_distance_m": 485.2,
+        "cumulative_distance_km": 8.44,
+        "segment_travel_time_sec": 82.1,
+        "cumulative_travel_time_min": 26.8,
+        "segment_speed_kmh": 21.27,
+        "is_terminal": false
+      },
+      {
+        "sequence": 21,
+        "stop_id": "217",
+        "stop_name": "Jaworskiego",
+        "lat": 50.88999,
+        "lon": 20.65453,
+        "segment_distance_m": 513.7,
+        "cumulative_distance_km": 8.96,
+        "segment_travel_time_sec": 120.0,
+        "cumulative_travel_time_min": 28.8,
+        "segment_speed_kmh": 15.41,
+        "is_terminal": false
+      },
+      {
+        "sequence": 22,
+        "stop_id": "302",
+        "stop_name": "Jaworskiego / os. Słoneczne Wzgórze",
+        "lat": 50.88794,
+        "lon": 20.65823,
+        "segment_distance_m": 367.0,
+        "cumulative_distance_km": 9.32,
+        "segment_travel_time_sec": 66.9,
+        "cumulative_travel_time_min": 29.9,
+        "segment_speed_kmh": 19.74,
+        "is_terminal": false
+      },
+      {
+        "sequence": 23,
+        "stop_id": "26",
+        "stop_name": "Solidarności / os. Bocianek",
+        "lat": 50.88378,
+        "lon": 20.65501,
+        "segment_distance_m": 623.5,
+        "cumulative_distance_km": 9.95,
+        "segment_travel_time_sec": 60.0,
+        "cumulative_travel_time_min": 30.9,
+        "segment_speed_kmh": 37.41,
+        "is_terminal": false
+      },
+      {
+        "sequence": 24,
+        "stop_id": "287",
+        "stop_name": "Galeria Echo",
+        "lat": 50.87779,
+        "lon": 20.64597,
+        "segment_distance_m": 924.4,
+        "cumulative_distance_km": 10.87,
+        "segment_travel_time_sec": 133.9,
+        "cumulative_travel_time_min": 33.1,
+        "segment_speed_kmh": 24.85,
+        "is_terminal": false
+      },
+      {
+        "sequence": 25,
+        "stop_id": "291",
+        "stop_name": "Solidarności / Tysiąclecia PP",
+        "lat": 50.87621,
+        "lon": 20.64384,
+        "segment_distance_m": 230.7,
+        "cumulative_distance_km": 11.1,
+        "segment_travel_time_sec": 66.6,
+        "cumulative_travel_time_min": 34.2,
+        "segment_speed_kmh": 12.46,
+        "is_terminal": false
+      },
+      {
+        "sequence": 26,
+        "stop_id": "640",
+        "stop_name": "Źródłowa / Jarońskich",
+        "lat": 50.87061,
+        "lon": 20.64083,
+        "segment_distance_m": 674.0,
+        "cumulative_distance_km": 11.78,
+        "segment_travel_time_sec": 120.0,
+        "cumulative_travel_time_min": 36.2,
+        "segment_speed_kmh": 20.22,
+        "is_terminal": false
+      },
+      {
+        "sequence": 27,
+        "stop_id": "638",
+        "stop_name": "Tarnowska",
+        "lat": 50.86572,
+        "lon": 20.64142,
+        "segment_distance_m": 567.9,
+        "cumulative_distance_km": 12.34,
+        "segment_travel_time_sec": 133.6,
+        "cumulative_travel_time_min": 38.5,
+        "segment_speed_kmh": 15.31,
+        "is_terminal": false
+      },
+      {
+        "sequence": 28,
+        "stop_id": "500",
+        "stop_name": "Tarnowska / Prosta",
+        "lat": 50.86247,
+        "lon": 20.63999,
+        "segment_distance_m": 377.6,
+        "cumulative_distance_km": 12.72,
+        "segment_travel_time_sec": 111.2,
+        "cumulative_travel_time_min": 40.3,
+        "segment_speed_kmh": 12.23,
+        "is_terminal": false
+      },
+      {
+        "sequence": 29,
+        "stop_id": "499",
+        "stop_name": "Tarnowska / Wojska Pol.",
+        "lat": 50.85606,
+        "lon": 20.63713,
+        "segment_distance_m": 741.6,
+        "cumulative_distance_km": 13.46,
+        "segment_travel_time_sec": 120.0,
+        "cumulative_travel_time_min": 42.3,
+        "segment_speed_kmh": 22.25,
+        "is_terminal": false
+      },
+      {
+        "sequence": 30,
+        "stop_id": "498",
+        "stop_name": "Popiełuszki / Wapiennikowa",
+        "lat": 50.85106,
+        "lon": 20.63473,
+        "segment_distance_m": 583.0,
+        "cumulative_distance_km": 14.05,
+        "segment_travel_time_sec": 60.0,
+        "cumulative_travel_time_min": 43.3,
+        "segment_speed_kmh": 34.98,
+        "is_terminal": false
+      },
+      {
+        "sequence": 31,
+        "stop_id": "22",
+        "stop_name": "Popiełuszki / Wrzosowa",
+        "lat": 50.84823,
+        "lon": 20.63381,
+        "segment_distance_m": 321.0,
+        "cumulative_distance_km": 14.37,
+        "segment_travel_time_sec": 60.0,
+        "cumulative_travel_time_min": 44.3,
+        "segment_speed_kmh": 19.26,
+        "is_terminal": false
+      },
+      {
+        "sequence": 32,
+        "stop_id": "1319",
+        "stop_name": "Wrzosowa / Starostwo Powiatowe",
+        "lat": 50.84573,
+        "lon": 20.63444,
+        "segment_distance_m": 382.7,
+        "cumulative_distance_km": 14.75,
+        "segment_travel_time_sec": 60.0,
+        "cumulative_travel_time_min": 45.3,
+        "segment_speed_kmh": 22.96,
+        "is_terminal": false
+      },
+      {
+        "sequence": 33,
+        "stop_id": "581",
+        "stop_name": "Wrzosowa",
+        "lat": 50.84532,
+        "lon": 20.63946,
+        "segment_distance_m": 356.0,
+        "cumulative_distance_km": 15.11,
+        "segment_travel_time_sec": 60.0,
+        "cumulative_travel_time_min": 46.3,
+        "segment_speed_kmh": 21.36,
+        "is_terminal": false
+      },
+      {
+        "sequence": 34,
+        "stop_id": "584",
+        "stop_name": "Wrzosowa os. Podhale",
+        "lat": 50.84487,
+        "lon": 20.64613,
+        "segment_distance_m": 472.3,
+        "cumulative_distance_km": 15.58,
+        "segment_travel_time_sec": 60.0,
+        "cumulative_travel_time_min": 47.3,
+        "segment_speed_kmh": 28.34,
+        "is_terminal": false
+      },
+      {
+        "sequence": 35,
+        "stop_id": "1561",
+        "stop_name": "Rondo Czwartaków",
+        "lat": 50.84464,
+        "lon": 20.64948,
+        "segment_distance_m": 231.3,
+        "cumulative_distance_km": 15.81,
+        "segment_travel_time_sec": 60.0,
+        "cumulative_travel_time_min": 48.3,
+        "segment_speed_kmh": 13.88,
+        "is_terminal": false
+      },
+      {
+        "sequence": 36,
+        "stop_id": "1396",
+        "stop_name": "Wojska Pol. / Ostra Górka",
+        "lat": 50.84306,
+        "lon": 20.65267,
+        "segment_distance_m": 285.8,
+        "cumulative_distance_km": 16.09,
+        "segment_travel_time_sec": 60.0,
+        "cumulative_travel_time_min": 49.3,
+        "segment_speed_kmh": 17.15,
+        "is_terminal": false
+      },
+      {
+        "sequence": 37,
+        "stop_id": "47",
+        "stop_name": "Bukówka",
+        "lat": 50.83931,
+        "lon": 20.65689,
+        "segment_distance_m": 512.2,
+        "cumulative_distance_km": 16.61,
+        "segment_travel_time_sec": 60.0,
+        "cumulative_travel_time_min": 50.3,
+        "segment_speed_kmh": 30.73,
+        "is_terminal": true
+      }
+    ]
+  },
+  "kielce_46": {
+    "route_uid": "kielce_46",
+    "route_id": "46",
+    "feed_id": "kielce",
+    "short_name": "46",
+    "long_name": "nan",
+    "type": 3,
+    "type_name": "Autobus",
+    "color": "#F5BB37",
+    "text_color": "#FFFFFF",
+    "direction_id": 0,
+    "headsign": "Os. Świętokrzyskie",
+    "daily_trips": 520,
+    "stop_count": 21,
+    "total_length_km": 9.93,
+    "total_travel_time_min": 32.8,
+    "commercial_speed_kmh": 18.16,
+    "service_hours": {
+      "first_departure": "04:20",
+      "last_departure": "23:01",
+      "peak_headway_min": 4,
+      "offpeak_headway_min": 4
+    },
+    "geometry_source": "gtfs_shape",
+    "geometry": {
+      "type": "LineString",
+      "coordinates": [
+        [
+          20.58245,
+          50.8871
+        ],
+        [
+          20.58235,
+          50.88685
+        ],
+        [
+          20.58231,
+          50.88667
+        ],
+        [
+          20.5823,
+          50.88665
+        ],
+        [
+          20.58226,
+          50.8865
+        ],
+        [
+          20.58223,
+          50.88632
+        ],
+        [
+          20.58221,
+          50.88613
+        ],
+        [
+          20.58223,
+          50.88569
+        ],
+        [
+          20.58231,
+          50.88549
+        ],
+        [
+          20.5824,
+          50.88531
+        ],
+        [
+          20.58251,
+          50.88514
+        ],
+        [
+          20.5827,
+          50.8849
+        ],
+        [
+          20.58312,
+          50.88452
+        ],
+        [
+          20.58348,
+          50.88418
+        ],
+        [
+          20.5841,
+          50.88355
+        ],
+        [
+          20.5841,
+          50.88355
+        ],
+        [
+          20.58441,
+          50.88328
+        ],
+        [
+          20.58448,
+          50.88319
+        ],
+        [
+          20.58449,
+          50.88317
+        ],
+        [
+          20.58449,
+          50.8831
+        ],
+        [
+          20.58467,
+          50.88288
+        ],
+        [
+          20.58494,
+          50.88254
+        ],
+        [
+          20.58497,
+          50.88238
+        ],
+        [
+          20.58499,
+          50.88225
+        ],
+        [
+          20.58499,
+          50.88211
+        ],
+        [
+          20.58499,
+          50.88204
+        ],
+        [
+          20.58491,
+          50.88189
+        ],
+        [
+          20.58483,
+          50.88168
+        ],
+        [
+          20.58473,
+          50.88148
+        ],
+        [
+          20.58467,
+          50.88141
+        ],
+        [
+          20.58454,
+          50.88115
+        ],
+        [
+          20.58509,
+          50.88105
+        ],
+        [
+          20.58509,
+          50.88105
+        ],
+        [
+          20.58525,
+          50.88103
+        ],
+        [
+          20.58575,
+          50.88094
+        ],
+        [
+          20.58764,
+          50.88064
+        ],
+        [
+          20.58837,
+          50.88051
+        ],
+        [
+          20.58876,
+          50.88045
+        ],
+        [
+          20.58888,
+          50.8804
+        ],
+        [
+          20.58936,
+          50.88022
+        ],
+        [
+          20.58978,
+          50.88006
+        ],
+        [
+          20.59007,
+          50.87992
+        ],
+        [
+          20.59019,
+          50.87979
+        ],
+        [
+          20.5902,
+          50.87979
+        ],
+        [
+          20.5916,
+          50.87824
+        ],
+        [
+          20.59241,
+          50.87739
+        ],
+        [
+          20.59241,
+          50.87739
+        ],
+        [
+          20.59291,
+          50.87687
+        ],
+        [
+          20.59317,
+          50.8766
+        ],
+        [
+          20.59369,
+          50.8763
+        ],
+        [
+          20.59441,
+          50.87603
+        ],
+        [
+          20.5951,
+          50.87591
+        ],
+        [
+          20.59628,
+          50.87582
+        ],
+        [
+          20.5971,
+          50.87579
+        ],
+        [
+          20.59746,
+          50.87579
+        ],
+        [
+          20.59771,
+          50.87554
+        ],
+        [
+          20.59808,
+          50.87557
+        ],
+        [
+          20.59836,
+          50.87565
+        ],
+        [
+          20.59996,
+          50.87538
+        ],
+        [
+          20.60181,
+          50.87494
+        ],
+        [
+          20.60161,
+          50.87495
+        ],
+        [
+          20.60273,
+          50.87473
+        ],
+        [
+          20.60372,
+          50.87449
+        ],
+        [
+          20.60477,
+          50.87423
+        ],
+        [
+          20.60575,
+          50.87392
+        ],
+        [
+          20.60655,
+          50.87367
+        ],
+        [
+          20.60708,
+          50.87353
+        ],
+        [
+          20.60831,
+          50.87331
+        ],
+        [
+          20.60831,
+          50.8733
+        ],
+        [
+          20.60831,
+          50.87331
+        ],
+        [
+          20.60879,
+          50.87323
+        ],
+        [
+          20.60917,
+          50.87315
+        ],
+        [
+          20.60951,
+          50.87306
+        ],
+        [
+          20.60982,
+          50.87297
+        ],
+        [
+          20.61018,
+          50.87286
+        ],
+        [
+          20.61072,
+          50.87267
+        ],
+        [
+          20.61164,
+          50.87233
+        ],
+        [
+          20.61263,
+          50.87195
+        ],
+        [
+          20.61412,
+          50.87137
+        ],
+        [
+          20.61429,
+          50.87128
+        ],
+        [
+          20.61457,
+          50.87118
+        ],
+        [
+          20.6148,
+          50.87108
+        ],
+        [
+          20.6148,
+          50.87107
+        ],
+        [
+          20.61512,
+          50.87096
+        ],
+        [
+          20.61544,
+          50.87085
+        ],
+        [
+          20.61552,
+          50.87083
+        ],
+        [
+          20.61578,
+          50.87074
+        ],
+        [
+          20.61665,
+          50.87039
+        ],
+        [
+          20.61697,
+          50.87027
+        ],
+        [
+          20.61712,
+          50.87027
+        ],
+        [
+          20.61723,
+          50.87028
+        ],
+        [
+          20.61744,
+          50.87031
+        ],
+        [
+          20.61755,
+          50.87037
+        ],
+        [
+          20.6179,
+          50.87091
+        ],
+        [
+          20.61827,
+          50.87153
+        ],
+        [
+          20.61839,
+          50.87173
+        ],
+        [
+          20.61865,
+          50.87234
+        ],
+        [
+          20.61867,
+          50.87245
+        ],
+        [
+          20.61945,
+          50.87402
+        ],
+        [
+          20.61962,
+          50.8743
+        ],
+        [
+          20.61993,
+          50.87468
+        ],
+        [
+          20.62019,
+          50.87473
+        ],
+        [
+          20.62064,
+          50.87473
+        ],
+        [
+          20.62111,
+          50.87468
+        ],
+        [
+          20.62156,
+          50.87462
+        ],
+        [
+          20.62182,
+          50.8746
+        ],
+        [
+          20.62182,
+          50.8746
+        ],
+        [
+          20.62229,
+          50.87457
+        ],
+        [
+          20.62261,
+          50.87457
+        ],
+        [
+          20.62272,
+          50.87457
+        ],
+        [
+          20.62281,
+          50.87459
+        ],
+        [
+          20.6234,
+          50.87466
+        ],
+        [
+          20.62358,
+          50.87469
+        ],
+        [
+          20.62431,
+          50.87484
+        ],
+        [
+          20.62507,
+          50.87499
+        ],
+        [
+          20.62511,
+          50.87499
+        ],
+        [
+          20.62518,
+          50.87499
+        ],
+        [
+          20.62532,
+          50.87499
+        ],
+        [
+          20.62548,
+          50.87495
+        ],
+        [
+          20.62563,
+          50.87486
+        ],
+        [
+          20.62584,
+          50.87483
+        ],
+        [
+          20.626,
+          50.87484
+        ],
+        [
+          20.62615,
+          50.87488
+        ],
+        [
+          20.62992,
+          50.87441
+        ],
+        [
+          20.63078,
+          50.87432
+        ],
+        [
+          20.63099,
+          50.87428
+        ],
+        [
+          20.63348,
+          50.87402
+        ],
+        [
+          20.63365,
+          50.87411
+        ],
+        [
+          20.63371,
+          50.87423
+        ],
+        [
+          20.63373,
+          50.87431
+        ],
+        [
+          20.63376,
+          50.8745
+        ],
+        [
+          20.63381,
+          50.87474
+        ],
+        [
+          20.63388,
+          50.875
+        ],
+        [
+          20.63393,
+          50.87522
+        ],
+        [
+          20.63414,
+          50.87577
+        ],
+        [
+          20.63433,
+          50.87612
+        ],
+        [
+          20.63445,
+          50.87635
+        ],
+        [
+          20.63479,
+          50.8769
+        ],
+        [
+          20.63508,
+          50.87729
+        ],
+        [
+          20.63536,
+          50.87763
+        ],
+        [
+          20.63611,
+          50.87851
+        ],
+        [
+          20.63654,
+          50.87902
+        ],
+        [
+          20.63675,
+          50.87925
+        ],
+        [
+          20.63687,
+          50.87939
+        ],
+        [
+          20.63704,
+          50.8796
+        ],
+        [
+          20.63718,
+          50.87974
+        ],
+        [
+          20.63718,
+          50.87974
+        ],
+        [
+          20.63823,
+          50.88096
+        ],
+        [
+          20.63891,
+          50.88177
+        ],
+        [
+          20.64053,
+          50.88362
+        ],
+        [
+          20.64167,
+          50.88495
+        ],
+        [
+          20.64355,
+          50.88713
+        ],
+        [
+          20.64439,
+          50.88812
+        ],
+        [
+          20.64489,
+          50.8886
+        ],
+        [
+          20.64507,
+          50.88875
+        ],
+        [
+          20.64592,
+          50.88938
+        ],
+        [
+          20.64635,
+          50.88965
+        ],
+        [
+          20.64669,
+          50.88983
+        ],
+        [
+          20.64741,
+          50.89016
+        ],
+        [
+          20.64798,
+          50.89048
+        ],
+        [
+          20.65233,
+          50.89267
+        ],
+        [
+          20.65328,
+          50.89314
+        ],
+        [
+          20.65348,
+          50.8932
+        ],
+        [
+          20.65365,
+          50.8932
+        ],
+        [
+          20.6539,
+          50.89314
+        ],
+        [
+          20.65416,
+          50.89292
+        ],
+        [
+          20.65443,
+          50.89267
+        ],
+        [
+          20.6546,
+          50.8924
+        ],
+        [
+          20.6547,
+          50.89219
+        ],
+        [
+          20.65475,
+          50.89194
+        ],
+        [
+          20.65475,
+          50.89176
+        ],
+        [
+          20.65465,
+          50.89106
+        ],
+        [
+          20.65453,
+          50.89035
+        ],
+        [
+          20.65453,
+          50.88999
+        ],
+        [
+          20.65465,
+          50.88965
+        ],
+        [
+          20.65467,
+          50.88954
+        ],
+        [
+          20.65482,
+          50.88936
+        ],
+        [
+          20.65504,
+          50.88914
+        ],
+        [
+          20.6553,
+          50.88893
+        ],
+        [
+          20.65572,
+          50.88869
+        ],
+        [
+          20.65605,
+          50.88855
+        ],
+        [
+          20.65648,
+          50.88843
+        ],
+        [
+          20.65682,
+          50.88834
+        ],
+        [
+          20.65735,
+          50.88821
+        ],
+        [
+          20.65824,
+          50.88797
+        ],
+        [
+          20.65824,
+          50.88798
+        ],
+        [
+          20.65858,
+          50.8879
+        ],
+        [
+          20.65898,
+          50.88776
+        ],
+        [
+          20.65926,
+          50.88765
+        ],
+        [
+          20.65974,
+          50.88735
+        ],
+        [
+          20.65977,
+          50.88731
+        ],
+        [
+          20.65975,
+          50.88725
+        ],
+        [
+          20.65977,
+          50.88717
+        ],
+        [
+          20.65984,
+          50.88711
+        ],
+        [
+          20.65996,
+          50.88708
+        ],
+        [
+          20.6601,
+          50.88708
+        ],
+        [
+          20.66017,
+          50.88711
+        ],
+        [
+          20.66023,
+          50.88718
+        ],
+        [
+          20.66024,
+          50.88726
+        ],
+        [
+          20.66037,
+          50.88731
+        ],
+        [
+          20.66054,
+          50.8874
+        ],
+        [
+          20.66124,
+          50.88766
+        ],
+        [
+          20.66143,
+          50.88773
+        ],
+        [
+          20.6618,
+          50.8878
+        ],
+        [
+          20.66292,
+          50.88808
+        ],
+        [
+          20.66592,
+          50.88879
+        ],
+        [
+          20.66593,
+          50.88879
+        ],
+        [
+          20.66654,
+          50.88893
+        ],
+        [
+          20.66738,
+          50.88911
+        ],
+        [
+          20.66864,
+          50.88944
+        ],
+        [
+          20.67085,
+          50.88999
+        ],
+        [
+          20.67421,
+          50.89084
+        ],
+        [
+          20.67468,
+          50.89096
+        ],
+        [
+          20.67495,
+          50.89107
+        ],
+        [
+          20.67542,
+          50.89125
+        ],
+        [
+          20.67566,
+          50.8914
+        ],
+        [
+          20.6758,
+          50.89152
+        ],
+        [
+          20.67611,
+          50.89184
+        ],
+        [
+          20.67623,
+          50.89197
+        ],
+        [
+          20.67639,
+          50.89222
+        ],
+        [
+          20.67642,
+          50.89232
+        ],
+        [
+          20.67622,
+          50.89234
+        ],
+        [
+          20.676,
+          50.89233
+        ],
+        [
+          20.67587,
+          50.89229
+        ],
+        [
+          20.67577,
+          50.89215
+        ],
+        [
+          20.67569,
+          50.89206
+        ]
+      ]
+    },
+    "variants": [
+      {
+        "direction_id": 0,
+        "headsign": "Os. Świętokrzyskie",
+        "stop_count": 15,
+        "daily_trips": 8,
+        "is_canonical": false,
+        "pattern_hash": "02f75e88"
+      },
+      {
+        "direction_id": 0,
+        "headsign": "Grunwaldzka Mielczarskiego",
+        "stop_count": 8,
+        "daily_trips": 38,
+        "is_canonical": false,
+        "pattern_hash": "0b8643a4"
+      },
+      {
+        "direction_id": 0,
+        "headsign": "Os. Świętokrzyskie",
+        "stop_count": 21,
+        "daily_trips": 520,
+        "is_canonical": true,
+        "pattern_hash": "ba3b4b82"
+      },
+      {
+        "direction_id": 1,
+        "headsign": "Os. Ślichowice",
+        "stop_count": 7,
+        "daily_trips": 42,
+        "is_canonical": false,
+        "pattern_hash": "10cde839"
+      },
+      {
+        "direction_id": 1,
+        "headsign": "Grunwaldzka Mielczarskiego",
+        "stop_count": 16,
+        "daily_trips": 26,
+        "is_canonical": false,
+        "pattern_hash": "6c177320"
+      },
+      {
+        "direction_id": 1,
+        "headsign": "Os. Ślichowice",
+        "stop_count": 23,
+        "daily_trips": 516,
+        "is_canonical": true,
+        "pattern_hash": "cb9031e4"
+      }
+    ],
+    "stops": [
+      {
+        "sequence": 1,
+        "stop_id": "738",
+        "stop_name": "Os. Ślichowice",
+        "lat": 50.88711,
+        "lon": 20.58239,
+        "segment_distance_m": 0.0,
+        "cumulative_distance_km": 0.0,
+        "segment_travel_time_sec": 0.0,
+        "cumulative_travel_time_min": 0.0,
+        "segment_speed_kmh": null,
+        "is_terminal": true
+      },
+      {
+        "sequence": 2,
+        "stop_id": "739",
+        "stop_name": "Massalskiego",
+        "lat": 50.88355,
+        "lon": 20.58405,
+        "segment_distance_m": 430.3,
+        "cumulative_distance_km": 0.43,
+        "segment_travel_time_sec": 69.5,
+        "cumulative_travel_time_min": 1.2,
+        "segment_speed_kmh": 22.3,
+        "is_terminal": false
+      },
+      {
+        "sequence": 3,
+        "stop_id": "1320",
+        "stop_name": "Szajnowicza - Iwanowa",
+        "lat": 50.88102,
+        "lon": 20.58506,
+        "segment_distance_m": 329.1,
+        "cumulative_distance_km": 0.76,
+        "segment_travel_time_sec": 92.5,
+        "cumulative_travel_time_min": 2.7,
+        "segment_speed_kmh": 12.8,
+        "is_terminal": false
+      },
+      {
+        "sequence": 4,
+        "stop_id": "306",
+        "stop_name": "Grunwaldzka / os. Pod Dalnią",
+        "lat": 50.87974,
+        "lon": 20.58999,
+        "segment_distance_m": 391.7,
+        "cumulative_distance_km": 1.15,
+        "segment_travel_time_sec": 60.0,
+        "cumulative_travel_time_min": 3.7,
+        "segment_speed_kmh": 23.5,
+        "is_terminal": false
+      },
+      {
+        "sequence": 5,
+        "stop_id": "1230",
+        "stop_name": "Grunwaldzka / Piekoszowska",
+        "lat": 50.87733,
+        "lon": 20.5923,
+        "segment_distance_m": 313.5,
+        "cumulative_distance_km": 1.46,
+        "segment_travel_time_sec": 60.0,
+        "cumulative_travel_time_min": 4.7,
+        "segment_speed_kmh": 18.81,
+        "is_terminal": false
+      },
+      {
+        "sequence": 6,
+        "stop_id": "139",
+        "stop_name": "Szpital / Wojewódzki",
+        "lat": 50.87492,
+        "lon": 20.60156,
+        "segment_distance_m": 777.0,
+        "cumulative_distance_km": 2.24,
+        "segment_travel_time_sec": 120.0,
+        "cumulative_travel_time_min": 6.7,
+        "segment_speed_kmh": 23.31,
+        "is_terminal": false
+      },
+      {
+        "sequence": 7,
+        "stop_id": "142",
+        "stop_name": "Grunwaldzka / Jagiellońska",
+        "lat": 50.8733,
+        "lon": 20.60831,
+        "segment_distance_m": 507.7,
+        "cumulative_distance_km": 2.75,
+        "segment_travel_time_sec": 120.0,
+        "cumulative_travel_time_min": 8.7,
+        "segment_speed_kmh": 15.23,
+        "is_terminal": false
+      },
+      {
+        "sequence": 8,
+        "stop_id": "144",
+        "stop_name": "Grunwaldzka / Mielczarskiego",
+        "lat": 50.87101,
+        "lon": 20.61476,
+        "segment_distance_m": 524.9,
+        "cumulative_distance_km": 3.27,
+        "segment_travel_time_sec": 69.5,
+        "cumulative_travel_time_min": 9.9,
+        "segment_speed_kmh": 27.2,
+        "is_terminal": false
+      },
+      {
+        "sequence": 9,
+        "stop_id": "1424",
+        "stop_name": "Dworzec Kolejowy",
+        "lat": 50.87358,
+        "lon": 20.61925,
+        "segment_distance_m": 596.9,
+        "cumulative_distance_km": 3.87,
+        "segment_travel_time_sec": 150.0,
+        "cumulative_travel_time_min": 12.4,
+        "segment_speed_kmh": 14.33,
+        "is_terminal": false
+      },
+      {
+        "sequence": 10,
+        "stop_id": "67",
+        "stop_name": "Czarnowska / Dworzec Autobusowy",
+        "lat": 50.87458,
+        "lon": 20.62182,
+        "segment_distance_m": 267.1,
+        "cumulative_distance_km": 4.14,
+        "segment_travel_time_sec": 60.0,
+        "cumulative_travel_time_min": 13.4,
+        "segment_speed_kmh": 16.03,
+        "is_terminal": false
+      },
+      {
+        "sequence": 11,
+        "stop_id": "81",
+        "stop_name": "Urząd Wojewódzki",
+        "lat": 50.87428,
+        "lon": 20.63078,
+        "segment_distance_m": 650.4,
+        "cumulative_distance_km": 4.79,
+        "segment_travel_time_sec": 148.2,
+        "cumulative_travel_time_min": 15.8,
+        "segment_speed_kmh": 15.8,
+        "is_terminal": false
+      },
+      {
+        "sequence": 12,
+        "stop_id": "536",
+        "stop_name": "Galeria Korona",
+        "lat": 50.87485,
+        "lon": 20.63384,
+        "segment_distance_m": 290.8,
+        "cumulative_distance_km": 5.08,
+        "segment_travel_time_sec": 120.0,
+        "cumulative_travel_time_min": 17.8,
+        "segment_speed_kmh": 8.73,
+        "is_terminal": false
+      },
+      {
+        "sequence": 13,
+        "stop_id": "545",
+        "stop_name": "Politechnika",
+        "lat": 50.87974,
+        "lon": 20.6372,
+        "segment_distance_m": 596.8,
+        "cumulative_distance_km": 5.68,
+        "segment_travel_time_sec": 120.0,
+        "cumulative_travel_time_min": 19.8,
+        "segment_speed_kmh": 17.9,
+        "is_terminal": false
+      },
+      {
+        "sequence": 14,
+        "stop_id": "533",
+        "stop_name": "Warszawska os. Sady",
+        "lat": 50.88238,
+        "lon": 20.63946,
+        "segment_distance_m": 333.8,
+        "cumulative_distance_km": 6.01,
+        "segment_travel_time_sec": 60.0,
+        "cumulative_travel_time_min": 20.8,
+        "segment_speed_kmh": 20.03,
+        "is_terminal": false
+      },
+      {
+        "sequence": 15,
+        "stop_id": "439",
+        "stop_name": "Warszawska os. Bocianek",
+        "lat": 50.88526,
+        "lon": 20.64194,
+        "segment_distance_m": 364.6,
+        "cumulative_distance_km": 6.37,
+        "segment_travel_time_sec": 110.3,
+        "cumulative_travel_time_min": 22.7,
+        "segment_speed_kmh": 11.9,
+        "is_terminal": false
+      },
+      {
+        "sequence": 16,
+        "stop_id": "437",
+        "stop_name": "Warszawska os. Sł. Wzgórze",
+        "lat": 50.88905,
+        "lon": 20.64545,
+        "segment_distance_m": 489.3,
+        "cumulative_distance_km": 6.86,
+        "segment_travel_time_sec": 120.0,
+        "cumulative_travel_time_min": 24.7,
+        "segment_speed_kmh": 14.68,
+        "is_terminal": false
+      },
+      {
+        "sequence": 17,
+        "stop_id": "438",
+        "stop_name": "Warszawska os. Uroczysko",
+        "lat": 50.89152,
+        "lon": 20.65002,
+        "segment_distance_m": 423.5,
+        "cumulative_distance_km": 7.29,
+        "segment_travel_time_sec": 60.0,
+        "cumulative_travel_time_min": 25.7,
+        "segment_speed_kmh": 25.41,
+        "is_terminal": false
+      },
+      {
+        "sequence": 18,
+        "stop_id": "217",
+        "stop_name": "Jaworskiego",
+        "lat": 50.88999,
+        "lon": 20.65453,
+        "segment_distance_m": 704.4,
+        "cumulative_distance_km": 7.99,
+        "segment_travel_time_sec": 120.0,
+        "cumulative_travel_time_min": 27.7,
+        "segment_speed_kmh": 21.13,
+        "is_terminal": false
+      },
+      {
+        "sequence": 19,
+        "stop_id": "302",
+        "stop_name": "Jaworskiego / os. Słoneczne Wzgórze",
+        "lat": 50.88794,
+        "lon": 20.65823,
+        "segment_distance_m": 367.0,
+        "cumulative_distance_km": 8.36,
+        "segment_travel_time_sec": 74.3,
+        "cumulative_travel_time_min": 28.9,
+        "segment_speed_kmh": 17.78,
+        "is_terminal": false
+      },
+      {
+        "sequence": 20,
+        "stop_id": "85",
+        "stop_name": "Dom Kultury Sabat",
+        "lat": 50.88897,
+        "lon": 20.66674,
+        "segment_distance_m": 698.2,
+        "cumulative_distance_km": 9.06,
+        "segment_travel_time_sec": 113.8,
+        "cumulative_travel_time_min": 30.8,
+        "segment_speed_kmh": 22.09,
+        "is_terminal": false
+      },
+      {
+        "sequence": 21,
+        "stop_id": "284",
+        "stop_name": "Os. Świętokrzyskie",
+        "lat": 50.89211,
+        "lon": 20.67569,
+        "segment_distance_m": 865.6,
+        "cumulative_distance_km": 9.92,
+        "segment_travel_time_sec": 120.0,
+        "cumulative_travel_time_min": 32.8,
+        "segment_speed_kmh": 25.97,
+        "is_terminal": true
+      }
+    ]
+  }
+}

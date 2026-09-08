@@ -162,6 +162,65 @@ export async function fetchHexagons(city: string, minPop: number = 0, signal?: A
 }
 
 
+export async function searchRoutes(city: string, query?: string, limit: number = 50, signal?: AbortSignal): Promise<any[]> {
+  try {
+    const qParam = query ? `&query=${encodeURIComponent(query)}` : '';
+    const res = await fetch(`${API_BASE_URL}/api/v1/routes/search?city=${city}${qParam}&limit=${limit}`, { signal });
+    if (res.ok) return await res.json();
+  } catch (e: any) {
+    if (e.name !== 'AbortError') {
+      console.warn(`Failed to search routes for ${city}:`, e);
+    }
+  }
+
+  // Fallback to local showcase
+  try {
+    const local = await fetch(`/data/showcase/${city}/routes.json`, { signal });
+    if (local.ok) {
+      const routes = await local.json();
+      if (query) {
+        const q = query.trim().toLowerCase();
+        return routes.filter((r: any) => 
+          String(r.short_name).toLowerCase().includes(q) || 
+          String(r.headsign).toLowerCase().includes(q)
+        ).slice(0, limit);
+      }
+      return routes.slice(0, limit);
+    }
+  } catch (e: any) {
+    if (e.name === 'AbortError') return [];
+  }
+
+  return [];
+}
+
+export async function fetchRouteDetails(city: string, routeUid: string, directionId?: number, signal?: AbortSignal): Promise<any | null> {
+  try {
+    const dirParam = directionId !== undefined && directionId !== null ? `&direction_id=${directionId}` : '';
+    const res = await fetch(`${API_BASE_URL}/api/v1/routes/${encodeURIComponent(routeUid)}/details?city=${city}${dirParam}`, { signal });
+    if (res.ok) return await res.json();
+  } catch (e: any) {
+    if (e.name !== 'AbortError') {
+      console.warn(`Failed to fetch route details for ${routeUid}:`, e);
+    }
+  }
+
+  // Fallback to local sample details
+  try {
+    const local = await fetch(`/data/showcase/${city}/route_details_sample.json`, { signal });
+    if (local.ok) {
+      const samples = await local.json();
+      if (samples[routeUid]) {
+        return samples[routeUid];
+      }
+    }
+  } catch (e: any) {
+    if (e.name === 'AbortError') return null;
+  }
+
+  return null;
+}
+
 export async function checkBackendHealth(): Promise<{ online: boolean; latencyMs: number; info?: any }> {
   const start = performance.now();
   try {
@@ -173,3 +232,4 @@ export async function checkBackendHealth(): Promise<{ online: boolean; latencyMs
   } catch (e) {}
   return { online: false, latencyMs: 0 };
 }
+

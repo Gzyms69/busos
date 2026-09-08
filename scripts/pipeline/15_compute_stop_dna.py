@@ -4,6 +4,7 @@ import numpy as np
 import os
 import json
 import math
+import shapely
 from pathlib import Path
 import argparse
 import sys
@@ -141,105 +142,148 @@ def calculate_h3_dna(city_name):
         hubs['catchment'] = hubs.geometry.buffer(CATCHMENT_RADIUS)
         stops['catchment'] = stops.geometry.buffer(CATCHMENT_RADIUS)
         
-        # Step 3: Prawdziwa Częstotliwość (Dirty GTFS Tolerance + Trip Deduplication) dla Słupków i Hubów
-        import concurrent.futures
-        
-        def process_gtfs_feed(feed):
-            local_stop_counts = {}
-            local_stop_routes = {}
-            local_hub_counts = {}
-            local_hub_routes = {}
-            if not feed.is_dir():
-                return local_stop_counts, local_stop_routes, local_hub_counts, local_hub_routes
-            try:
-                service_ids = get_best_service_ids(feed)
-                st = pd.read_csv(feed / "stop_times.txt", usecols=['trip_id', 'stop_id', 'departure_time'], dtype=str)
-                tr = pd.read_csv(feed / "trips.txt", dtype=str)
-                
-                if 'route_id' in tr.columns:
-                    tr['route_id'] = tr['route_id'].astype(str)
-                    routes_path = feed / "routes.txt"
-                    if routes_path.exists():
-                        routes = pd.read_csv(routes_path, dtype=str)
-                        routes['route_id'] = routes['route_id'].astype(str)
-                        r_name_col = 'route_short_name' if 'route_short_name' in routes.columns else ('route_long_name' if 'route_long_name' in routes.columns else 'route_id')
-                        tr = tr.merge(routes[['route_id', r_name_col]], on='route_id', how='left')
-                        tr['route_name'] = tr[r_name_col].fillna(tr['route_id']).astype(str)
-                    else:
-                        tr['route_name'] = tr['route_id'].astype(str)
-                else:
-                    tr['route_name'] = 'BUS'
+        # Step 3: Prawdziwa Częstotliwość (SSOT z stop_route_matrix.parquet lub GTFS Fallback)
+        matrix_path = results_dir / "stop_route_matrix.parquet"
+        if matrix_path.exists():
+            print(f"    [SSOT] Wczytywanie wag GTFS z {matrix_path.name} (sub-sekundowy C++ cache)...", flush=True)
+            matrix = pd.read_parquet(matrix_path)
+            matrix['stop_id'] = matrix['stop_id'].astype(str)
+            matrix['route_id'] = matrix['route_id'].astype(str)
+            
+            stop_agg = matrix.groupby('stop_id').agg(
+                daily_deps=('daily_departures', 'sum'),
+                routes=('route_id', lambda s: sorted(set(s), key=lambda x: (int(x) if x.isdigit() else 999, x)))
+            ).reset_index()
+            stop_agg['stop_departures_h'] = (stop_agg['daily_deps'] / 14.0).round(2)
+            stop_agg['stop_routes_count'] = stop_agg['routes'].apply(len)
+            stop_agg['stop_routes'] = stop_agg['routes'].apply(lambda r: ", ".join(r))
+            
+            stops['stop_id_str'] = stops['stop_id'].astype(str)
+            stops = stops.merge(stop_agg[['stop_id', 'stop_departures_h', 'stop_routes', 'stop_routes_count']], left_on='stop_id_str', right_on='stop_id', how='left', suffixes=('', '_y'))
+            stops = stops.drop(columns=['stop_id_str'], errors='ignore')
+            if 'stop_id_y' in stops.columns:
+                stops = stops.drop(columns=['stop_id_y'])
+            stops['stop_departures_h'] = stops['stop_departures_h'].fillna(0.0)
+            stops['stop_routes'] = stops['stop_routes'].fillna("")
+            stops['stop_routes_count'] = stops['stop_routes_count'].fillna(0).astype(int)
 
-                if service_ids and 'service_id' in tr.columns:
-                    tr = tr[tr['service_id'].isin(service_ids)]
-                    divisor = 14.0 # typical 14 working hours
-                else:
-                    divisor = 14.0 * 20.0
+            def aggregate_routes_list(route_strs):
+                unique_rts = set()
+                for s in route_strs:
+                    if s and isinstance(s, str):
+                        for r in s.split(", "):
+                            if r.strip():
+                                unique_rts.add(r.strip())
+                return ", ".join(sorted(unique_rts, key=lambda x: (int(x) if str(x).isdigit() else 999, str(x))))
+
+            hub_agg = stops.groupby('hub_id').agg(
+                hub_departures_h=('stop_departures_h', 'sum'),
+                hub_routes=('stop_routes', aggregate_routes_list)
+            ).reset_index()
+            hub_agg['hub_routes_count'] = hub_agg['hub_routes'].apply(lambda r: len([x for x in r.split(", ") if x]))
+            hubs = hubs.merge(hub_agg, on='hub_id', how='left')
+            hubs['hub_departures_h'] = hubs['hub_departures_h'].fillna(0.0)
+            hubs['hub_routes'] = hubs['hub_routes'].fillna("")
+            hubs['hub_routes_count'] = hubs['hub_routes_count'].fillna(0).astype(int)
+        else:
+            import concurrent.futures
+            
+            def process_gtfs_feed(feed):
+                local_stop_counts = {}
+                local_stop_routes = {}
+                local_hub_counts = {}
+                local_hub_routes = {}
+                if not feed.is_dir():
+                    return local_stop_counts, local_stop_routes, local_hub_counts, local_hub_routes
+                try:
+                    service_ids = get_best_service_ids(feed)
+                    st = pd.read_csv(feed / "stop_times.txt", usecols=['trip_id', 'stop_id', 'departure_time'], dtype=str)
+                    tr = pd.read_csv(feed / "trips.txt", dtype=str)
                     
-                st = st.merge(tr[['trip_id', 'route_name']], on='trip_id')
-                del tr; import gc; gc.collect()
-                
-                # Assign hub_id to stop_times
-                stop_hub_map = dict(zip(stops['stop_id'].astype(str), stops['hub_id']))
-                st['hub_id'] = st['stop_id'].astype(str).map(stop_hub_map)
-                st = st.dropna(subset=['hub_id'])
-                
-                # Active time window 06:00 to 20:00
-                st['secs'] = st['departure_time'].apply(parse_gtfs_time_safe)
-                st = st[(st['secs'] >= 21600) & (st['secs'] <= 72000)]
-                
-                # Stop level counts & routes
-                stop_counts = st.groupby('stop_id')['trip_id'].nunique()
-                for sid, val in stop_counts.items():
-                    local_stop_counts[str(sid)] = (val / divisor)
+                    if 'route_id' in tr.columns:
+                        tr['route_id'] = tr['route_id'].astype(str)
+                        routes_path = feed / "routes.txt"
+                        if routes_path.exists():
+                            routes = pd.read_csv(routes_path, dtype=str)
+                            routes['route_id'] = routes['route_id'].astype(str)
+                            r_name_col = 'route_short_name' if 'route_short_name' in routes.columns else ('route_long_name' if 'route_long_name' in routes.columns else 'route_id')
+                            tr = tr.merge(routes[['route_id', r_name_col]], on='route_id', how='left')
+                            tr['route_name'] = tr[r_name_col].fillna(tr['route_id']).astype(str)
+                        else:
+                            tr['route_name'] = tr['route_id'].astype(str)
+                    else:
+                        tr['route_name'] = 'BUS'
 
-                stop_r = st.groupby('stop_id')['route_name'].unique()
-                for sid, rts in stop_r.items():
-                    local_stop_routes[str(sid)] = set(rts)
+                    if service_ids and 'service_id' in tr.columns:
+                        tr = tr[tr['service_id'].isin(service_ids)]
+                        divisor = 14.0 # typical 14 working hours
+                    else:
+                        divisor = 14.0 * 20.0
+                        
+                    st = st.merge(tr[['trip_id', 'route_name']], on='trip_id')
+                    del tr; import gc; gc.collect()
+                    
+                    # Assign hub_id to stop_times
+                    stop_hub_map = dict(zip(stops['stop_id'].astype(str), stops['hub_id']))
+                    st['hub_id'] = st['stop_id'].astype(str).map(stop_hub_map)
+                    st = st.dropna(subset=['hub_id'])
+                    
+                    # Active time window 06:00 to 20:00
+                    st['secs'] = st['departure_time'].apply(parse_gtfs_time_safe)
+                    st = st[(st['secs'] >= 21600) & (st['secs'] <= 72000)]
+                    
+                    # Stop level counts & routes
+                    stop_counts = st.groupby('stop_id')['trip_id'].nunique()
+                    for sid, val in stop_counts.items():
+                        local_stop_counts[str(sid)] = (val / divisor)
 
-                # Hub level counts & routes
-                hub_counts = st.groupby('hub_id')['trip_id'].nunique()
-                for hid, val in hub_counts.items():
-                    local_hub_counts[hid] = (val / divisor)
+                    stop_r = st.groupby('stop_id')['route_name'].unique()
+                    for sid, rts in stop_r.items():
+                        local_stop_routes[str(sid)] = set(rts)
 
-                hub_r = st.groupby('hub_id')['route_name'].unique()
-                for hid, rts in hub_r.items():
-                    local_hub_routes[hid] = set(rts)
+                    # Hub level counts & routes
+                    hub_counts = st.groupby('hub_id')['trip_id'].nunique()
+                    for hid, val in hub_counts.items():
+                        local_hub_counts[hid] = (val / divisor)
 
-            except Exception as e:
-                print(f"Błąd GTFS na feedzie {feed.name}: {e}")
-            return local_stop_counts, local_stop_routes, local_hub_counts, local_hub_routes
+                    hub_r = st.groupby('hub_id')['route_name'].unique()
+                    for hid, rts in hub_r.items():
+                        local_hub_routes[hid] = set(rts)
 
-        total_stop_trips = {}
-        total_stop_routes = {}
-        total_hub_trips = {}
-        total_hub_routes = {}
+                except Exception as e:
+                    print(f"Błąd GTFS na feedzie {feed.name}: {e}")
+                return local_stop_counts, local_stop_routes, local_hub_counts, local_hub_routes
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
-            gtfs_dirs = list((city_dir / "gtfs").iterdir()) if (city_dir / "gtfs").exists() else []
-            futures = [executor.submit(process_gtfs_feed, f) for f in gtfs_dirs]
-            for future in concurrent.futures.as_completed(futures):
-                s_counts, s_routes, h_counts, h_routes = future.result()
-                for sid, val in s_counts.items():
-                    total_stop_trips[sid] = total_stop_trips.get(sid, 0.0) + val
-                for sid, rts in s_routes.items():
-                    total_stop_routes.setdefault(sid, set()).update(rts)
-                for hid, val in h_counts.items():
-                    total_hub_trips[hid] = total_hub_trips.get(hid, 0.0) + val
-                for hid, rts in h_routes.items():
-                    total_hub_routes.setdefault(hid, set()).update(rts)
+            total_stop_trips = {}
+            total_stop_routes = {}
+            total_hub_trips = {}
+            total_hub_routes = {}
 
-        def format_routes(r_set):
-            if not r_set: return ""
-            return ", ".join(sorted(r_set, key=lambda s: (int(s) if str(s).isdigit() else 999, str(s))))
+            with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+                gtfs_dirs = list((city_dir / "gtfs").iterdir()) if (city_dir / "gtfs").exists() else []
+                futures = [executor.submit(process_gtfs_feed, f) for f in gtfs_dirs]
+                for future in concurrent.futures.as_completed(futures):
+                    s_counts, s_routes, h_counts, h_routes = future.result()
+                    for sid, val in s_counts.items():
+                        total_stop_trips[sid] = total_stop_trips.get(sid, 0.0) + val
+                    for sid, rts in s_routes.items():
+                        total_stop_routes.setdefault(sid, set()).update(rts)
+                    for hid, val in h_counts.items():
+                        total_hub_trips[hid] = total_hub_trips.get(hid, 0.0) + val
+                    for hid, rts in h_routes.items():
+                        total_hub_routes.setdefault(hid, set()).update(rts)
 
-        stops['stop_departures_h'] = stops['stop_id'].astype(str).map(total_stop_trips).fillna(0.0)
-        stops['stop_routes'] = stops['stop_id'].astype(str).map(lambda sid: format_routes(total_stop_routes.get(sid, set())))
-        stops['stop_routes_count'] = stops['stop_id'].astype(str).map(lambda sid: len(total_stop_routes.get(sid, set()))).astype(int)
+            def format_routes(r_set):
+                if not r_set: return ""
+                return ", ".join(sorted(r_set, key=lambda s: (int(s) if str(s).isdigit() else 999, str(s))))
 
-        hubs['hub_departures_h'] = hubs['hub_id'].map(total_hub_trips).fillna(0.0)
-        hubs['hub_routes'] = hubs['hub_id'].map(lambda hid: format_routes(total_hub_routes.get(hid, set())))
-        hubs['hub_routes_count'] = hubs['hub_id'].map(lambda hid: len(total_hub_routes.get(hid, set()))).astype(int)
+            stops['stop_departures_h'] = stops['stop_id'].astype(str).map(total_stop_trips).fillna(0.0)
+            stops['stop_routes'] = stops['stop_id'].astype(str).map(lambda sid: format_routes(total_stop_routes.get(sid, set())))
+            stops['stop_routes_count'] = stops['stop_id'].astype(str).map(lambda sid: len(total_stop_routes.get(sid, set()))).astype(int)
+
+            hubs['hub_departures_h'] = hubs['hub_id'].map(total_hub_trips).fillna(0.0)
+            hubs['hub_routes'] = hubs['hub_id'].map(lambda hid: format_routes(total_hub_routes.get(hid, set())))
+            hubs['hub_routes_count'] = hubs['hub_id'].map(lambda hid: len(total_hub_routes.get(hid, set()))).astype(int)
 
         # Step 4: RCN Ochrona IQR + Zero-Liquidity Fallback dla Hubów i Słupków
         rcn_path = spatial_dir / "transactions.gpkg"
@@ -254,34 +298,40 @@ def calculate_h3_dna(city_name):
         city_median_price = rcn['price_m2'].median() if not rcn.empty else 0.0
         
         if not rcn.empty:
-            # Hubs RCN
-            joined_rcn_hubs = gpd.sjoin(rcn, hubs.set_geometry('catchment')[['hub_id', 'catchment']], how="inner", predicate="intersects")
-            rcn_stats_hubs = joined_rcn_hubs.groupby('hub_id')['price_m2'].agg(hub_market_val='median', hub_liquidity='count').reset_index()
-            hubs = hubs.merge(rcn_stats_hubs, on='hub_id', how='left')
-            hubs['hub_market_val'] = hubs['hub_market_val'].fillna(city_median_price)
-            hubs['hub_liquidity'] = hubs['hub_liquidity'].fillna(0).astype(int)
+            print(f"    [STRtree] Indeksowanie przestrzenne RCN vs Słupki (C-GEOS dwithin {CATCHMENT_RADIUS}m)...", flush=True)
+            tree = shapely.STRtree(stops.geometry.values)
+            tx_indices, stop_indices = tree.query(rcn.geometry.values, predicate="dwithin", distance=CATCHMENT_RADIUS)
+
+            matched_tx = rcn.iloc[tx_indices].copy().reset_index(drop=True)
+            matched_tx['stop_id'] = stops['stop_id'].values[stop_indices]
+            matched_tx['hub_id'] = stops['hub_id'].values[stop_indices]
+            
+            tx_geoms = rcn.geometry.values[tx_indices]
+            stop_geoms = stops.geometry.values[stop_indices]
+            matched_tx['distance_m'] = shapely.distance(tx_geoms, stop_geoms).round(1)
 
             # Stops RCN
-            joined_rcn_stops = gpd.sjoin(rcn, stops.set_geometry('catchment')[['stop_id', 'hub_id', 'catchment']], how="inner", predicate="intersects")
-            rcn_stats_stops = joined_rcn_stops.groupby('stop_id')['price_m2'].agg(stop_market_val='median', stop_liquidity='count').reset_index()
+            rcn_stats_stops = matched_tx.groupby('stop_id')['price_m2'].agg(stop_market_val='median', stop_liquidity='count').reset_index()
             stops = stops.merge(rcn_stats_stops, on='stop_id', how='left')
             stops['stop_market_val'] = stops['stop_market_val'].fillna(city_median_price)
             stops['stop_liquidity'] = stops['stop_liquidity'].fillna(0).astype(int)
 
+            # Hubs RCN
+            rcn_stats_hubs = matched_tx.groupby('hub_id')['price_m2'].agg(hub_market_val='median', hub_liquidity='count').reset_index()
+            hubs = hubs.merge(rcn_stats_hubs, on='hub_id', how='left')
+            hubs['hub_market_val'] = hubs['hub_market_val'].fillna(city_median_price)
+            hubs['hub_liquidity'] = hubs['hub_liquidity'].fillna(0).astype(int)
+
             # Materializacja tabeli mostkowej stop_transactions_bridge.parquet
-            # z zwektoryzowanym dystansem (C/GEOS) i sortowaniem pod DuckDB Zone Maps
             try:
-                stop_point_map = stops.set_index('stop_id')['geometry']
-                joined_stop_pts = joined_rcn_stops['stop_id'].map(stop_point_map)
-                
                 bridge_df = pd.DataFrame({
-                    'stop_id': joined_rcn_stops['stop_id'].astype(str),
-                    'hub_id': joined_rcn_stops['hub_id'].astype(int) if 'hub_id' in joined_rcn_stops.columns else 0,
-                    'tx_id': joined_rcn_stops.index.astype(str),
-                    'dok_data': joined_rcn_stops['dok_data'] if 'dok_data' in joined_rcn_stops.columns else pd.NaT,
-                    'price_m2': joined_rcn_stops['price_m2'].astype(float),
-                    'distance_m': joined_rcn_stops.geometry.distance(joined_stop_pts).round(1),
-                    'tran_rodzaj_rynku': joined_rcn_stops['tran_rodzaj_rynku'].fillna('nieznany') if 'tran_rodzaj_rynku' in joined_rcn_stops.columns else 'nieznany'
+                    'stop_id': matched_tx['stop_id'].astype(str),
+                    'hub_id': matched_tx['hub_id'].astype(int),
+                    'tx_id': rcn.index.values[tx_indices].astype(str),
+                    'dok_data': matched_tx['dok_data'] if 'dok_data' in matched_tx.columns else pd.NaT,
+                    'price_m2': matched_tx['price_m2'].astype(float),
+                    'distance_m': matched_tx['distance_m'],
+                    'tran_rodzaj_rynku': matched_tx['tran_rodzaj_rynku'].fillna('nieznany') if 'tran_rodzaj_rynku' in matched_tx.columns else 'nieznany'
                 })
                 
                 if 'dok_data' in bridge_df.columns:
@@ -655,14 +705,21 @@ def main():
             d.name for d in (data_dir / "cities").iterdir()
             if d.is_dir() and (d / "02_spatial" / "stops.gpkg").exists() and (d / "02_spatial" / "infrastructure.gpkg").exists()
         ])
-        print(f"[*] Batch processing {len(available_cities)} calibrated cities for Stop DNA & Symmetry...")
+        print(f"[*] Batch processing {len(available_cities)} calibrated cities (Subprocess Isolated Mode)...", flush=True)
+        import subprocess
         for idx, c in enumerate(available_cities, 1):
-            print(f"[{idx}/{len(available_cities)}] Processing city: {c}...")
-            calculate_h3_dna(c)
+            bridge_p = data_dir / "cities" / c / "04_results" / "stop_transactions_bridge.parquet"
+            if bridge_p.exists() and not args.force:
+                print(f"[{idx}/{len(available_cities)}] City {c} already complete ({bridge_p.name} exists). Skipping.", flush=True)
+                continue
+            print(f"[{idx}/{len(available_cities)}] Spawning isolated process for: {c}...", flush=True)
+            cmd = [sys.executable, str(Path(__file__).resolve()), "--city", c]
+            subprocess.run(cmd, check=True)
     elif args.city:
         calculate_h3_dna(args.city)
 
     if args.stitch:
+        print("[*] Running national database stitching...", flush=True)
         run_national_stitching()
 
 if __name__ == "__main__":
