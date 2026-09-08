@@ -327,3 +327,33 @@
   6. Benchmarking Krajowy (Leaderboard 30 miast, porównywarka side-by-side, histogramy metryk)
 - **Kompletna integracja AI Radar** (wektory podobieństwa Stop DNA w skali kraju).
 - **Pełna adaptacja mobilna** (Bottom Sheet z 3 snap-pointami).
+
+---
+
+### Task 13 (Sprint 4.4 / Security Hardening): BusOS API Security Audit & Anti-Bot Hardening
+- **Status:** `[DONE]` (Zrealizowano 2026-09-08)
+- **Zrealizowany zakres:**
+  1. **Usunięcie podatności DuckDB SQL Injection (`spatial_engine.py`):**
+     - Sparametryzowano dynamiczne zapytanie `get_hexagons_ranking` przez `?`.
+     - Wprowadzono zestaw `ALLOWED_GRADES = {"A+", "A", "B", "C", "D", "E", "F"}` w funkcji `_parse_grades` uniemożliwiający wstrzykiwanie dowolnych klauzul SQL.
+  2. **Wdrożenie Sliding-Window Rate Limitingu (`main.py`):**
+     - Dodano `slowapi` z domyślnym limitem `60/minute` per IP klienta (`get_remote_address`).
+     - Obsłużono wyjątek `RateLimitExceeded` ze standardowym kodem `429 Too Many Requests`.
+  3. **Ścisła Biała Lista CORS (`main.py`):**
+     - Zastąpiono `allow_origins=["*"]` ścisłą białą listą (`busos.czerwinskidawid.pl`, `localhost:3000`, `allow_origin_regex=r"^https:\/\/busos.*\.vercel\.app$"`).
+     - Wyłączono `allow_credentials` dla bezstanowego API.
+  4. **Autonomiczny Strażnik Brzegu (`backend/Caddyfile`):**
+     - Reguła `@bad_bots`: blokada narzędzi skanujących (`sqlmap`, `nikto`, `masscan`, `zgrab`, `censys`, `shodan`, `scrapy`) i bibliotek scraperów (`python-requests`, `aiohttp`, `urllib`) kodem `403 Forbidden`.
+     - Blokada zapytań z brakującym `User-Agent` (`400 Bad Request`).
+     - Przekierowanie ruchu portu `:80` natychmiast do HTTPS (`redir https://{host}{uri} permanent`).
+     - Ograniczenie rozmiaru `request_body` do 1MB.
+     - Nagłówki bezpieczeństwa: `Strict-Transport-Security`, `X-Content-Type-Options`, `X-Frame-Options DENY`.
+  5. **Optymalizacja DoS Modułu AI (`routers/ai.py` & `schemas.py`):**
+     - Ograniczono `top_k: int = Field(5, ge=1, le=50)`.
+     - Dodano buforowanie w pamięci RAM (`Lazy Singleton` `_EMBEDDINGS_CACHE`) eliminujące wczytywanie bazy krajowej z dysku na każde zapytanie.
+  6. **Automatyczny Reload Caddy w CI/CD (`.github/workflows/deploy-backend.yml`):**
+     - Dodano `docker compose restart caddy` po resecie kontenera API na instancji OCI.
+  7. **Pakiet Testów Bezpieczeństwa (`backend/tests/test_security.py`):**
+     - 5 testów weryfikujących SQLi, Path Traversal, CORS, `top_k` bounds oraz Rate Limiter.
+- **Dowody Weryfikacji (100% Green):**
+  - `uv run pytest backend/tests/test_security.py backend/tests/test_api_v1.py -v`: **29/29 testów PASSED w 21.97s**.

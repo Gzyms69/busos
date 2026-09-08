@@ -18,6 +18,19 @@ It acts as a Digital Auditor of Urban Policy, revealing whether cities favor aff
 *   **Vector Database Engine**: Qdrant v1.13+ (Active on OCI port 6333 for GNN Transit Embeddings)
 *   **Audited Coverage**: 30 major Polish metropolitan agglomerations with full econometric calibration (60,265 physical stops, 28,317 logical hubs, 36,784 H3 cells, 210 validated data files, 95/95 Pytest test suite).
 
+### Autonomous API Security & Edge Defense (Caddy + FastAPI)
+*   **Perimeter Edge Gate (Caddy 2)**:
+    *   **Automated Bot Filtering (`@bad_bots`)**: Immediate `403 Forbidden` response for automated vulnerability scanners (`sqlmap`, `nikto`, `masscan`, `zgrab`, `censys`, `shodan`) and headless scraper libraries (`python-requests`, `aiohttp`, `scrapy`, `urllib`).
+    *   **User-Agent Integrity**: Rejection of requests with missing or empty User-Agent headers (`400 Bad Request`).
+    *   **HTTPS Enforcement**: Immediate redirect on port `:80` (`redir https://{host}{uri} permanent`).
+    *   **Buffer & Payload Armor**: Strict `request_body max_size 1MB` limiting memory pressure from oversized POST requests.
+    *   **Security Headers**: Automated `Strict-Transport-Security` (HSTS), `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Permissions-Policy`.
+*   **Application-Level Defense (FastAPI + SlowAPI)**:
+    *   **Sliding-Window Rate Limiting**: Enforced via `slowapi` (`60 req/min` per IP default, emitting standardized HTTP `429 Too Many Requests` and `X-RateLimit-*` headers).
+    *   **Strict CORS Whitelist**: Locked down to verified origins (`https://busos.czerwinskidawid.pl`, `localhost:3000`, `*.vercel.app`) with wildcard-credentials disabled.
+    *   **Spatial Cache Headers**: Native `Cache-Control: public, max-age=3600, stale-while-revalidate=86400` on spatial GET endpoints.
+    *   **DuckDB SQLi Immunity**: 100% parameterized queries (`?`) and strict `ALLOWED_GRADES` whitelisting on dynamic filters (`get_hexagons_ranking`).
+
 ---
 
 ## 2. Mathematical Architecture: Physics of the City (v13.0 - Rygor Tkanki Miejskiej)
