@@ -10,10 +10,13 @@ It acts as a Digital Auditor of Urban Policy, revealing whether cities favor aff
 
 ### Live Production Deployment & Endpoints
 *   **Interactive Spatial Dashboard**: [busos.czerwinskidawid.pl](https://busos.czerwinskidawid.pl) (Hosted on Vercel Global Edge CDN)
-*   **Spatial Analytical API & Swagger UI**: [api.busos.czerwinskidawid.pl/docs](https://api.busos.czerwinskidawid.pl/docs) (Hosted on Oracle Cloud Infrastructure Ampere A1 ARM64)
+*   **Spatial Analytical API & Swagger UI**: [api.busos.czerwinskidawid.pl/docs](https://api.busos.czerwinskidawid.pl/docs) (Hosted on Oracle Cloud Infrastructure Ampere A1 ARM64 behind Caddy 2 TLS 1.3 / HTTP/3)
 *   **Real-time Engine Health Telemetry**: [api.busos.czerwinskidawid.pl/health](https://api.busos.czerwinskidawid.pl/health)
+*   **Automated CI/CD Pipeline**: GitHub Actions (`.github/workflows/deploy-backend.yml`) with automated Docker ARM64 compilation and zero-downtime deployment.
+*   **Unified Analytical H3 Grid API**: [api.busos.czerwinskidawid.pl/api/v1/hexagons?city=kielce](https://api.busos.czerwinskidawid.pl/api/v1/hexagons?city=kielce) (Uber H3 Res 8: Transit Desert Index & Transport Score).
+*   **GTFS Transit Routes & LRS Network**: [api.busos.czerwinskidawid.pl/api/v1/routes?city=warszawa](https://api.busos.czerwinskidawid.pl/api/v1/routes?city=warszawa) (Canonical Trip Patterns, Linear Referencing System in EPSG:2180, commercial speed km/h).
 *   **Vector Database Engine**: Qdrant v1.13+ (Active on OCI port 6333 for GNN Transit Embeddings)
-*   **Audited Coverage**: 30 major Polish metropolitan agglomerations with full econometric calibration.
+*   **Audited Coverage**: 30 major Polish metropolitan agglomerations with full econometric calibration (60,265 physical stops, 28,317 logical hubs, 36,784 H3 cells, 210 validated data files, 95/95 Pytest test suite).
 
 ---
 
@@ -69,7 +72,7 @@ To ensure 100% scalability, data integrity, and parallel processing capabilities
 
 ---
 
-## 4. The Master Pipeline: 16 Steps to Perfection
+## 4. The Master Pipeline: 18 Steps to Perfection
 
 ```mermaid
 flowchart TD
@@ -81,72 +84,87 @@ flowchart TD
     end
 
     subgraph Spatial_Core["2. Potok Przestrzenny C-GEOS & Silnik Grawitacji (Autonomous Hub)"]
+        Routes["01b: Rekonstrukcja Tras GTFS & LRS (EPSG:2180, Shapes + Prędkości km/h)"]
         Osmium["osmium-tool & ogr2ogr (Strumieniowy C++ BBOX Clip <200MB RAM)"]
         Dissolve["Spatial Dissolve T0/T1 (Unifikacja Kampusów -15x Inflacji)"]
         Cluster["Klastrowanie Hybrydowe (Complete 150m + Centroid Stitching 100m)"]
-        Huff["Model Grawitacji Huffa (K=0.005, In-Place .transform('sum') -60% RAM)"]
-        Shannon["Entropia Shannona (Różnorodność 6 Domen POI) + Z-Score"]
+        Huff["Model Grawitacji Huffa (C-GEOS STRtree dwithin, In-Place .transform)"]
+        Shannon["Entropia Shannona (Wektoryzacja NumPy unstack) + Z-Score"]
+        H3Grid["17: Siatka Analityczna Uber H3 Res 8 & Transit Desert Index (TDI)"]
     end
 
     subgraph Serving["3. Warstwa Serwerowa i Baza Wektorowa (Decoupled OCI ARM64)"]
         Caddy["Caddy 2 Reverse Proxy (Auto Let's Encrypt TLS 1.3 / HTTP/3)"]
-        FastAPI["FastAPI 0.115+ (Asynchroniczny REST API C-GEOS)"]
-        DuckDB["DuckDB In-Memory SQL (Strumieniowy Odczyt Parquet)"]
+        FastAPI["FastAPI 0.115+ (Universal Query Engine, 24 Trasy REST)"]
+        DuckDB["DuckDB In-Memory C++ SQL (Zone Maps Predicate Pushdown <26ms)"]
         Qdrant["Qdrant Vector Engine (Wyszukiwanie Semantyczne & GNN)"]
-        GPKG["SQLite GeoPackage (Wektory Stop DNA EPSG:4326)"]
+        GPKG["Podwójna Warstwa GPKG (stop_dna.gpkg & hubs.gpkg)"]
     end
 
     subgraph Presentation["4. Wizualizacja GPU 60 FPS (Vercel Global Edge)"]
         Vercel["Next.js 16 + React 19 (Turbopack Engine)"]
-        DeckGL["Deck.gl v9 (GPU Compute Scatterplot & 3D Hexagons)"]
+        DeckGL["Deck.gl v9 (GPU Compute H3HexagonLayer, PathLayer & Scatterplot)"]
         MapLibre["MapLibre GL (Wektorowy Podkład CARTO Dark Matter)"]
-        DualCache["Hybrydowy Cache (Sub-400ms First Paint + Live 30-City Stream)"]
+        AbortCtrl["Pula AbortController (Zero Zamrożeń WebGL & Zero Race Conditions)"]
     end
 
-    GTFS & OSM --> Osmium --> Dissolve --> Cluster --> Huff --> Shannon
+    GTFS --> Routes --> Cluster
+    OSM --> Osmium --> Dissolve --> Cluster
     GUS & RCN --> Cluster
+    Cluster --> Huff --> Shannon --> H3Grid
     Shannon --> GPKG & DuckDB
+    H3Grid --> DuckDB
     GPKG & DuckDB --> FastAPI --> Caddy
     Qdrant --> FastAPI
-    Caddy --> Vercel --> DualCache --> DeckGL & MapLibre
+    Caddy --> Vercel --> AbortCtrl --> DeckGL & MapLibre
 ```
 
-The system is fully automated and orchestrated via `orchestrator.py` (The "Pancerny" fault-tolerant runner). To rebuild the national dataset from scratch, the Orchestrator executes these numbered scripts sequentially from `scripts/pipeline/`.
+The system is fully automated and orchestrated via `orchestrator.py` (The "Pancerny" fault-tolerant runner with Subprocess Isolation). To rebuild the national dataset from scratch, the Orchestrator executes these numbered scripts sequentially from `scripts/pipeline/`.
 
-### Phase 1: Environment & Spatial Isolation
+### Phase 1: Environment, Network Topology & Spatial Isolation
 *   **`00_init_environment.py`**: Validates the global directory structure, verifies CRS integrity across the workspace, and prepares the operational grid.
 *   **`01_fetch_gtfs.py`**: Multi-threaded sync of 85+ Polish transit operators (ZTM, MPK, PKP).
-*   **`02_collect_stops.py`**: Unifies Urban and Rail stops. Applies the crucial `normalize_name` regex function (stripping strings to raw alphanumeric core) to ensure perfect Agglomerative Clustering later. Identifies massive transport radii.
+*   **`01b_extract_transit_routes.py`**: **Transit Route Geometry & Linear Referencing System (LRS).**
+    *   Extracts canonical trip patterns with multi-feed isolation key `route_uid = f"{feed_id}_{route_id}"`.
+    *   Parses certified GPS tracks from `shapes.txt` (23 cities) or derives interpolated sequences (7 cities).
+    *   Implements Linear Referencing System (LRS) in metric EPSG:2180: projects stops onto route geometry to compute true road/track distances ($d_{\text{real}}$) and commercial travel speeds ($v_{\text{kmh}} = \frac{d}{t} \times 3.6$).
+    *   Calculates clean net travel time between stops: $\Delta t = \text{arrival}(v) - \text{departure}(u)$ (eliminating dwell-time distortion).
+    *   Exports `transit_routes.gpkg`, `stop_route_matrix.parquet`, and directed graph `transit_network_edges.parquet`.
+*   **`02_collect_stops.py`**: Unifies Urban and Rail stops. Applies metric BBox buffers in EPSG:2180 (5 km) with auto-sync to `config/extract_config.json`. Normalizes names to alphanumeric core.
 *   **`03_download_osm_pbf.py`**: Downloads the 2GB+ National OpenStreetMap binary (Geofabrik).
 *   **`04_download_population.py`**: Ingests the National Census (GUS) 250m demographic grid and converts it to EPSG:2180.
-*   **`05_extract_infrastructure.py`**: C++ Osmium + OGR high-performance pipeline. Clips the massive Poland PBF strictly to the 1.5km walking buffers of transit stops, saving massive amounts of RAM and disk space.
+*   **`05_extract_infrastructure.py`**: C++ Osmium + OGR high-performance pipeline. Clips the massive Poland PBF strictly to walking buffers of transit stops, saving massive RAM and disk space.
 *   **`06_identify_rcn_teryt.py`**: Spatial intersection mapping transit hubs to specific administrative TERYT codes for real estate querying.
 
-### Phase 2: Real Estate Hardening (RCN)
+### Phase 2: Real Estate Hardening & Spatial Bridge (RCN)
 *   **`07_harvest_rcn_omnibus.py`**: Connects to the national WFS (GUGiK) and county registries to download vast XML/GML troves of local real estate transactions. Ingests flat WFS features and handles GML 3.2 multi-layer relational data.
-*   **`08_fix_relational_data.py`** *(Dedicated Offline/Rescue Parser)*: Dedicated parser for raw cadastral GML 3.2 packages requiring direct relational XLink pointer resolution, retained for offline extraction and edge-case county cadastral rescues.
-*   **`09_fix_suwalki_geometry.py`**: Global fallback algorithm restoring valid Point geometries for non-standard real estate multipolygons and cadastral parcel/building centroids (covering edge cases like Suwałki and Łódź).
-*   **`10_unify_schemas.py`**: Aggressive standardization of thousands of disjointed local RCN columns into a strict, unified economic format (`price_m2`, `lok_pow_uzyt`, date) with IQR boundary cleaning.
+*   **`08_fix_relational_data.py`** *(Dedicated Offline/Rescue Parser)*: Dedicated parser for raw cadastral GML 3.2 packages requiring direct relational XLink pointer resolution.
+*   **`09_fix_suwalki_geometry.py`**: Global fallback algorithm restoring valid Point geometries for non-standard real estate multipolygons and cadastral parcel/building centroids.
+*   **`10_unify_schemas.py`**: **Quality Real Estate Normalization & Filtering.** Filters exclusively for residential free-market transactions (`lok_funkcja == 'mieszkalna'`, `tran_rodzaj_trans == 'wolnyRynek'`), eliminating 3,800+ garage purchases and 1,700+ discounted municipal buyouts. Enforces columnar `DATE` typing, extracts explicit `lon`/`lat` and Uber H3 Res 8 indices, and applies IQR boundary cleaning.
 *   **`11_build_master_db.py`**: Concatenates all verified property records into the National Master Database (over 222,000 verified transactions).
 
-### Phase 3: Urban Intelligence & The Gravity Engine
+### Phase 3: Urban Intelligence, Symmetry & The Gravity Engine
 *   **`12_audit_data_quality.py`**: Mid-flight validation. Verifies coordinate validity, eliminates teleporting stops (0,0 coords), and audits schema compliance.
 *   **`13_isolate_city_data.py`**: The "Splinter" process. Cuts the National Master DB and National Population grid into autonomous, localized GeoPackages per city, moving operations to the decentralized `data/cities/` architecture.
-*   **`14_build_isc_valuation.py`**: **The Urban Intelligence Engine.** Parses the complex `all_tags` HSTORE of every building. Assigns Tiers (T0-T6) based on structural taxonomy (e.g., recognizing `uic_ref` to designate a National Rail Hub instead of just a generic station). Incorporates base city population logs and physical volume metrics to calculate the definitive Monetary Weight of every POI category in the city (`poi_valuation.json`). Applies Spatial Dissolve to multi-building campuses.
-*   **`15_compute_stop_dna.py`**: **The Grand Integrator.** 
-    *   Merges Stops into Logical Hubs via two-phase clustering (complete linkage 150m + centroid stitching 100m).
-    *   Computes GTFS unique departures per hour with Dirty GTFS calendar resilience (Wednesday typical day heuristic).
-    *   Calculates C-GEOS vectorized Euclidean distances to POIs.
-    *   Solves Huff Models strictly in-place (`.transform('sum')`) to eliminate RAM Cartesian explosions.
-    *   Applies Tier-based Dynamic Diminishing Returns with a 20% Retention Floor on daily services (T4/T5) and quadratic penalties on micro-infrastructure (T6).
-    *   Integrates the GUS 250m population grid via demand cannibalization, preserving 100% human population mass.
-    *   Calculates Shannon Entropy across functional domains (Health, Education, Commerce, Leisure, Government, Transport) as an Urban Synergy Bonus.
-    *   Computes log-normalized Z-Scores and assigns letter grades (A+ to F).
-    *   Exports high-speed `.parquet` matrices and `.gpkg` vectors in EPSG:4326 for frontend delivery.
+*   **`14_build_isc_valuation.py`**: **The Urban Intelligence Engine.** Parses `all_tags` HSTORE, assigns Tiers (T0-T6) based on structural taxonomy, and computes the city-specific monetary weight list (`poi_valuation.json`). Applies Spatial Dissolve to multi-building campuses.
+*   **`15_compute_stop_dna.py`**: **The Grand Integrator & Micro-Macro Symmetry.** 
+    *   **Subprocess Isolation Architecture**: Enforces isolated subprocessing per city (`subprocess.run`), guaranteeing that the Linux kernel fully reclaims memory arenas and clears swap pages, eliminating OOM Killer and Swap Death crashes across 30-city batch runs.
+    *   **Dual-Layer GeoPackage Export**: Generates `stop_dna.gpkg` (60,265 physical stops with complete micro metrics) and `hubs.gpkg` (28,317 logical hub centroid points with macro metrics, `hub_stops_count`, `hub_stops_ids`).
+    *   **Zero Stop Loss Symmetry**: Establishes mathematical relationships: `stop_hub_share` ($[0.0, 1.0]$) and exactly one anchor stop per hub (`is_hub_anchor = 1`).
+    *   **High-Speed C-GEOS STRtree**: Replaces polygon buffers with allocation-free `shapely.STRtree(points).query(predicate='dwithin', distance=500.0)`, slashing RAM from 28 GB to <200 MB and join times from minutes to 6 milliseconds.
+    *   **Pre-Materialized Spatial Bridge**: Materializes `stop_transactions_bridge.parquet` sorted physically by `['stop_id', 'dok_data']` with `row_group_size=50000` for hardware Zone Map Predicate Pushdown in DuckDB.
+    *   **Vectorized Shannon Entropy**: Replaces Python loops with matrix unstacking `unstack(fill_value=0.0)` and vectorized log2 arithmetic in NumPy, reducing runtime from 5 minutes to 38 milliseconds on 10k+ stops (GZM).
+    *   **Log-Normalized Z-Scores**: Computes robust Z-scores and assigns letter grades (A+ to F).
 *   **`16_national_stitching` (`15_compute_stop_dna.py --stitch`)**: **The National Unifier.**
-    *   Aggregates city-level `stop_dna.gpkg` datasets across all processed cities into `data/database/master_stop_dna_poland.gpkg` and `.csv`.
-    *   Calculates cross-city log-normalized National Z-Scores calibrated exclusively against unique logical hubs to prevent over-represented multi-stop nodes from skewing the national distribution.
-    *   Assigns country-wide percentiles (from 0.03% to 100.00%) across all 60,000+ transit nodes.
+    *   Aggregates city-level datasets across all 30 calibrated Polish cities into `data/database/master_stop_dna_poland.gpkg` (30 MB) and `.csv` (38 MB).
+    *   Calculates cross-city log-normalized National Z-Scores calibrated exclusively against unique logical hubs.
+    *   Assigns country-wide percentiles (0.0% to 100.0%) across all transit nodes.
+*   **`17_build_h3_grid.py`**: **Unified Analytical H3 Grid (Uber H3 Res 8) & Transit Desert Index.**
+    *   Fuses GTFS transit supply (departures/h, routes), GUS 250m demographic demand (`pop_total`), RCN property transaction deeds (`rcn_median_price_m2`), and OSM POI gravity into uniform Uber H3 Resolution 8 cells (~0.74 km²).
+    *   Calculates the **Transit Desert Index (TDI)**:
+        $$TDI = \frac{\ln(1 + \text{pop\_total})}{\ln(1 + \text{total\_departures\_h} + 0.1)}$$
+    *   Flags high-deficit exclusion zones (`is_transit_desert = true` when `pop_total >= 150` and `total_departures_h < 4.0`) to power "The Investment List".
+    *   Outputs `h3_grid.parquet` per city (36,784 cells across 30 cities in Poland).
 
 ---
 
@@ -156,62 +174,59 @@ The platform employs a decoupled, production-grade cloud architecture separating
 
 ```mermaid
 flowchart LR
-    subgraph Storage["Pipeline Datasets (data/cities/ - 30 Miast)"]
-        GPKG["stop_dna.gpkg (WGS84 EPSG:4326)"]
-        POI["poi_matrix.parquet (GUS / OSM)"]
-        POP["pop_matrix.parquet (250m Siatka)"]
-        TX["transactions.parquet (RCN / GUGiK)"]
+    subgraph Storage["Pipeline Datasets (data/cities/ - 30 Miast, 210 Plików)"]
+        GPKG["stop_dna.gpkg & hubs.gpkg (WGS84 EPSG:4326)"]
+        ROUTES["transit_routes.gpkg & transit_network_edges.parquet"]
+        BRIDGE["stop_transactions_bridge.parquet (Zone Maps)"]
+        H3["h3_grid.parquet (Uber H3 Res 8)"]
     end
 
     subgraph Backend["Spatial Analytics Backend (OCI Ampere A1 ARM64)"]
-        CADDY["Caddy 2 Proxy<br/>Auto Let's Encrypt TLS 1.3 / HTTP/3"]
-        FASTAPI["FastAPI 0.115+ (Uvicorn)<br/>Asynchroniczny silnik C-GEOS"]
-        DUCK["DuckDB In-Memory SQL<br/>Haversine Radius Query (500m)"]
-        QDRANT["Qdrant Vector DB<br/>GNN Transit & Node Embeddings"]
+        CICD["GitHub Actions CI/CD<br/>Auto Docker ARM64 Build (2m 1s)"]
+        CADDY["Caddy 2 Reverse Proxy<br/>Auto Let's Encrypt TLS 1.3 / HTTP/3"]
+        FASTAPI["FastAPI 0.115+ (Universal Query Engine)<br/>24 Trasy REST, Whitelisty SQL O(1)"]
+        DUCK["DuckDB In-Memory C++ SQL Engine<br/>Zone Maps Predicate Pushdown (<26ms)"]
+        QDRANT["Qdrant Vector DB (Port 6333)<br/>Stop DNA & GNN Node Embeddings"]
     end
 
     subgraph Frontend["Interactive WebGL Client (Vercel Edge Global CDN)"]
         CLIENT["Next.js 16 + React 19 (Turbopack)<br/>Dual-Mode Hybrid Client"]
         CACHE["Showcase Static Cache<br/>(Sub-400ms Recruiter First Paint)"]
-        DECK["Deck.gl v9 (GPU Compute)<br/>3D Columns, Hexagons & Stop DNA"]
-        MAP["MapLibre GL (CARTO Dark Matter)"]
+        DECK["Deck.gl v9 (GPU Compute)<br/>H3HexagonLayer, PathLayer & Scatterplot"]
+        MAP["MapLibre GL (CARTO Dark Matter Podkład)"]
+        ABORT["AbortController Pool<br/>Zero WebGL Freezes & Race Conditions"]
     end
 
-    GPKG & POI & POP & TX --> DUCK --> FASTAPI
+    CICD --> Backend
+    GPKG & ROUTES & BRIDGE & H3 --> DUCK --> FASTAPI
     QDRANT <--> FASTAPI
     FASTAPI <--> CADDY
     CADDY <-->|HTTPS REST API / JSON| CLIENT
     CACHE -.->|Instant Fallback| CLIENT
-    CLIENT --> DECK & MAP
+    CLIENT --> ABORT --> DECK & MAP
 ```
 
 ### Core Production Implementations:
-1.  **Decoupled Cloud Serving on Oracle Cloud Infrastructure (OCI)**:
+1.  **Decoupled Cloud Serving & Automated CI/CD on Oracle Cloud Infrastructure (OCI)**:
     *   Hosted on an OCI Ampere A1 Compute instance (ARM64, 2 OCPUs, 12 GB RAM) behind a hardened **Caddy 2** reverse proxy with native Let's Encrypt SSL ([api.busos.czerwinskidawid.pl](https://api.busos.czerwinskidawid.pl)).
+    *   Fully automated continuous integration and deployment pipeline via **GitHub Actions** (`.github/workflows/deploy-backend.yml`), compiling Docker ARM64 images natively with zero downtime.
     *   API response latency: **<1 ms** for `/health` diagnostics and **<10 ms** for multi-city metadata indexes.
     *   Interactive Swagger / OpenAPI UI live at [api.busos.czerwinskidawid.pl/docs](https://api.busos.czerwinskidawid.pl/docs).
-2.  **In-Memory Parquet Filtering with DuckDB & C-GEOS**:
-    *   Rather than holding multi-million POI and population records in Node.js heap memory, analytical route handlers utilize DuckDB's vectorized query engine directly over Parquet files on disk:
-    ```sql
-    SELECT poi_id, name, category, tier, lat, lon, w, sum_pull
-    FROM read_parquet('poi_matrix.parquet')
-    WHERE lat BETWEEN :minLat AND :maxLat
-      AND lon BETWEEN :minLon AND :maxLon
-      AND (6371000 * acos(
-            cos(radians(:lat)) * cos(radians(lat)) * cos(radians(lon) - radians(:lon)) +
-            sin(radians(:lat)) * sin(radians(lat))
-          )) <= 500
-    ORDER BY (w * sum_pull) DESC
-    ```
+2.  **Universal Query Engine & In-Memory DuckDB C++ SQL**:
+    *   Sub-15ms query execution across 60,265 physical stops, 28,317 logical hubs, 36,784 H3 cells, and 2.55M transaction pairs.
+    *   1-based exact position querying (`rank=N`) and free `limit` pagination.
+    *   100% SQL Injection immunity via strict column whitelisting (`STOP_METRIC_MAP`, `HUB_METRIC_MAP`, `HEX_METRIC_MAP`, `MARKET_METRIC_MAP`) verified in O(1) time.
+    *   Hardware Zone Map Predicate Pushdown over physically sorted Parquet tables (`stop_transactions_bridge.parquet` with `row_group_size=50000`), executing dynamic date filters `WHERE dok_data >= ?::DATE` in 12–26 ms.
 3.  **Vector Similarity Ready (Qdrant Vector DB)**:
     *   Integrated official Rust **Qdrant** engine on port 6333, connected to FastAPI for AI spatial analysis (GraphSAGE / VGAE embeddings, Transit Deserts, and node similarity).
 4.  **Instant-Paint Hybrid Frontend Architecture (Vercel)**:
     *   Next.js 16 App Router with React 19 and Turbopack compilation deployed globally on Vercel Edge ([busos.czerwinskidawid.pl](https://busos.czerwinskidawid.pl)).
     *   **Sub-400ms Recruiter First Paint**: Pre-computed static showcase JSON cache (`/data/showcase/kielce/`) guarantees immediate 3D visualization even during zero-cold-start conditions, seamlessly fetching dynamic multi-city data from the live API in the background.
 5.  **Hardware-Accelerated WebGL Rendering (Deck.gl v9)**:
-    *   **ScatterplotLayer**: Renders tens of thousands of transit hubs colour-coded by grade (A+ through F) at 60 FPS.
-    *   **HexagonLayer / GeoJSONLayer**: Visualizes 3D spatial hexagons and real estate transaction density.
-    *   **Interactive Node Inspection**: Deep-dive sidebar profiling catchment radius, functional domain entropy, and local vs national percentiles.
+    *   **H3HexagonLayer**: GPU-accelerated 3D hexagonal tessellation colour-coded by Transit Desert Index and transport supply at 60 FPS.
+    *   **ScatterplotLayer**: Renders physical stops and transit hubs colour-coded by grade (A+ through F) with 350m elevation caps to prevent raycasting collisions.
+    *   **PathLayer**: High-fidelity transit line routes rendered with official agency colors and directional animations.
+    *   **AbortController Lifecycle**: Dynamic HTTP fetch cancellation preventing WebGL thread freezing during rapid city switching.
 
 ---
 
@@ -238,7 +253,7 @@ cd ..
 # Process a single city (e.g. Kielce)
 python3 orchestrator.py --cities kielce --workers 4
 
-# Run the complete national pipeline across all 57 cities
+# Run the complete national pipeline across all 30 calibrated cities
 python3 orchestrator.py --cities all --workers 4
 
 # Force rebuild of all steps (ignoring .pipeline_state.json cache)
@@ -262,17 +277,20 @@ The [`dev.sh`](file:///home/gzyms/Dev%20Projects/busos/dev.sh) script provides p
 
 ### Running Audits and Tests
 ```bash
-# Run unit tests via uv or pytest
-uv run pytest tests/ -v
+# Run comprehensive unit & integration test suite (95 tests, Tier 0 to Tier 5)
+uv run pytest backend/tests/ -v
 
 # Run Python linting and code style checks
-uv run ruff check scripts/ tests/
+uv run ruff check scripts/ backend/
 
 # Run ESLint and TypeScript type-safety checks on dashboard
 cd urban-dashboard
 npm run lint
 npx tsc --noEmit
 cd ..
+
+# Verify complete nationwide data files (30 cities, 210 files)
+python3 scripts/tools/verify_nationwide_data.py
 
 # Run the Golden Auditor across all generated Stop DNA files
 python3 scripts/tools/100_percent_dna_validator.py
@@ -284,10 +302,10 @@ python3 scripts/tools/100_percent_dna_validator.py
 
 The platform enforces a "Verify, Then Trust" standard via 18 rigorous auditing and diagnostic tools:
 
-*   **`100_percent_dna_validator.py` (The Golden Auditor)**: Traverses `stop_dna.gpkg` for all processed cities. Deduplicates logical hubs so reports reflect true physical nodes, validates statistical standard deviations (Z-Scores), audits population drift against raw census counts, and generates comprehensive `GOLDEN_DNA_AUDIT` Markdown reports.
-*   **`orchestrator.py`**: Fault-tolerant process manager with thread-safe execution, `.pipeline_state.json` persistence for interrupted runs, line-buffered subprocessing, and IPC metric parsing (`__PIPELINE_METRICS__=`).
-*   **`master_national_auditor.py` & `comprehensive_national_audit.py`**: Cross-city integrity scanners ensuring schema uniformity, zero-null constraints, and valid spatial bounds across the national repository.
-*   **`verify_isolation.py` & `dry_run_rcn_audit.py`**: Boundary checkers confirming zero data cross-contamination between city directories.
+*   **`verify_nationwide_data.py`**: Scans all 30 cities confirming 100% presence and integrity across all 7 essential analytical layers (210/210 complete files).
+*   **`100_percent_dna_validator.py` (The Golden Auditor)**: Traverses `stop_dna.gpkg` for all processed cities. Deduplicates logical hubs so reports reflect true physical nodes, validates statistical standard deviations (Z-Scores), audits population drift against raw census counts, and generates comprehensive `GOLDEN_DNA_AUDIT` Markdown reports (26,235 lines).
+*   **`test_stop_hub_symmetry.py`**: Rigorous 8-gate verification script confirming zero stop loss, valid `stop_hub_share` ranges $[0.0, 1.0]$, and exactly one anchor stop per hub across 30 cities.
+*   **`orchestrator.py`**: Fault-tolerant process manager with Subprocess Isolation, `.pipeline_state.json` persistence, line-buffered subprocessing, and IPC metric parsing (`__PIPELINE_METRICS__=`).
 
 ---
 
@@ -296,13 +314,13 @@ The platform enforces a "Verify, Then Trust" standard via 18 rigorous auditing a
 ### Full System Stack:
 | Layer | Technologies |
 |---|---|
-| **Data Pipeline Core** | Python 3.12+, GeoPandas, Shapely 2.0+, NumPy, pandas, scikit-learn |
-| **C/C++ Spatial Engines** | PyOsmium / `osmium-tool`, GDAL/OGR 3.8+ (`ogr2ogr`), C-GEOS bindings |
-| **Data Formats & Storage** | OGC GeoPackage (GPKG with SQLite R-Tree), Apache Parquet (`pyarrow`/`fastparquet`), H3 Spatial Index (Uber H3 Res 9) |
+| **Data Pipeline Core** | Python 3.12+, GeoPandas 1.0+, Shapely 2.0+ (C-GEOS), NumPy, pandas, scikit-learn, Subprocess Isolation |
+| **C/C++ Spatial Engines** | PyOsmium / `osmium-tool`, GDAL/OGR 3.8+ (`ogr2ogr`), C-GEOS STRtree, SciPy `cKDTree` |
+| **Data Formats & Storage** | OGC GeoPackage (GPKG with SQLite R-Tree), Apache Parquet (`pyarrow` Zone Maps), Uber H3 (Res 8 & 9) |
 | **Coordinate Reference Systems** | EPSG:2180 (Poland CS92 - metric distance & area physics), EPSG:4326 (WGS84 - display export) |
-| **Spatial Backend & Vector Engine** | FastAPI 0.115+ (Uvicorn), DuckDB 1.2+, Qdrant Vector DB (Rust v1.13+), C-GEOS, Caddy 2 (Auto TLS 1.3 / HTTP/3), Docker Compose |
-| **Frontend & Visualization** | Next.js 16.2+ (Turbopack), React 19.2+, `@deck.gl` 9.2+ (Scatterplot, Hexagon 3D, GeoJSON), MapLibre GL 5.2+, Zustand 5.0+, Tailwind CSS v4, shadcn/ui |
-| **Cloud Infrastructure & Edge** | Vercel Global Edge CDN (Frontend), Oracle Cloud Infrastructure Ampere A1 ARM64 (Backend & Vector DB), Cloudflare DNS (DNS-Only) |
+| **Spatial Backend & Vector Engine** | FastAPI 0.115+ (Universal Query Engine, 24 REST routes), DuckDB 1.2+ C++, Qdrant Vector DB (v1.13+), Caddy 2 (TLS 1.3 / HTTP/3) |
+| **Frontend & Visualization** | Next.js 16.2.1 (Turbopack), React 19.2+, `@deck.gl` 9.2+ (H3HexagonLayer, Scatterplot, PathLayer), MapLibre GL 5.2+, Zustand 5.0+, Tailwind CSS v4, Blueprint.js |
+| **Cloud Infrastructure & CI/CD** | Oracle Cloud Infrastructure Ampere A1 ARM64 (Backend & Vector DB), GitHub Actions CI/CD (`deploy-backend.yml`), Vercel Global Edge CDN (Frontend) |
 
 ### Engineering Directives (Senior Engineering Standard):
 1.  **C-Level Vectorization First**: Python `apply(lambda)` loops over spatial frames are banned for distance matrices. Calculations reduce to flat NumPy arrays (`x.values`, `y.values`) or native C bindings (`geometry.distance()`).

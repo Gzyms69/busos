@@ -31,6 +31,90 @@ Każdy wiersz w `h3_grid.parquet` reprezentuje pojedynczą komórkę Uber H3 (do
 | `transit_desert_index`| `DOUBLE`| $\ge 0.0$ | Wskaźnik Pustyni Transportowej: $\frac{\ln(1 + \text{pop\_total})}{\ln(1 + \text{total\_departures\_h} + 0.1)}$ | Oś 2: The Investment List |
 | `is_transit_desert` | `BOOLEAN` | `true` / `false` | Flaga wykluczenia: $\text{pop\_total} \ge 150 \land \text{total\_departures\_h} < 4.0$. | Filtracja alertów |
 
+### 1.2 Fizyczne Słupki Przystankowe (`stop_dna.gpkg` / tabela `stop_dna`)
+
+Warstwa zawiera 100% fizycznych słupków przystankowych w układzie WGS84 (EPSG:4326 Point).
+
+| Pole (Field) | Typ | Zakres / Jednostka | Definicja / Źródło | Rola w Systemie |
+| :--- | :--- | :--- | :--- | :--- |
+| `stop_id` | `VARCHAR` | Alfanumeryczny | Oryginalny identyfikator słupka z GTFS `stops.txt`. | Klucz główny (PK) |
+| `stop_name` | `VARCHAR` | Tekst | Oryginalna nazwa przystanku ze słupka. | Prezentacja UI |
+| `stop_lat` / `stop_lon` | `DOUBLE` | EPSG:4326 | Współrzędne geograficzne fizycznego słupka. | Geometria punktowa |
+| `hub_id` | `INT` | $\ge 1$ | Identyfikator nadrzędnego logicznego węzła przesiadkowego. | Klucz obcy (FK) |
+| `hub_name` | `VARCHAR` | Tekst | Znormalizowana nazwa węzła logicznego. | Agregacja makro |
+| `hub_stops_count` | `INT` | $\ge 1$ | Liczba fizycznych słupków wchodzących w skład huba. | Skala węzła |
+| `hub_stops_ids` | `VARCHAR` | Lista CSV | Identyfikatory wszystkich słupków w hubie (`id1,id2,...`). | Lookup relacyjny |
+| `stop_hub_share` | `DOUBLE` | $[0.0, 1.0]$ | Udział odjazdów słupka w odjazdach huba: $\frac{\text{stop\_dep}}{\text{hub\_dep}}$. | Waga mikro/makro |
+| `is_hub_anchor` | `INT` | `0` lub `1` | Dokładnie 1 dla słupka o najwyższym wolumenie kursów w hubie. | Reprezentant huba |
+| `stop_departures_h`| `DOUBLE` | kursy / godz. | Unikalne odjazdy w godzinie szczytu z tego słupka. | Podaż transportowa |
+| `stop_routes` | `VARCHAR` | CSV linii | Wykaz linii autobusowych/tramwajowych obsługujących słupek. | Oferta przewozowa |
+| `stop_raw_gravity` | `DOUBLE` | $\ge 0.0$ | Suma grawitacji POI w buforze 500m (model Huffa). | Potencjał usługowy |
+| `stop_entropy` | `DOUBLE` | $[0.0, 1.0]$ | Znormalizowana entropia Shannona różnorodności domen POI. | Synergia miejska |
+| `stop_infra_score` | `DOUBLE` | $\ge 0.0$ | Złożony wskaźnik infrastrukturalny słupka. | Filar infrastruktury |
+| `stop_pop_val` | `DOUBLE` | osoby | Przypisana ludność GUS 250m po kanibalizacji popytu. | Filar demografii |
+| `stop_market_val` | `DOUBLE` | PLN / m² | Mediana cen RCN w buforze 500m po filtracji IQR. | Filar wyceny rynku |
+| `stop_liquidity` | `INT` | $\ge 0$ | Liczba transakcji notarialnych w buforze 500m. | Płynność rynku |
+| `stop_local_score_raw`| `DOUBLE`| Z-Score | Log-standaryzowany Z-Score słupka w populacji miasta. | Ocena syntetyczna |
+| `stop_percentile` | `DOUBLE` | $0.0 - 100.0\%$ | Percentyl słupka w rozkładzie miejskim. | Pozycja w mieście |
+| `stop_grade` | `VARCHAR` | `A+` do `F` | Klasa jakościowa słupka (A+, A, B, C, D, F). | Klasyfikacja UI |
+| `nat_percentile` | `DOUBLE` | $0.0 - 100.0\%$ | Percentyl słupka w rozkładzie ogólnopolskim (30 miast). | Pozycja krajowa |
+| `nat_grade` | `VARCHAR` | `A+` do `F` | Klasa jakościowa słupka w skali całego kraju. | Benchmarking |
+
+### 1.3 Logiczne Węzły Przesiadkowe (`hubs.gpkg` / tabela `hubs`)
+
+Warstwa zawiera zagregowane węzły logiczne (zespoły przystankowe) na współrzędnych centroidu geometrycznego (EPSG:4326 Point).
+
+| Pole (Field) | Typ | Zakres / Jednostka | Definicja / Rola |
+| :--- | :--- | :--- | :--- |
+| `hub_id` | `INT` | $\ge 1$ | Unikalny identyfikator węzła logicznego w danym mieście. |
+| `hub_name` | `VARCHAR` | Tekst | Oficjalna nazwa zespołu przystankowego (np. `Dworzec Główny`). |
+| `hub_stops_count` | `INT` | $\ge 1$ | Liczba słupków składowych. |
+| `hub_stops_ids` | `VARCHAR` | CSV | Lista identyfikatorów słupków fizycznych wchodzących w skład węzła. |
+| `hub_departures_h` | `DOUBLE` | kursy / godz. | Sumaryczny wolumen odjazdów huba (ze zredukowanymi dubletami). |
+| `hub_routes` | `VARCHAR` | CSV | Zbiór wszystkich unikalnych linii obsługujących zespół węzłowy. |
+| `hub_raw_gravity` | `DOUBLE` | $\ge 0.0$ | Suma grawitacji POI zintegrowana dla całego węzła. |
+| `hub_entropy` | `DOUBLE` | $[0.0, 1.0]$ | Entropia Shannona miksu usługowego wokół węzła. |
+| `hub_infra_score` | `DOUBLE` | $\ge 0.0$ | Wynik infrastrukturalny huba. |
+| `hub_pop_val` | `DOUBLE` | osoby | Łączna populacja GUS 250m ciążąca do zespołu przesiadkowego. |
+| `hub_market_val` | `DOUBLE` | PLN / m² | Średnia ważona wycena m² mieszkań w otoczeniu węzła. |
+| `hub_liquidity` | `INT` | $\ge 0$ | Liczba aktów notarialnych w strefie dojścia pieszych. |
+| `hub_local_score_raw`| `DOUBLE`| Z-Score | Log-standaryzowany Z-Score huba. |
+| `hub_percentile` | `DOUBLE` | $0.0 - 100.0\%$ | Percentyl huba w populacji węzłów miasta. |
+| `hub_grade` | `VARCHAR` | `A+` do `F` | Klasa jakościowa huba. |
+| `nat_percentile` / `nat_grade` | `DOUBLE`/`STR` | $0.0 - 100\%$ / `A+`..`F` | Ogólnokrajowy percentyl i ocena huba kalibrowana na 28 317 hubach. |
+
+### 1.4 Sieć Tras i Graf Transportowy (`transit_routes.gpkg`, `stop_route_matrix.parquet`, `transit_network_edges.parquet`)
+
+1. **`transit_routes.gpkg` (Warstwa Linii Transportowych EPSG:4326 MultiLineString):**
+   * `route_uid`: Kompozytowy unikalny identyfikator linii: `f"{feed_id}_{route_id}"`.
+   * `feed_id`, `route_id`, `route_short_name`, `route_long_name`, `route_type` (0=tramwaj, 3=autobus, 2=kolej).
+   * `route_color`: Oficjalny kod HEX koloru przewoźnika (np. `#E31E24`).
+   * `direction_id`: Kierunek jazdy (`0` lub `1`).
+   * `is_canonical`: Flaga wariantu dominującego (`true` dla najczęstszego wzorca kursów w dobie).
+   * `is_shape_interpolated`: `false` dla geometrii ze śladów GPS `shapes.txt`, `true` dla interpolacji przystankowej.
+   * `daily_trips`: Suma zrealizowanych kursów w dobie.
+   * `stop_count`: Liczba obsługiwanych przystanków na trasie.
+
+2. **`transit_network_edges.parquet` (Topologiczny Graf Skierowany $u \to v$):**
+   * `from_stop_id`, `to_stop_id`: Pary kolejnych przystanków w sekwencji trasy.
+   * `route_uid`, `direction_id`: Powiązanie z linią i kierunkiem.
+   * `avg_travel_time_sec`: Czysty czas przejazdu netto: $\Delta t = \text{arrival}(v) - \text{departure}(u)$.
+   * `distance_m`: Dystans drogowy/torowy wzdłuż trasy w metrach (LRS w EPSG:2180).
+   * `speed_kmh`: Realna prędkość handlowa: $\frac{d_{\text{real}} / 1000}{t / 3600}$.
+   * `is_distance_real`: `true` dla obliczeń w oparciu o rzutowanie LRS na `shapes.txt`.
+
+### 1.5 Mostek Przestrzenny Nieruchomości (`stop_transactions_bridge.parquet` & `transactions.parquet`)
+
+* **`stop_transactions_bridge.parquet`**: Pre-materializowana tabela relacji M:N łącząca przystanki z transakcjami RCN.
+  * `stop_id`: Identyfikator słupka.
+  * `hub_id`: Identyfikator huba.
+  * `tx_id`: Identyfikator transakcji notarialnej.
+  * `dok_data`: Data zawarcia aktu notarialnego (kolumnowy typ `DATE`).
+  * `price_m2`: Cena transakcyjna za metr kwadratowy lokalu (PLN).
+  * `distance_m`: Rzeczywista odległość metryczna punktu od słupka w EPSG:2180 (C-GEOS).
+  * `tran_rodzaj_rynku`: Rynek `pierwotny` lub `wtorny`.
+  * **Optymalizacja I/O:** Plik jest fizycznie posortowany po `['stop_id', 'dok_data']` z `row_group_size=50000`, co umożliwia DuckDB sprzętowe pomijanie bloków (Zone Maps Predicate Pushdown) bez pełnego skanowania dysku.
+
 ---
 
 ## 2. Modular API Architecture & Domain Routers (`backend/app/routers/`)
@@ -58,6 +142,8 @@ Architektura API zostaje podzielona na wyspecjalizowane routery domenowe z pełn
 
 ### 2.3 Router Rynku Nieruchomości (`/api/v1/market`)
 *   `GET /api/v1/market/summary?city={city}`: Globalne statystyki transakcyjne miasta z `rcn_stats.json` (mediana ceny m², wolumen, przedziały IQR).
+*   `GET /api/v1/market/stops-summary?city={city}&date_from=...&date_to=...&market_type=...`: Odpytanie silnika DuckDB po pre-materializowanym mostku `stop_transactions_bridge.parquet` (czas odpowiedzi 12–26 ms dla 10k+ słupków).
+*   `GET /api/v1/market/stop/{stop_id}/transactions?city={city}&date_from=...`: Lista transakcji notarialnych w strefie 500m wokół wybranego słupka.
 *   `GET /api/v1/market/transactions/ranking?city={city}&order_by=price_m2&order_dir=...&limit=N&rank=N&market_type=...`: Paginowany ranking transakcji notarialnych RCN z dynamicznym sortowaniem, filtrowaniem po rynku (`pierwotny` / `wtorny`), funkcji nieruchomości i cenie.
 *   `GET /api/v1/market/transactions/nearby?city={city}&lat=...&lon=...&radius_m=500&limit=20`: Przestrzenne wyszukiwanie transakcji w promieniu metrycznym (EPSG:2180 C-GEOS).
 *   `GET /api/v1/market/h3-analysis?city={city}`: Zbiorcza analiza pokrycia nieruchomości w siatce H3, 6 przedziałów cenowych oraz korelacji z transportem publicznym.
@@ -75,9 +161,16 @@ Architektura API zostaje podzielona na wyspecjalizowane routery domenowe z pełn
 *   `GET /api/v1/analytics/transit-deserts?city={city}`: [The Investment List] Ranking komórek H3 o najwyższym wskaźniku wykluczenia (duża populacja GUS, brak oferty transportowej).
 *   `GET /api/v1/analytics/axe-list?city={city}`: [The Axe List] Przystanki zidentyfikowane jako zbędne wg standardu TCRP Report 100 ($R_{\max} \ge 0.70$).
 
-### 2.6 Router Wektorowy & AI (`/api/v1/ai`)
-*   `POST /api/v1/ai/similar-hubs`: Wyszukiwanie semantyczne w silniku Qdrant na bazie embeddingów węzłów (znajdź najbardziej zbliżone węzły w kraju).
+### 2.6 Router Tras Komunikacji Miejskiej (`/api/v1/routes`)
+*   `GET /api/v1/routes?city={city}&route_type=...&canonical_only=true`: Wykaz linii transportowych ze statystykami kursów i barwą przewoźnika.
+*   `GET /api/v1/routes/search?city={city}&query={q}`: Autouzupełnianie i wyszukiwarka linii autobusowych i tramwajowych po numerze lub nazwie.
+*   `GET /api/v1/routes/geometry?city={city}&route_uid={uid}`: Precyzyjny GeoJSON geometrii wybranej trasy (MultiLineString EPSG:4326) z LRS.
+*   `GET /api/v1/routes/{route_uid}/details?city={city}&direction_id={dir}`: Złożony payload zawierający sekwencję przystanków, czasy przejazdu, odległości drogowe w metrach i wyceny Stop DNA.
+*   `GET /api/v1/routes/stop/{stop_id}?city={city}`: Wykaz wszystkich linii i kierunków obsługujących dany słupek przystankowy.
+*   `GET /api/v1/routes/edges?city={city}&route_uid={uid}`: Odcinki grafu sieci $u \to v$ z czasami netto i prędkościami handlowymi w km/h.
 
+### 2.7 Router Wektorowy & AI (`/api/v1/ai`)
+*   `POST /api/v1/ai/similar-hubs`: Wyszukiwanie semantyczne w silniku Qdrant na bazie embeddingów węzłów (znajdź najbardziej zbliżone węzły w kraju).
 
 ---
 
@@ -85,4 +178,7 @@ Architektura API zostaje podzielona na wyspecjalizowane routery domenowe z pełn
 
 1. **Brak kolumn w Parquet:** W przypadku starszych lub zoptymalizowanych plików Parquet backend MUSI stosować dynamiczną introspekcję (`DESCRIBE`) i zwracać spójne wartości domyślne zamiast rzucać błąd Binder Error 500.
 2. **Stateless Backend:** Backend na OCI nie przechowuje stanu sesji w pamięci RAM — wszystkie zapytania DuckDB wykonują się in-memory w oparciu o pliki na dysku `/data/cities/`.
-3. **C-Level Vectorization First:** Żadne operacje przestrzenne nie mogą być wykonywane pętlami `apply(lambda)` w Pythonie dla dużych zbiorów — wyłącznie wektoryzacja GeoPandas, C-GEOS i DuckDB.
+3. **C-Level Vectorization First:** Żadne operacje przestrzenne nie mogą być wykonywane pętlami `apply(lambda)` w Pythonie dla dużych zbiorów — wyłącznie wektoryzacja GeoPandas, C-GEOS `shapely.STRtree` i DuckDB.
+4. **Subprocess Isolation:** Masowe przetwarzanie 30 miast w potoku musi odbywać się w izolowanych podprocesach (`subprocess.run`), co gwarantuje 100% zwrot pamięci i zwalnianie stron swapu przez jądro Linuxa po każdym mieście.
+5. **Multi-Feed Key Isolation:** Wszelkie operacje na trasach GTFS muszą posługiwać się kompozytowym kluczem `route_uid = f"{feed_id}_{route_id}"`, eliminując kolizje linii o tych samych numerach u różnych organizatorów aglomeracji.
+6. **Hardware Zone Maps Pushdown:** Tabele Parquet o dużym wolumenie (`stop_transactions_bridge.parquet`) muszą być fizycznie posortowane po kluczach partycjonowania z jednolitym `row_group_size=50000`.
