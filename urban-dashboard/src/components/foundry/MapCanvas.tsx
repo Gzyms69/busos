@@ -407,7 +407,7 @@ export default function MapCanvas() {
           }}
         >
           {/* Hexagon Tooltip */}
-          {"hex" in (hoverInfo.object as any) && (
+          {(hoverInfo.object as any) && "hex" in (hoverInfo.object as any) && (
             <div>
               <div style={{ fontWeight: 700, color: "#2b95d6", marginBottom: 3 }}>
                 Heks Res 8: {(hoverInfo.object as HexagonCell).hex}
@@ -427,7 +427,7 @@ export default function MapCanvas() {
           )}
 
           {/* Stop Tooltip */}
-          {"stop_id" in (hoverInfo.object as any)?.properties && (
+          {(hoverInfo.object as any)?.properties && "stop_id" in (hoverInfo.object as any).properties && (
             <div>
               <div style={{ fontWeight: 700, color: "#0f9960", marginBottom: 2 }}>
                 {(hoverInfo.object as any).properties.stop_name}
@@ -443,7 +443,7 @@ export default function MapCanvas() {
           )}
 
           {/* Hub Tooltip */}
-          {"hub_id" in (hoverInfo.object as any)?.properties && (
+          {(hoverInfo.object as any)?.properties && "hub_id" in (hoverInfo.object as any).properties && (
             <div>
               <div style={{ fontWeight: 700, color: "#2b95d6", marginBottom: 2 }}>
                 {(hoverInfo.object as any).properties.hub_name || (hoverInfo.object as any).properties.stop_name}
