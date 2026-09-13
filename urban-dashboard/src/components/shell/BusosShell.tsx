@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   useFoundryStore,
   initializeStoreFromUrl,
@@ -11,15 +11,30 @@ import MapCanvas from "@/components/foundry/MapCanvas";
 import BrandHeader from "./BrandHeader";
 import TopSearchPill from "./TopSearchPill";
 import FloatingMapControls from "./FloatingMapControls";
-import LeftSlidePanel from "./LeftSlidePanel";
+import ResizableMainPanel from "./ResizableMainPanel";
+import OmniDock from "./OmniDock";
 import MobileBottomSheet from "@/components/mobile/MobileBottomSheet";
 import SimulationControlsDock from "@/components/simulation/SimulationControlsDock";
 import VehicleInspectorCard from "@/components/simulation/VehicleInspectorCard";
 
 export default function BusosShell() {
   const store = useFoundryStore();
-  const { setAvailableCities, setHealth, setConnectionStatus, selectedId } = store;
-  const [isPanelOpen, setIsPanelOpen] = useState<boolean>(true);
+  const {
+    setAvailableCities,
+    setHealth,
+    setConnectionStatus,
+    selectedId,
+    clearSelection,
+    windows,
+    openWindow,
+    closeWindow,
+    toggleWindow,
+    toggleCleanMapMode,
+    activeWindowId,
+    isSimulationActive,
+    isPlaying,
+    setPlaying,
+  } = store;
 
   // Initialize store from URL and load baseline cities & health
   useEffect(() => {
@@ -68,12 +83,62 @@ export default function BusosShell() {
     store.viewState.zoom,
   ]);
 
-  // Automatically open panel if an object is selected
+  // Automatically open primary panel if an object is selected
   useEffect(() => {
     if (selectedId) {
-      setIsPanelOpen(true);
+      openWindow("primary-panel");
     }
-  }, [selectedId]);
+  }, [selectedId, openWindow]);
+
+  // Global Keyboard Shortcuts (Esc, H, Space)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't intercept if user is typing in an input, textarea, or select
+      const activeTag = (document.activeElement?.tagName || "").toLowerCase();
+      if (activeTag === "input" || activeTag === "textarea" || activeTag === "select") {
+        if (e.key === "Escape") {
+          (document.activeElement as HTMLElement)?.blur();
+        }
+        return;
+      }
+
+      // 1. Escape: clear selection or close active window
+      if (e.key === "Escape") {
+        if (selectedId) {
+          clearSelection();
+        } else if (activeWindowId) {
+          closeWindow(activeWindowId);
+        }
+      }
+
+      // 2. 'h' or 'H': toggle Clean Map mode
+      if (e.key === "h" || e.key === "H") {
+        e.preventDefault();
+        toggleCleanMapMode();
+      }
+
+      // 3. Space: play/pause simulation
+      if (e.key === " " && isSimulationActive) {
+        e.preventDefault();
+        setPlaying(!isPlaying);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [
+    selectedId,
+    clearSelection,
+    activeWindowId,
+    closeWindow,
+    toggleCleanMapMode,
+    isSimulationActive,
+    isPlaying,
+    setPlaying,
+  ]);
+
+  const isPrimaryPanelOpen =
+    Boolean(windows["primary-panel"]?.isOpen && !windows["primary-panel"]?.isMinimized);
 
   return (
     <div className="relative w-full h-dvh min-h-dvh overflow-hidden bg-slate-50 font-sans">
@@ -83,7 +148,7 @@ export default function BusosShell() {
       </div>
 
       {/* 2. Top Unified Controls Dock (Always on top z-40) */}
-      <div className="absolute top-3 left-3 right-3 sm:top-4 sm:left-4 sm:right-4 z-40 flex items-center justify-between pointer-events-none gap-2 sm:gap-3">
+      <header className="absolute top-3 left-3 right-3 sm:top-4 sm:left-4 sm:right-4 z-40 flex items-center justify-between pointer-events-none gap-2 sm:gap-3">
         {/* Left: Brand Badge & City Selector & Telemetry */}
         <div className="pointer-events-auto shrink-0">
           <BrandHeader />
@@ -97,17 +162,17 @@ export default function BusosShell() {
         {/* Right: Map & View Controls */}
         <div className="pointer-events-auto shrink-0">
           <FloatingMapControls
-            isPanelOpen={isPanelOpen}
-            onTogglePanel={() => setIsPanelOpen(!isPanelOpen)}
+            isPanelOpen={isPrimaryPanelOpen}
+            onTogglePanel={() => toggleWindow("primary-panel")}
           />
         </div>
-      </div>
+      </header>
 
-      {/* 3. Desktop Collapsible Left Slide Panel (Hidden on Mobile) */}
-      <LeftSlidePanel
-        isOpen={isPanelOpen}
-        onToggle={() => setIsPanelOpen(!isPanelOpen)}
-      />
+      {/* 3. Desktop Resizable & Draggable Primary Workspace Panel */}
+      <ResizableMainPanel />
+
+      {/* 4. Desktop Bottom OmniDock Toolbar */}
+      <OmniDock />
 
       {/* 5. Mobile Gesture Bottom Sheet (Hidden on Desktop) */}
       <MobileBottomSheet />

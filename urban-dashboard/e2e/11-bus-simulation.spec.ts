@@ -8,7 +8,7 @@ test.describe("11 - Real-time Bus Fleet Simulation", () => {
     await page.goto("http://localhost:3000/?city=kielce", { waitUntil: "domcontentloaded" });
 
     // 2. Znajdź przycisk Symulacji w FloatingMapControls
-    const simButton = page.locator('button:has-text("Symulacja")');
+    const simButton = page.getByRole("button", { name: "Symulacja", exact: true });
     await expect(simButton).toBeVisible({ timeout: 15000 });
 
     // 3. Kliknij w przycisk Symulacji
@@ -32,7 +32,7 @@ test.describe("11 - Real-time Bus Fleet Simulation", () => {
     await chip3600x.click();
 
     // 7. Sprawdź obecność wskaźnika floty w trasie
-    const fleetStatus = page.locator('text=/w trasie/');
+    const fleetStatus = page.locator('text=/w trasie/').first();
     await expect(fleetStatus).toBeVisible();
 
     // 8. Sprawdź selektor linii

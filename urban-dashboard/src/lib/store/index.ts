@@ -5,6 +5,7 @@ import { createMapSlice, type MapSlice, type MapViewState } from "./map-slice";
 import { createSelectionSlice, type SelectionSlice } from "./selection-slice";
 import { createGridSlice, type GridSlice } from "./grid-slice";
 import { createSimulationSlice, type SimulationSlice } from "./simulation-slice";
+import { createWindowSlice, type WindowSlice } from "./window-slice";
 import { sessionCache } from "./session-cache";
 
 export type FoundryStore = CitySlice &
@@ -12,7 +13,8 @@ export type FoundryStore = CitySlice &
   MapSlice &
   SelectionSlice &
   GridSlice &
-  SimulationSlice;
+  SimulationSlice &
+  WindowSlice;
 
 export const useFoundryStore = create<FoundryStore>()((...a) => ({
   ...createCitySlice(...a),
@@ -21,6 +23,7 @@ export const useFoundryStore = create<FoundryStore>()((...a) => ({
   ...createSelectionSlice(...a),
   ...createGridSlice(...a),
   ...createSimulationSlice(...a),
+  ...createWindowSlice(...a),
 }));
 
 // Backwards compatibility alias for components expecting useStore
@@ -33,6 +36,7 @@ export * from "./map-slice";
 export * from "./selection-slice";
 export * from "./grid-slice";
 export * from "./simulation-slice";
+export * from "./window-slice";
 export * from "./session-cache";
 
 // URL State Sync Helper
