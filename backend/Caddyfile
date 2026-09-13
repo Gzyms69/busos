@@ -13,12 +13,18 @@ api.busos.czerwinskidawid.pl, busos.duckdns.org {
     respond @bad_bots "Access Denied by Security Policy" 403
     respond @empty_ua "Bad Request: Missing User-Agent" 400
 
-    # 2. Limit request body size to 1MB
+    # 2. Block external access to internal Prometheus telemetry
+    @metrics_block {
+        path /metrics
+    }
+    respond @metrics_block "Access Denied: Internal Telemetry" 403
+
+    # 3. Limit request body size to 1MB
     request_body {
         max_size 1MB
     }
 
-    # 3. Reverse proxy to FastAPI with real client IP headers
+    # 4. Reverse proxy to FastAPI with real client IP headers
     reverse_proxy busos-api:8000 {
         header_up X-Real-IP {remote_host}
         header_up X-Forwarded-For {remote_host}

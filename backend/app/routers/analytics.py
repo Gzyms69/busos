@@ -1,5 +1,6 @@
 from typing import Optional
-from fastapi import APIRouter, Query, HTTPException
+from fastapi import APIRouter, Query, HTTPException, Response
+from app.core.cache import cached_query
 from app.schemas import (
     AxeListResponse,
     TransitDesertsResponse,
@@ -42,9 +43,11 @@ async def get_transit_deserts(
 
 
 @router.get("/analytics/audit-summary", response_model=CityAuditSummaryResponse)
+@cached_query(prefix="analytics_audit", ttl=600, jitter=60)
 async def get_city_audit_summary(
     city: str = Query(..., description="City slug"),
     include: str = Query("all", description="Comma-separated list of sections: summary, zscore, grades, h3, rcn, tcrp, poi, samples, all"),
+    response: Response = None
 ):
     """Returns granular City Audit Scorecard with modular selective section loading."""
     try:
@@ -56,6 +59,7 @@ async def get_city_audit_summary(
 
 
 @router.get("/analytics/national-ranking", response_model=NationalRankingResponse)
+@cached_query(prefix="analytics_national", ttl=600, jitter=60)
 async def get_national_ranking(
     scope: str = Query("stops", description="Leaderboard scope: 'stops', 'hubs', 'hexagons', 'cities'"),
     order_by: Optional[str] = Query(None, description="Metric column to sort by"),
@@ -65,6 +69,7 @@ async def get_national_ranking(
     rank: Optional[int] = Query(None, ge=1, description="1-based exact position to fetch"),
     grade: Optional[str] = Query(None, description="Filter by grade"),
     city: Optional[str] = Query(None, description="Filter by city"),
+    response: Response = None
 ):
     """National leaderboard across Poland for stops (60k), hubs (28k), hexagons (36k), or cities (30)."""
     try:

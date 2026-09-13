@@ -28,12 +28,12 @@ jobs:
             cd "$TARGET_DIR"
             
             echo "[+] Pulling latest commits from GitHub..."
-            git pull origin main
+            git pull --ff-only origin main
             
             echo "[+] Rebuilding and restarting busos-api container..."
             cd backend
             docker compose build --no-cache busos-api
-            docker compose up -d busos-api
+            docker compose --profile monitoring up -d
             docker compose restart caddy
             
             echo "[+] Waiting for healthcheck..."

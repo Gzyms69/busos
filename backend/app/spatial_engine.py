@@ -11,7 +11,21 @@ import shapely.ops
 import numpy as np
 import pandas as pd
 from scipy.spatial import cKDTree
+import threading
 from typing import Dict, Any, List, Optional
+
+_DUCKDB_ENGINE = None
+_DUCKDB_LOCK = threading.Lock()
+
+def get_duckdb_connection():
+    global _DUCKDB_ENGINE
+    if _DUCKDB_ENGINE is None:
+        with _DUCKDB_LOCK:
+            if _DUCKDB_ENGINE is None:
+                _DUCKDB_ENGINE = duckdb.connect(":memory:", read_only=False)
+                _DUCKDB_ENGINE.execute("SET memory_limit = '2GB';")
+                _DUCKDB_ENGINE.execute("SET threads = 4;")
+    return _DUCKDB_ENGINE.cursor()
 
 # Transformer for Polish Cadastral/Demographic metric CRS (EPSG:2180) to WGS84 (EPSG:4326)
 transformer_2180_to_4326 = pyproj.Transformer.from_crs("EPSG:2180", "EPSG:4326", always_xy=True)
@@ -503,7 +517,7 @@ def get_hub_details(city: str, lat: float, lon: float, hub_id: Optional[str] = N
         sin(radians({lat})) * sin(radians(lat))
     ))"""
 
-    db = duckdb.connect(":memory:")
+    db = get_duckdb_connection()
 
     # Introspect schema to handle cities with optimized/reduced poi_matrix columns
     cols_df = db.execute(f"DESCRIBE SELECT * FROM read_parquet('{poi_file}')").fetchall()
@@ -595,7 +609,7 @@ def get_hexagons(city: str, min_pop: float = 0.0) -> Dict[str, Any]:
     if not os.path.exists(h3_file):
         raise FileNotFoundError(f"h3_grid.parquet not found for city '{city}' at {h3_file}")
 
-    db = duckdb.connect(":memory:")
+    db = get_duckdb_connection()
     query = f"""
         SELECT 
             h3_index as hex,
@@ -786,7 +800,7 @@ def get_transit_deserts(city: str, limit: int = 50) -> Dict[str, Any]:
     if not os.path.exists(h3_file):
         raise FileNotFoundError(f"h3_grid.parquet not found for city '{city}' at {h3_file}")
 
-    db = duckdb.connect(":memory:")
+    db = get_duckdb_connection()
     query = f"""
         SELECT 
             h3_index,
@@ -833,7 +847,7 @@ def get_hexagon_detail(city: str, hex_index: str) -> Dict[str, Any]:
     if not os.path.exists(h3_file):
         raise FileNotFoundError(f"h3_grid.parquet not found for city '{city}' at {h3_file}")
 
-    db = duckdb.connect(":memory:")
+    db = get_duckdb_connection()
     query = f"""
         SELECT 
             h3_index as hex,
@@ -1448,7 +1462,7 @@ def get_hexagons_ranking(
 
     where_sql = ("WHERE " + " AND ".join(where_clauses)) if where_clauses else ""
 
-    db = duckdb.connect(":memory:")
+    db = get_duckdb_connection()
     total_count = db.execute(f"SELECT COUNT(*) FROM read_parquet(?) {where_sql}", params).fetchone()[0]
 
     query_sql = f"""
@@ -1763,7 +1777,7 @@ def get_market_h3_analysis(city: str) -> Dict[str, Any]:
     if not os.path.exists(h3_file):
         raise FileNotFoundError(f"h3_grid.parquet not found for city '{city}'")
 
-    db = duckdb.connect(":memory:")
+    db = get_duckdb_connection()
     df = db.execute(f"SELECT * FROM read_parquet('{h3_file}')").fetch_df()
     db.close()
 
@@ -1840,7 +1854,7 @@ def get_poi_magnets(
     if not os.path.exists(poi_file):
         raise FileNotFoundError(f"poi_matrix.parquet not found for city '{city}'")
 
-    db = duckdb.connect(":memory:")
+    db = get_duckdb_connection()
     df = db.execute(f"SELECT * FROM read_parquet('{poi_file}')").fetch_df()
     db.close()
 
@@ -1936,7 +1950,7 @@ def search_pois(
     limit = max(1, min(limit, 500))
     offset = max(0, offset)
 
-    con = duckdb.connect(":memory:")
+    con = get_duckdb_connection()
     where_clauses = ["1=1"]
     params = [str(poi_file)]
 
@@ -2022,7 +2036,7 @@ def get_city_kpi(city: str) -> Dict[str, Any]:
     avg_trn, deserts_cnt, rcn_med = 0.0, 0, None
     h3_file = os.path.join(city_dir, "04_results", "h3_grid.parquet")
     if os.path.exists(h3_file):
-        db = duckdb.connect(":memory:")
+        db = get_duckdb_connection()
         r = db.execute(f"""
             SELECT 
                 AVG(transport_score), 
@@ -2168,7 +2182,7 @@ def get_city_audit_summary(city: str, include: str = "all") -> Dict[str, Any]:
     if inc_all or "h3" in inc_tokens:
         h3_file = os.path.join(city_dir, "04_results", "h3_grid.parquet")
         if os.path.exists(h3_file):
-            db = duckdb.connect(":memory:")
+            db = get_duckdb_connection()
             h3_df = db.execute(f"SELECT * FROM read_parquet('{h3_file}')").fetch_df()
             db.close()
 
@@ -2362,7 +2376,7 @@ def get_national_ranking(
         }
 
     elif scope == "hexagons":
-        db = duckdb.connect(":memory:")
+        db = get_duckdb_connection()
         pattern = os.path.join(DATA_DIR, "*", "04_results", "h3_grid.parquet")
         db_col = HEX_METRIC_MAP.get((order_by or "transit_desert_index").lower(), "transit_desert_index")
         total_count = db.execute(f"SELECT COUNT(*) FROM read_parquet('{pattern}')").fetchone()[0]
@@ -2457,7 +2471,7 @@ def get_metric_distribution(city: str, metric: str) -> Dict[str, Any]:
         elif metric_clean in HEX_METRIC_MAP:
             col = HEX_METRIC_MAP[metric_clean]
             pattern = os.path.join(DATA_DIR, "*", "04_results", "h3_grid.parquet")
-            db = duckdb.connect(":memory:")
+            db = get_duckdb_connection()
             res = db.execute(f"SELECT {col} FROM read_parquet('{pattern}') WHERE {col} IS NOT NULL").fetchall()
             db.close()
             vals = [float(r[0]) for r in res if r[0] is not None and not math.isnan(r[0])]
@@ -2478,7 +2492,7 @@ def get_metric_distribution(city: str, metric: str) -> Dict[str, Any]:
             col = HEX_METRIC_MAP[metric_clean]
             h3_file = os.path.join(city_dir, "04_results", "h3_grid.parquet")
             if os.path.exists(h3_file):
-                db = duckdb.connect(":memory:")
+                db = get_duckdb_connection()
                 res = db.execute(f"SELECT {col} FROM read_parquet('{h3_file}') WHERE {col} IS NOT NULL").fetchall()
                 db.close()
                 vals = [float(r[0]) for r in res if r[0] is not None and not math.isnan(r[0])]

@@ -16,7 +16,7 @@ export type H3ColorMetric =
 
 export interface MapSlice {
   viewState: MapViewState;
-  mapStyle: "dark" | "satellite";
+  mapStyle: "light" | "dark" | "satellite";
   showBoundary: boolean;
   showHexagons: boolean;
   showStops: boolean;
@@ -26,7 +26,7 @@ export interface MapSlice {
   h3Metric: H3ColorMetric;
 
   setViewState: (viewState: Partial<MapViewState>) => void;
-  setMapStyle: (style: "dark" | "satellite") => void;
+  setMapStyle: (style: "light" | "dark" | "satellite") => void;
   toggleLayer: (
     layer:
       | "showBoundary"
@@ -54,17 +54,17 @@ const DEFAULT_VIEW_STATE: MapViewState = {
   longitude: 20.6285,
   latitude: 50.8703,
   zoom: 12,
-  pitch: 45,
+  pitch: 0,
   bearing: 0,
 };
 
 export const createMapSlice: StateCreator<MapSlice, [], [], MapSlice> = (set, get) => ({
   viewState: DEFAULT_VIEW_STATE,
-  mapStyle: "dark",
+  mapStyle: "light",
   showBoundary: true,
-  showHexagons: true,
+  showHexagons: false,
   showStops: true,
-  showHubs: false,
+  showHubs: true,
   showRoutes: true,
   show3DBuildings: false,
   h3Metric: "transport_score",

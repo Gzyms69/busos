@@ -6,7 +6,8 @@ import httpx
 import numpy as np
 from app.schemas import SimilarHubRequest, SimilarHubResponse
 from app.spatial_engine import DATA_DIR
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Response
+from app.core.cache import cached_query
 
 router = APIRouter(tags=["AI & Vector Search"])
 
@@ -55,7 +56,8 @@ def _get_embeddings_data(source_db: str, table_name: str):
 
 
 @router.post("/ai/similar-hubs", response_model=List[SimilarHubResponse])
-async def search_similar_hubs(req: SimilarHubRequest):
+@cached_query(prefix="ai_similar", ttl=3600, jitter=300)
+async def search_similar_hubs(req: SimilarHubRequest, response: Response = None):
     """
     Finds semantically & structurally similar transit hubs across Poland based on Stop DNA profile.
     Tries Qdrant vector engine first; falls back to exact multi-dimensional cosine similarity
@@ -101,17 +103,25 @@ async def search_similar_hubs(req: SimilarHubRequest):
     t_normalized = t_vec / t_norm
 
     sims = np.dot(normalized_matrix, t_normalized)
-    df["_sim"] = sims
 
-    # Exclude self
-    other = df[df["hub_id"] != target_hub_id].copy()
-    if other.empty:
-        other = df.copy()
+    # Exclude self by index without mutating shared cached DataFrame
+    other_mask = (df["hub_id"].values != target_hub_id)
+    if not np.any(other_mask):
+        eligible_indices = np.arange(len(df))
+    else:
+        eligible_indices = np.where(other_mask)[0]
 
-    top = other.sort_values("_sim", ascending=False).head(req.top_k)
+    sims_eligible = sims[eligible_indices]
+    k = min(req.top_k, len(eligible_indices))
+    if k > 0:
+        top_sorted_order = np.argsort(-sims_eligible)[:k]
+        top_indices = eligible_indices[top_sorted_order]
+    else:
+        top_indices = []
 
     results = []
-    for _, row in top.iterrows():
+    for idx in top_indices:
+        row = df.iloc[idx]
         c_city = str(row.get("city_context") or req.city)
         name = str(row.get("hub_name") or row.get("stop_name") or f"Hub #{row['hub_id']}")
         grade = str(row.get("hub_grade") or row.get("grade") or "C")
@@ -121,7 +131,7 @@ async def search_similar_hubs(req: SimilarHubRequest):
             hub_id=str(row["hub_id"]),
             city=c_city,
             stop_name=name,
-            similarity_score=round(float(row["_sim"]), 4),
+            similarity_score=round(float(sims[idx]), 4),
             grade=grade,
             local_score_raw=round(score, 3)
         ))

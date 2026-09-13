@@ -385,3 +385,27 @@
   - `npx tsc --noEmit`: **0 błędów**.
   - `npm run build --prefix urban-dashboard`: **sukces w 7.7s** (Turbopack Next.js 16).
   - `uv run pytest backend/tests/ -v`: **109/109 testów PASSED w 35.71s**.
+
+---
+
+### Task 15 (Sprint 4.6): Backend Hardening, Adversarial Security Audit & Forum Monitoring Rollout
+- **Status:** `[DONE]` (Zrealizowano 2026-09-13)
+- **Cel:** Wdrożenie 6 filarów architektonicznych backendu (Idempotencja IETF, Redis/InMemory LRU cache z Mutexem stampede, telemetria W3C + Prometheus, optymalizacja DuckDB, Caddy anti-bot + /metrics block, oraz VictoriaMetrics + Grafana live dashboard) wraz z pełnym audytem adversarialnym.
+- **Zrealizowany zakres:**
+  1. **Safe API & Idempotency Standard (`app/core/idempotency.py`):**
+     - Obsługa nagłówka `Idempotency-Key` z haszowaniem SHA-256 ciała zapytania, blokadą `409 Conflict`, replikacją `Idempotent-Replayed: true` oraz restrykcją metod do mutujących (`POST`, `PUT`, `PATCH`).
+  2. **Distributed Cache-Aside & Stampede Mutex (`app/core/cache.py`):**
+     - Pamięć podręczna LRU z TTL i losowym jitterem, automatyczny fallback Redis $\leftrightarrow$ InMemory oraz dekorator `@cached_query`.
+  3. **Wyeliminowanie wyścigów danych i bezpieczny DuckDB (`app/routers/ai.py` & `spatial_engine.py`):**
+     - Przebudowa `search_similar_hubs` na czyste wektorowe indeksowanie NumPy (brak mutacji `df["_sim"]` na współdzielonym cache).
+     - Zabezpieczenie inicjalizacji silnika DuckDB blokadą `threading.Lock()`.
+  4. **Proxy-Aware Rate Limiting & Bezpieczeństwo Sieciowe (`main.py`, `Caddyfile`, `Dockerfile`):**
+     - Ekstrakcja prawdziwego IP klienta z `X-Forwarded-For` dla `slowapi`.
+     - Blokada zewnętrznego dostępu do `/metrics` w Caddy (`403 Forbidden`).
+     - Uvicorn skonfigurowany pod 1 worker z obsługą `--proxy-headers` i `--forwarded-allow-ips=*`.
+  5. **Forum Launch Live Monitoring (VictoriaMetrics + Grafana):**
+     - Pre-prowizjonowany dashboard Grafany pod profilem `monitoring` z metrykami RPS, latencji p50/p95/p99, statusów HTTP i rankingu miast.
+- **Dowody Weryfikacji (100% Green):**
+  - `uv run pytest backend/tests/ -v`: **122/122 testów PASSED w 26.01s** (109 domenowych + 7 hardening + 6 audyt adversarialny).
+  - `npm run build --prefix urban-dashboard`: **sukces w 4.3s** (0 błędów TypeScript).
+

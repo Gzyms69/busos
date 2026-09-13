@@ -5,6 +5,9 @@ from contextlib import asynccontextmanager
 import duckdb
 import httpx
 from app import spatial_engine
+from app.core.cache import cache
+from app.core.idempotency import IdempotencyMiddleware
+from app.core.telemetry import TracingMiddleware, metrics_endpoint
 from app.routers import ai, analytics, hexagons, hubs, market, poi, routes, stops
 from app.schemas import (
     CitiesResponse,
@@ -20,24 +23,45 @@ from slowapi.util import get_remote_address
 
 QDRANT_HOST = os.getenv("QDRANT_HOST", "qdrant")
 QDRANT_PORT = int(os.getenv("QDRANT_PORT", "6333"))
+REDIS_URL = os.getenv("REDIS_URL")
 IS_PROD = os.getenv("ENVIRONMENT", "").lower() in ["production", "prod"]
 
+def get_real_client_ip(request: Request) -> str:
+    """Extracts real client IP resolving reverse proxy headers (X-Forwarded-For, X-Real-IP)."""
+    forwarded = request.headers.get("X-Forwarded-For")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    real_ip = request.headers.get("X-Real-IP")
+    if real_ip:
+        return real_ip.strip()
+    if request.client and request.client.host:
+        return request.client.host
+    return "127.0.0.1"
+
+
+storage_uri = "memory://"
+if REDIS_URL:
+    storage_uri = REDIS_URL
+
 limiter = Limiter(
-    key_func=get_remote_address,
+    key_func=get_real_client_ip,
     default_limits=["60/minute"],
     headers_enabled=True,
-    storage_uri="memory://"
+    storage_uri=storage_uri
 )
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Inicjalizacja persistent singleton DuckDB in-memory
-    app.state.duckdb = duckdb.connect(":memory:", read_only=False)
+    # Warm up shared DuckDB engine singleton
+    spatial_engine.get_duckdb_connection()
     yield
-    # Zamykanie połączenia przy wyłączeniu serwera
-    if hasattr(app.state, "duckdb") and app.state.duckdb:
-        app.state.duckdb.close()
+    # Graceful shutdown: close shared DuckDB engine if initialized
+    if spatial_engine._DUCKDB_ENGINE:
+        try:
+            spatial_engine._DUCKDB_ENGINE.close()
+        except Exception:
+            pass
 
 
 app = FastAPI(
@@ -53,6 +77,8 @@ app = FastAPI(
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.add_middleware(SlowAPIMiddleware)
+app.add_middleware(IdempotencyMiddleware)
+app.add_middleware(TracingMiddleware)
 
 
 ALLOWED_ORIGINS = [
@@ -81,7 +107,7 @@ async def add_process_time_and_cache_header(request: Request, call_next):
     response.headers["X-Process-Time-Ms"] = f"{process_time_ms:.2f}"
 
     # Cache GET spatial responses in client browser to reduce repeat DoS pressure
-    if request.method == "GET" and not request.url.path.startswith("/health"):
+    if request.method == "GET" and not request.url.path.startswith("/health") and not request.url.path.startswith("/metrics"):
         response.headers.setdefault("Cache-Control", "public, max-age=3600, stale-while-revalidate=86400")
     return response
 
@@ -105,6 +131,12 @@ async def health():
         active_cities_count=len(cities),
         qdrant_connected=qdrant_ok
     )
+
+
+@app.get("/metrics", include_in_schema=False)
+async def get_metrics():
+    """Returns Prometheus exposition metrics for VictoriaMetrics / Grafana."""
+    return metrics_endpoint()
 
 
 @app.get("/api/v1/cities", response_model=CitiesResponse, tags=["Urban Analytics"])

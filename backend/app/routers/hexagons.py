@@ -1,5 +1,6 @@
 from typing import Optional
-from fastapi import APIRouter, Query, HTTPException
+from fastapi import APIRouter, Query, HTTPException, Response
+from app.core.cache import cached_query
 from app.schemas import (
     HexagonsResponse,
     HexagonCell,
@@ -13,9 +14,11 @@ router = APIRouter(tags=["H3 Analytical Grid"])
 
 
 @router.get("/hexagons", response_model=HexagonsResponse)
+@cached_query(prefix="hexagons_all", ttl=300, jitter=60)
 async def get_hexagons(
     city: str = Query(..., description="City slug"),
-    min_pop: float = Query(0.0, description="Minimum population filter")
+    min_pop: float = Query(0.0, description="Minimum population filter"),
+    response: Response = None
 ):
     """Returns precomputed unified H3 spatial grid cells (Res 8) with fused transit, demographic, and real estate data."""
     try:
@@ -27,6 +30,7 @@ async def get_hexagons(
 
 
 @router.get("/hexagons/ranking", response_model=HexagonRankingResponse)
+@cached_query(prefix="hexagons_ranking", ttl=300, jitter=60)
 async def get_hexagons_ranking(
     city: str = Query(..., description="City slug"),
     order_by: str = Query("transport_score", description="Metric to sort by"),
@@ -41,6 +45,7 @@ async def get_hexagons_ranking(
     min_departures: Optional[float] = Query(None, description="Minimum departures/h"),
     max_departures: Optional[float] = Query(None, description="Maximum departures/h"),
     grade: Optional[str] = Query(None, description="Filter by stop grade"),
+    response: Response = None
 ):
     """Universal ranking endpoint for H3 hexagon cells with multi-attribute filtering."""
     try:

@@ -4,25 +4,36 @@
 @import "@blueprintjs/table/lib/css/table.css";
 @import "@blueprintjs/select/lib/css/blueprint-select.css";
 
-/* Swiss Design & OKLCH Industrial Tactical Palette */
+/* Deweloperuch Design System & Civic GIS Palette */
 :root {
-  --obsidian-canvas: oklch(0.10 0.005 260);
-  --obsidian-surface: oklch(0.14 0.010 260);
-  --obsidian-surface-elevated: oklch(0.18 0.012 260);
-  --obsidian-border: oklch(0.26 0.010 260);
-  --obsidian-text: #f8fafc;
-  --obsidian-text-muted: #94a3b8;
+  --brand-purple: #47317f;
+  --brand-purple-dark: #382468;
+  --brand-purple-light: #f5f2fa;
+  --brand-purple-glow: rgba(71, 49, 127, 0.18);
+  
+  --surface-canvas: #f8fafc;
+  --surface-card: #ffffff;
+  --surface-subtle: #f1f5f9;
+  
+  --border-card: #e2e8f0;
+  --border-strong: #cbd5e1;
+  
+  --text-main: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
 
-  /* OKLCH Perceptual Accents */
-  --accent-emerald: oklch(0.72 0.17 150);
-  --accent-blue: oklch(0.68 0.16 240);
-  --accent-amber: oklch(0.78 0.16 70); /* Signal Amber */
-  --accent-crimson: oklch(0.62 0.22 25);
-  --accent-signal: oklch(0.78 0.16 70);
+  /* Status Accents */
+  --accent-emerald: #059669;
+  --accent-emerald-bg: #ecfdf5;
+  --accent-amber: #d97706;
+  --accent-amber-bg: #fffbeb;
+  --accent-crimson: #dc2626;
+  --accent-crimson-bg: #fef2f2;
+  --accent-cobalt: #2563eb;
+  --accent-cobalt-bg: #eff6ff;
 
-  /* Base overrides */
-  --background: var(--obsidian-canvas);
-  --foreground: var(--obsidian-text);
+  --background: var(--surface-canvas);
+  --foreground: var(--text-main);
   --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: var(--font-geist-mono), monospace;
 }
@@ -56,63 +67,60 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: oklch(0.10 0.005 260);
-  color: #f8fafc;
+  background-color: var(--surface-canvas);
+  color: var(--text-main);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
 
-/* Blueprint Dark Mode Adaptations - Harmonized with czerwinskidawid.pl */
-.bp6-dark {
-  background-color: #090a0f !important;
-  color: #f8fafc !important;
+/* Deweloperuch Floating Pill Style */
+.deweloperuch-pill {
+  background: linear-gradient(135deg, #ffffff 0%, #f5f2fa 100%);
+  border: 2px solid var(--brand-purple);
+  box-shadow: 0 8px 30px rgba(71, 49, 127, 0.18), 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.bp6-dark .bp6-navbar {
-  background-color: #0e1017 !important;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) !important;
-  border-bottom: 1px solid #27272a;
+.deweloperuch-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 36px rgba(71, 49, 127, 0.24), 0 3px 10px rgba(0, 0, 0, 0.1);
 }
 
-.bp6-dark .bp6-card {
-  background-color: #121318;
-  border: 1px solid #27272a;
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08), 0 4px 12px rgba(0, 0, 0, 0.4);
+/* Deweloperuch Card & Panel Styles */
+.deweloperuch-panel {
+  background: #ffffff;
+  border: 1px solid var(--border-card);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.04);
 }
 
-.bp6-dark .bp6-section {
-  background-color: #121318;
-  border: 1px solid #27272a;
+.deweloperuch-card {
+  background: #ffffff;
+  border: 1px solid var(--border-card);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.15s ease;
 }
 
-.bp6-dark .bp6-section-header {
-  background-color: #181922;
-  border-bottom: 1px solid #27272a;
+.deweloperuch-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-/* Tactile Card Style matching czerwinskidawid.pl */
-.card-tactile {
-  background: rgba(18, 19, 24, 0.85);
-  backdrop-filter: blur(16px);
-  border: 1px solid #27272a;
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.1), 0 8px 24px rgba(0, 0, 0, 0.4);
-}
-
-/* Custom Scrollbars */
+/* Custom Clean Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #090a0f;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #27272a;
-  border-radius: 3px;
+  background: #cbd5e1;
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
+  background: #94a3b8;
 }
