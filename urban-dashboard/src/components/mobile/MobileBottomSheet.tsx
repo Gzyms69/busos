@@ -27,12 +27,12 @@ import AnalyticalWorkspace from "@/components/foundry/AnalyticalWorkspace";
 export type MobileSnap = "minimized" | "peek" | "half" | "full";
 
 const MODULES_LIST = [
-  { id: "command-center", label: "Command Center" },
-  { id: "network", label: "Przystanki i Węzły" },
-  { id: "optimization", label: "Optymalizacja (Axe List)" },
-  { id: "routes", label: "Katalog GTFS" },
-  { id: "market", label: "Ceny Mieszkań RCN" },
-  { id: "benchmark", label: "Ranking Miast" },
+  { id: "command-center", label: "Centrum dowodzenia" },
+  { id: "network", label: "Węzły i przystanki" },
+  { id: "optimization", label: "Optymalizacja sieci" },
+  { id: "routes", label: "Katalog linii GTFS" },
+  { id: "market", label: "Rynek nieruchomości" },
+  { id: "benchmark", label: "Ranking aglomeracji" },
 ] as const;
 
 export default function MobileBottomSheet() {

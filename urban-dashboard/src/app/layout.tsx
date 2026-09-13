@@ -51,7 +51,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body
-        className="h-dvh w-full overflow-hidden bg-slate-950 text-slate-900 font-sans antialiased"
+        className="h-dvh w-full overflow-hidden bg-slate-50 text-slate-900 font-sans antialiased"
         suppressHydrationWarning
       >
         {children}

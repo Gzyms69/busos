@@ -4,12 +4,12 @@
 
 The primary mission of this platform is to provide an empirical, high-fidelity quantification of the causal relationship between public transport accessibility and residential property values across **57 Polish agglomerations and urban centers** (with 30 metropolitan hubs undergoing complete cross-city econometric Z-Score calibration). By integrating high-resolution transit data (GTFS), comprehensive infrastructure context (OpenStreetMap), transactional real estate registries (RCN/GUGiK), and demographic grids (GUS NSP 2021), the system enables advanced modeling of Transit-Oriented Development (TOD) premiums and socio-economic equity.
 
-This platform is not merely a data aggregator; it is a **specialized spatial engineering engine** designed to eliminate "spatial noise". It solves fundamental data science challenges—such as preventing rural train stops from being evaluated like metropolitan hubs, stopping the "Gravity Fallacy" from erasing human populations, and preventing massive shopping malls from being outranked by 30 scattered park benches. 
+This platform is not merely a data aggregator; it is a **specialized spatial engineering engine** designed to eliminate "spatial noise". It solves fundamental data science challenges, such as preventing rural train stops from being evaluated like metropolitan hubs, stopping the "Gravity Fallacy" from erasing human populations, and preventing massive shopping malls from being outranked by 30 scattered park benches. 
 
 It acts as a Digital Auditor of Urban Policy, revealing whether cities favor affluent districts or prioritize regional accessibility, while delivering completely clean, mathematically rigorous data sets (Parquet/GPKG) ready for Next.js mapping and deep econometric modeling. Over 60,265 stops, 222,000+ notary transactions, 1.1M+ OSM structures, and 1.4M+ demographic grid cells are processed through this architecture.
 
 ### Live Production Deployment & Endpoints
-*   **Interactive Spatial Dashboard**: [busos.czerwinskidawid.pl](https://busos.czerwinskidawid.pl) (Hosted on Vercel Global Edge CDN — BusOS Shell with Dynamic Windowing, OmniDock and Deck.gl TripsLayer)
+*   **Interactive Spatial Dashboard**: [busos.czerwinskidawid.pl](https://busos.czerwinskidawid.pl) (Hosted on Vercel Global Edge CDN: BusOS Shell with Dynamic Windowing, OmniDock and Deck.gl TripsLayer)
 *   **Spatial Analytical API & Swagger UI**: [api.busos.czerwinskidawid.pl/docs](https://api.busos.czerwinskidawid.pl/docs) (Hosted on Oracle Cloud Infrastructure Ampere A1 ARM64 behind Caddy 2 TLS 1.3 / HTTP/3)
 *   **Real-time Engine Health Telemetry**: [api.busos.czerwinskidawid.pl/health](https://api.busos.czerwinskidawid.pl/health)
 *   **Automated CI/CD Pipeline**: GitHub Actions (`.github/workflows/deploy-backend.yml`) with automated Docker ARM64 compilation and zero-downtime deployment.
@@ -109,7 +109,7 @@ flowchart TD
 
     subgraph Serving["3. Warstwa Serwerowa i Baza Wektorowa (Decoupled OCI ARM64)"]
         Caddy["Caddy 2 Reverse Proxy (Auto Let's Encrypt TLS 1.3 / HTTP/3)"]
-        FastAPI["FastAPI 0.115+ (Universal Query Engine, 24 Trasy REST)"]
+        FastAPI["FastAPI 0.115+ (Universal Query Engine, 28 Tras REST)"]
         DuckDB["DuckDB In-Memory C++ SQL (Zone Maps Predicate Pushdown <26ms)"]
         Qdrant["Qdrant Vector Engine (Wyszukiwanie Semantyczne & GNN)"]
         GPKG["Podwójna Warstwa GPKG (stop_dna.gpkg & hubs.gpkg)"]
@@ -117,8 +117,8 @@ flowchart TD
 
     subgraph Presentation["4. Wizualizacja GPU 60 FPS (Vercel Global Edge)"]
         Vercel["Next.js 16 + React 19 (Turbopack Engine)"]
-        DeckGL["Deck.gl v9 (GPU Compute H3HexagonLayer, PathLayer & Scatterplot)"]
-        MapLibre["MapLibre GL (Wektorowy Podkład CARTO Dark Matter)"]
+        DeckGL["Deck.gl v9.2 (GPU Compute: TripsLayer, H3HexagonLayer, PathLayer & Scatterplot)"]
+        MapLibre["MapLibre GL (Wektorowy Podkład CARTO Voyager / Positron)"]
         AbortCtrl["Pula AbortController (Zero Zamrożeń WebGL & Zero Race Conditions)"]
     end
 
@@ -198,16 +198,15 @@ flowchart LR
     subgraph Backend["Spatial Analytics Backend (OCI Ampere A1 ARM64)"]
         CICD["GitHub Actions CI/CD<br/>Auto Docker ARM64 Build (2m 1s)"]
         CADDY["Caddy 2 Reverse Proxy<br/>Auto Let's Encrypt TLS 1.3 / HTTP/3"]
-        FASTAPI["FastAPI 0.115+ (Universal Query Engine)<br/>24 Trasy REST, Whitelisty SQL O(1)"]
+        FASTAPI["FastAPI 0.115+ (Universal Query Engine)<br/>28 Tras REST, Whitelisty SQL O(1)"]
         DUCK["DuckDB In-Memory C++ SQL Engine<br/>Zone Maps Predicate Pushdown (<26ms)"]
         QDRANT["Qdrant Vector DB (Port 6333)<br/>Stop DNA & GNN Node Embeddings"]
     end
 
     subgraph Frontend["Interactive WebGL Client (Vercel Edge Global CDN)"]
-        CLIENT["Next.js 16 + React 19 (Turbopack)<br/>Dual-Mode Hybrid Client"]
-        CACHE["Showcase Static Cache<br/>(Sub-400ms Recruiter First Paint)"]
-        DECK["Deck.gl v9 (GPU Compute)<br/>H3HexagonLayer, PathLayer & Scatterplot"]
-        MAP["MapLibre GL (CARTO Dark Matter Podkład)"]
+        CLIENT["Next.js 16 + React 19 (Turbopack)<br/>BusOS Desktop Shell"]
+        DECK["Deck.gl v9.2 (GPU Compute)<br/>TripsLayer, H3HexagonLayer, Scatterplot & Path"]
+        MAP["MapLibre GL (CARTO Voyager / Positron)"]
         ABORT["AbortController Pool<br/>Zero WebGL Freezes & Race Conditions"]
     end
 
@@ -216,7 +215,6 @@ flowchart LR
     QDRANT <--> FASTAPI
     FASTAPI <--> CADDY
     CADDY <-->|HTTPS REST API / JSON| CLIENT
-    CACHE -.->|Instant Fallback| CLIENT
     CLIENT --> ABORT --> DECK & MAP
 ```
 
@@ -233,10 +231,12 @@ flowchart LR
     *   Hardware Zone Map Predicate Pushdown over physically sorted Parquet tables (`stop_transactions_bridge.parquet` with `row_group_size=50000`), executing dynamic date filters `WHERE dok_data >= ?::DATE` in 12–26 ms.
 3.  **Vector Similarity Ready (Qdrant Vector DB)**:
     *   Integrated official Rust **Qdrant** engine on port 6333, connected to FastAPI for AI spatial analysis (GraphSAGE / VGAE embeddings, Transit Deserts, and node similarity).
-4.  **Instant-Paint Hybrid Frontend Architecture (Vercel)**:
+4.  **BusOS Desktop Shell and Decoupled Architecture (Vercel)**:
     *   Next.js 16 App Router with React 19 and Turbopack compilation deployed globally on Vercel Edge ([busos.czerwinskidawid.pl](https://busos.czerwinskidawid.pl)).
-    *   **Sub-400ms Recruiter First Paint**: Pre-computed static showcase JSON cache (`/data/showcase/kielce/`) guarantees immediate 3D visualization even during zero-cold-start conditions, seamlessly fetching dynamic multi-city data from the live API in the background.
-5.  **Hardware-Accelerated WebGL Rendering (Deck.gl v9)**:
+    *   **Window Management System**: Non-modal draggable, minimizable windows (`FloatingWindow`, `OmniDock`) and adaptive mobile bottom sheet for spatial analytics workflows.
+    *   **Real-Time Fleet Simulation**: Animated bus movement (`TripsLayer`) interpolated from GTFS schedule geometry streamed directly from the spatial engine across 30 cities.
+5.  **Hardware-Accelerated WebGL Rendering (Deck.gl v9.2)**:
+    *   **TripsLayer**: Real-time vehicle trajectories rendered with live playback controls, simulation clock, and speed scaling (1x to 60x).
     *   **H3HexagonLayer**: GPU-accelerated 3D hexagonal tessellation colour-coded by Transit Desert Index and transport supply at 60 FPS.
     *   **ScatterplotLayer**: Renders physical stops and transit hubs colour-coded by grade (A+ through F) with 350m elevation caps to prevent raycasting collisions.
     *   **PathLayer**: High-fidelity transit line routes rendered with official agency colors and directional animations.
@@ -332,7 +332,7 @@ The platform enforces a "Verify, Then Trust" standard via 18 rigorous auditing a
 | **C/C++ Spatial Engines** | PyOsmium / `osmium-tool`, GDAL/OGR 3.8+ (`ogr2ogr`), C-GEOS STRtree, SciPy `cKDTree` |
 | **Data Formats & Storage** | OGC GeoPackage (GPKG with SQLite R-Tree), Apache Parquet (`pyarrow` Zone Maps), Uber H3 (Res 8 & 9) |
 | **Coordinate Reference Systems** | EPSG:2180 (Poland CS92 - metric distance & area physics), EPSG:4326 (WGS84 - display export) |
-| **Spatial Backend & Vector Engine** | FastAPI 0.115+ (Universal Query Engine, 24 REST routes), DuckDB 1.2+ C++, Qdrant Vector DB (v1.13+), Caddy 2 (TLS 1.3 / HTTP/3) |
+| **Spatial Backend & Vector Engine** | FastAPI 0.115+ (Universal Query Engine, 28 REST routes), DuckDB 1.2+ C++, Qdrant Vector DB (v1.13+), Caddy 2 (TLS 1.3 / HTTP/3) |
 | **Frontend & Visualization** | Next.js 16.2.1 (Turbopack), React 19.2+, `@deck.gl` 9.2+ (H3HexagonLayer, Scatterplot, PathLayer), MapLibre GL 5.2+, Zustand 5.0+, Tailwind CSS v4, Blueprint.js |
 | **Cloud Infrastructure & CI/CD** | Oracle Cloud Infrastructure Ampere A1 ARM64 (Backend & Vector DB), GitHub Actions CI/CD (`deploy-backend.yml`), Vercel Global Edge CDN (Frontend) |
 

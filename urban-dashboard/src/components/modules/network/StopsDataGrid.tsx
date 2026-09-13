@@ -137,7 +137,7 @@ export default function StopsDataGrid() {
     activeFilters.push({
       key: "anchor",
       label: "Typ",
-      value: "Tylko Anchory",
+      value: "Tylko słupki główne",
       onRemove: () => setStopsFilter({ anchorOnly: false }),
     });
   }
@@ -431,8 +431,8 @@ export default function StopsDataGrid() {
             )}
           />
           <Column
-            name="Infra Score"
-            columnHeaderCellRenderer={() => renderSortHeader("stop_infra_score", "Infra Score")}
+            name="Wskaźnik POI"
+            columnHeaderCellRenderer={() => renderSortHeader("stop_infra_score", "Wskaźnik POI")}
             cellRenderer={(row) => (
               <Cell style={getCellStyle(row)}>
                 <div
@@ -448,8 +448,8 @@ export default function StopsDataGrid() {
             )}
           />
           <Column
-            name="Pop GUS (500m)"
-            columnHeaderCellRenderer={() => renderSortHeader("stop_pop_val", "Pop GUS (500m)")}
+            name="Ludność (500m)"
+            columnHeaderCellRenderer={() => renderSortHeader("stop_pop_val", "Ludność (500m)")}
             cellRenderer={(row) => (
               <Cell style={getCellStyle(row)}>
                 <div
@@ -465,8 +465,8 @@ export default function StopsDataGrid() {
             )}
           />
           <Column
-            name="Rynek RCN"
-            columnHeaderCellRenderer={() => renderSortHeader("stop_market_val", "Rynek RCN")}
+            name="Cena m² RCN"
+            columnHeaderCellRenderer={() => renderSortHeader("stop_market_val", "Cena m² RCN")}
             cellRenderer={(row) => (
               <Cell style={getCellStyle(row)}>
                 <div
@@ -482,8 +482,8 @@ export default function StopsDataGrid() {
             )}
           />
           <Column
-            name="Anchor Huba"
-            columnHeaderCellRenderer={() => renderSortHeader("is_hub_anchor", "Anchor Huba")}
+            name="Słupek główny"
+            columnHeaderCellRenderer={() => renderSortHeader("is_hub_anchor", "Słupek główny")}
             cellRenderer={(row) => (
               <Cell style={getCellStyle(row)}>
                 <div
@@ -492,8 +492,13 @@ export default function StopsDataGrid() {
                   className="w-full h-full flex items-center"
                 >
                   {items[row]?.is_hub_anchor ? (
-                    <Tag minimal intent="success" style={{ fontSize: 9, fontWeight: 700 }}>
-                      ANCHOR
+                    <Tag
+                      minimal
+                      intent="success"
+                      style={{ fontSize: 9, fontWeight: 700 }}
+                      title="Główny słupek węzła o najwyższym wolumenie odjazdów"
+                    >
+                      GŁÓWNY
                     </Tag>
                   ) : (
                     <span className="text-slate-300">—</span>

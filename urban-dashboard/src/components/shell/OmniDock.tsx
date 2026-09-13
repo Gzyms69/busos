@@ -58,7 +58,7 @@ export default function OmniDock() {
         title="Główny panel analityczny (Przegląd aglomeracji, katalog, moduły analityczne)"
       >
         <LayoutDashboard className="w-4 h-4" />
-        <span>Panel & Moduły</span>
+        <span>Panele i moduły</span>
         {isPrimaryMinimized && (
           <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
         )}
@@ -85,7 +85,7 @@ export default function OmniDock() {
         title="Symulacja ruchu floty autobusowej w czasie rzeczywistym"
       >
         <Bus className="w-4 h-4" />
-        <span>Symulacja Floty</span>
+        <span>Symulacja floty</span>
         {isSimulationActive && (
           <span className="px-1.5 py-0.2 bg-white/20 rounded-md text-[10px] font-mono">
             {activeVehicles.length}
@@ -105,7 +105,7 @@ export default function OmniDock() {
         title="Warstwy analityczne (Heksagony H3, linie, słupki, style mapy)"
       >
         <Layers className="w-4 h-4" />
-        <span>Warstwy Mapy</span>
+        <span>Warstwy mapy</span>
       </button>
 
       <div className="w-px h-5 bg-slate-200 mx-0.5" />
@@ -122,12 +122,12 @@ export default function OmniDock() {
         title={
           isCleanMapMode
             ? "Przywróć okna (skrót H)"
-            : "Tryb Czystej Mapy — ukryj wszystkie panele (skrót H)"
+            : "Tryb czystej mapy: ukryj wszystkie panele (skrót H)"
         }
       >
         {isCleanMapMode ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
         <span className="hidden lg:inline">
-          {isCleanMapMode ? "Pokaż Okna (H)" : "Czysta Mapa (H)"}
+          {isCleanMapMode ? "Pokaż okna (H)" : "Czysta mapa (H)"}
         </span>
       </button>
 
@@ -135,12 +135,12 @@ export default function OmniDock() {
       <button
         type="button"
         onClick={() => {
-          if (window.confirm("Czy na pewno chcesz przywrócić domyślny układ okien roboczych?")) {
+          if (window.confirm("Przywrócić domyślny układ okien roboczych?")) {
             resetLayout();
           }
         }}
         className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all cursor-pointer"
-        title="Resetuj układ okien do ustawień fabrycznych"
+        title="Przywróć domyślny układ okien"
       >
         <RotateCcw className="w-4 h-4" />
       </button>

@@ -1,10 +1,10 @@
 # BusOS Urban Analytics Dashboard
 
-High-performance, GPU-accelerated spatial analytics dashboard for the National Transit Equity & Urban Gravity Platform (**BusOS**). Built with **Next.js 16**, **React 19**, **Deck.gl v9**, and **MapLibre GL**, decoupled from server-side native dependencies to deliver sub-second global responses on **Vercel Edge**.
+GPU-accelerated spatial analytics dashboard for the National Transit Equity and Urban Gravity Platform (BusOS). Built with Next.js 16, React 19, Deck.gl v9.2, and MapLibre GL v5, decoupled from server-side native dependencies to deliver sub-second responses on Vercel Edge.
 
 ---
 
-## Live Deployments & Endpoints
+## Deployments and Endpoints
 
 *   **Production Dashboard**: [https://busos.czerwinskidawid.pl](https://busos.czerwinskidawid.pl) (Vercel Global Edge CDN)
 *   **Spatial Analytical Backend**: [https://api.busos.czerwinskidawid.pl](https://api.busos.czerwinskidawid.pl) (Oracle Cloud Infrastructure Ampere A1 ARM64)
@@ -15,51 +15,58 @@ High-performance, GPU-accelerated spatial analytics dashboard for the National T
 
 ## Architecture Overview
 
-The dashboard functions as a pure presentation and GPU compute layer, communicating with the backend spatial engine via a decoupled REST API and an instant-paint static showcase cache:
+The dashboard operates as an interactive presentation and GPU compute layer, communicating with the backend spatial engine via a decoupled REST API across 30 Polish metropolitan areas:
 
 ```mermaid
 flowchart TD
-    subgraph Client["Browser (WebGL 60 FPS)"]
-        UI["UI Controls (Tailwind CSS v4 & shadcn/ui)"]
-        Store["Zustand State Store (City, Metrics, Viewport)"]
-        Deck["Deck.gl v9 (Scatterplot & 3D Hexagon Layers)"]
-        Map["MapLibre GL (CARTO Dark Matter)"]
+    subgraph Client["Browser (WebGL / Deck.gl v9.2)"]
+        Shell["BusOS Desktop Shell (OmniDock, FloatingWindow)"]
+        Store["Zustand Store (City, Metrics, Viewport, Windows)"]
+        Deck["Deck.gl v9.2 (TripsLayer, H3HexagonLayer, ScatterplotLayer, PathLayer)"]
+        Map["MapLibre GL v5 (CARTO Voyager / Positron)"]
     end
 
-    subgraph DataLayer["Dual-Mode Data Client (@/lib/api-client.ts)"]
-        Cache["Instant Static Cache (/data/showcase/kielce/)<br/>Sub-400ms First Paint"]
-        API["Cloud Spatial REST API (api.busos.czerwinskidawid.pl)<br/>30 Polish Metropolitan Hubs"]
+    subgraph Backend["Spatial REST API (api.busos.czerwinskidawid.pl)"]
+        FastAPI["FastAPI / DuckDB Spatial Engine (OCI ARM64)"]
+        Simulation["GTFS Trip Interpolation and Fleet Engine"]
+        Analytics["H3 Spatial Grids, Stop DNA, Property Transactions"]
     end
 
-    UI --> Store
-    Store --> DataLayer
-    Cache --> Deck & Map
-    API --> Deck & Map
+    Shell --> Store
+    Store --> Deck & Map
+    Store <-->|REST API / 28 Routes| FastAPI
+    FastAPI --> Simulation & Analytics
 ```
 
-### Core Features
-1.  **Dual-Mode Network Client (`@/lib/api-client.ts`)**:
-    *   **Flagship Showcase Cache**: Instant static payload for Kielce (`/data/showcase/kielce/`) guarantees immediate 3D rendering (<400ms) for recruiters on cold starts.
-    *   **Dynamic Multi-City API**: Streams live Stop DNA, population grids, and notary transactions for all 30 audited Polish metropolitan hubs directly from the high-throughput Python C-GEOS / DuckDB backend.
-    *   **Live Health Telemetry**: Monitors backend availability in real-time, displaying engine latency and Swagger documentation links directly in the navigation sidebar.
+### Core Capabilities
+
+1.  **BusOS Desktop Shell & Dynamic Windowing**:
+    *   **Window Management**: Non-modal draggable, minimizable, and maximizable windows (`FloatingWindow`) for parallel analysis.
+    *   **OmniDock**: Central desktop dock managing module states, fleet simulation toggles, analytical layers, and clean map mode.
+    *   **Mobile Bottom Sheet**: Adaptive ergonomic bottom sheet for touch devices with snap points (`peek`, `half`, `full`).
 2.  **Hardware-Accelerated WebGL Rendering**:
-    *   **Deck.gl v9**: Instanced GPU rendering of transit stops colour-coded by econometric grade (A+ through F) alongside 3D spatial column aggregations of property transaction values.
-    *   **MapLibre GL**: Smooth vector basemaps using CARTO Dark Matter styles.
-3.  **Turbopack & React 19 Native**:
-    *   Completely decoupled from native C++ bindings (`better-sqlite3`, `duckdb-async`, `wkx`), enabling 100% pure JavaScript/WebAssembly client builds with Next.js Turbopack (~2.3s production build).
+    *   **TripsLayer**: Real-time animated bus fleet movement interpolated from GTFS schedule geometry across 30 cities.
+    *   **H3HexagonLayer**: Dynamic spatial binning (resolution 8) visualizing population coverage, POI density, and market values.
+    *   **ScatterplotLayer & PathLayer**: Stop markers classified by econometric grade (A+ through F) and route alignments.
+3.  **Decoupled API Integration**:
+    *   Direct data fetching against 28 REST endpoints on the OCI spatial engine (`/api/v1/stops`, `/api/v1/hubs`, `/api/v1/routes`, `/api/v1/simulation`, `/api/v1/stats`).
+    *   Backend availability telemetry and latency monitoring built into the navigation shell.
+4.  **End-to-End Test Suite**:
+    *   12 Playwright suites covering windowing ergonomics, fleet simulation controls, layer toggling, responsive layouts, and data grids.
 
 ---
 
 ## Technical Stack
 
-| Category | Technology |
+| Layer | Technology |
 |---|---|
 | **Framework** | Next.js 16.2.1 (App Router) with React 19.2 |
-| **Bundler & Build** | Turbopack Native Engine |
-| **WebGL & Spatial** | `@deck.gl/core`, `@deck.gl/layers`, `@deck.gl/aggregation-layers` (v9.2), `maplibre-gl` (v5.2) |
+| **Bundler** | Turbopack Native Engine |
+| **WebGL & Spatial** | `@deck.gl/core`, `@deck.gl/layers`, `@deck.gl/geo-layers`, `deck.gl` (v9.2), `maplibre-gl` (v5.2), `h3-js` |
 | **State Management** | Zustand 5.0 |
-| **Styling & UI** | Tailwind CSS v4, Lucide React, shadcn/ui, Radix UI |
-| **Edge Hosting** | Vercel Global Edge Anycast Network |
+| **Styling & UI** | Tailwind CSS v4, Lucide React, BlueprintJS Table2, Radix UI |
+| **Testing** | Playwright (12 E2E suites) |
+| **Edge Hosting** | Vercel Global Edge Network |
 
 ---
 
@@ -77,7 +84,7 @@ flowchart TD
     ```
 
 2.  **Configure environment variables**:
-    Create a `.env.local` file (optional, defaults to production API):
+    Create `.env.local` (defaults to production API if omitted):
     ```env
     NEXT_PUBLIC_API_URL=https://api.busos.czerwinskidawid.pl
     ```
@@ -94,13 +101,18 @@ flowchart TD
     npm run build
     ```
 
+5.  **Run E2E tests**:
+    ```bash
+    npx playwright test
+    ```
+
 ---
 
 ## Deployment on Vercel
 
-The dashboard is configured for zero-configuration continuous deployment on Vercel:
+The dashboard is configured for continuous deployment on Vercel:
 *   **Framework Preset**: Next.js
 *   **Root Directory**: `urban-dashboard`
 *   **Build Command**: `npm run build`
 *   **Output Directory**: `.next`
-*   **Custom Domain**: `busos.czerwinskidawid.pl` (CNAME configured via Cloudflare DNS-Only mode)
+*   **Custom Domain**: `busos.czerwinskidawid.pl` (Cloudflare DNS)

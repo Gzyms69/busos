@@ -20,6 +20,7 @@ import {
 import type { ActiveVehicle } from "@/lib/api/simulation";
 import type { HexagonCell } from "@/lib/api/types";
 import type { PickingInfo } from "@deck.gl/core";
+import { getCityDisplayName } from "@/lib/utils/city-names";
 import MapHud from "./MapHud";
 import "maplibre-gl/dist/maplibre-gl.css";
 
@@ -1020,7 +1021,7 @@ export default function MapCanvas() {
                 Strefa Dostępności Transportowej
               </div>
               <div style={{ fontSize: 10, color: "#64748b", marginBottom: 3 }}>
-                Aglomeracja kielecka • Siatka analityczna
+                Aglomeracja {getCityDisplayName(selectedCity)} • Siatka analityczna
               </div>
               <div
                 style={{
@@ -1165,7 +1166,7 @@ export default function MapCanvas() {
                       gap: 4,
                     }}
                   >
-                    <span>⚡ Kliknij, aby wycentrować i otworzyć szczegóły</span>
+                    <span>Kliknij punkt na mapie, aby wycentrować widok i otworzyć profil słupka</span>
                   </div>
                 </div>
               );
@@ -1268,7 +1269,7 @@ export default function MapCanvas() {
                       gap: 4,
                     }}
                   >
-                    <span>⚡ Kliknij, aby zbadać profil węzła 360°</span>
+                    <span>Kliknij węzeł, aby otworzyć profil analityczny 360°</span>
                   </div>
                 </div>
               );
