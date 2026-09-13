@@ -658,10 +658,20 @@ def get_hexagons(city: str, min_pop: float = 0.0) -> Dict[str, Any]:
 
 
 def get_market_summary(city: str) -> Dict[str, Any]:
-    """Reads notary transaction summary from rcn_stats.json."""
-    stats_path = os.path.join(DATA_DIR, city, "02_spatial", "rcn_stats.json")
+    city_dir = os.path.join(DATA_DIR, city)
+    if not os.path.exists(city_dir):
+        raise FileNotFoundError(f"City '{city}' not found at {city_dir}")
+    stats_path = os.path.join(city_dir, "02_spatial", "rcn_stats.json")
     if not os.path.exists(stats_path):
-        raise FileNotFoundError(f"rcn_stats.json not found for city '{city}' at {stats_path}")
+        return {
+            "city": city,
+            "total": 0,
+            "valid": 0,
+            "median_price_m2": 0.0,
+            "trimmed_mean_m2": 0.0,
+            "min_valid": 0.0,
+            "max_allowed": 0.0,
+        }
     with open(stats_path, "r", encoding="utf-8") as f:
         data = json.load(f)
     return {
@@ -1906,9 +1916,16 @@ def get_poi_categories(
     order_by: str = "final_value",
     order_dir: str = "desc"
 ) -> Dict[str, Any]:
-    val_file = os.path.join(DATA_DIR, city, "03_config", "poi_valuation.json")
+    city_dir = os.path.join(DATA_DIR, city)
+    if not os.path.exists(city_dir):
+        raise FileNotFoundError(f"City '{city}' not found at {city_dir}")
+    val_file = os.path.join(city_dir, "03_config", "poi_valuation.json")
     if not os.path.exists(val_file):
-        raise FileNotFoundError(f"poi_valuation.json not found for city '{city}'")
+        fallback = os.path.join(DATA_DIR, "..", "processed", "city_poi_valuation.json")
+        if os.path.exists(fallback):
+            val_file = fallback
+        else:
+            return {"city": city, "categories": []}
 
     with open(val_file, "r", encoding="utf-8") as f:
         data = json.load(f)

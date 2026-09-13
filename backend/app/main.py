@@ -45,7 +45,7 @@ if REDIS_URL:
 
 limiter = Limiter(
     key_func=get_real_client_ip,
-    default_limits=["60/minute"],
+    default_limits=["180/minute"],
     headers_enabled=True,
     storage_uri=storage_uri
 )
@@ -91,7 +91,7 @@ ALLOWED_ORIGINS = [
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
-    allow_origin_regex=r"^https:\/\/busos.*\.vercel\.app$",
+    allow_origin_regex=r"^(https:\/\/busos.*\.vercel\.app|http:\/\/(localhost|127\.0\.0\.1)(:\d+)?)$",
     allow_credentials=False,
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],

@@ -1,14 +1,17 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { ArrowLeft, Network, Bus, Clock, MapPin } from "lucide-react";
 import { useFoundryStore } from "@/lib/store";
-import { fetchHubCard, fetchStopsBatch } from "@/lib/api";
-import type { HubCardResponse, StopProfileResponse } from "@/lib/api/types";
+import { fetchHubCard, fetchStopsBatch, fetchRoutes } from "@/lib/api";
+import type { HubCardResponse, StopProfileResponse, RouteItem } from "@/lib/api/types";
 import GradeBadge from "@/components/shared/GradeBadge";
 import AccordionSection from "@/components/shared/AccordionSection";
 import CleanKpiBadge from "@/components/shared/CleanKpiBadge";
+import PanelErrorState from "@/components/shared/PanelErrorState";
+import InteractiveRouteBadge from "@/components/shared/InteractiveRouteBadge";
 import { formatNumber } from "@/lib/utils/formatters";
+import { getCityDisplayName } from "@/lib/utils/city-names";
 
 export default function HubDetailPanel() {
   const {
@@ -16,20 +19,34 @@ export default function HubDetailPanel() {
     selectedCity,
     clearSelection,
     selectObject,
+    activeRouteUid,
+    setActiveRoute,
   } = useFoundryStore();
 
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const [hubCard, setHubCard] = useState<HubCardResponse | null>(null);
   const [memberStops, setMemberStops] = useState<StopProfileResponse[]>([]);
+  const [cityRoutes, setCityRoutes] = useState<RouteItem[]>([]);
 
-  useEffect(() => {
-    if (!selectedId) return;
+  // Load hub card and its member stops
+  const loadData = useCallback(() => {
+    if (!selectedId) return () => {};
     const controller = new AbortController();
     setLoading(true);
+    setError(null);
 
-    fetchHubCard(selectedCity, Number(selectedId), controller.signal)
-      .then((hub) => {
-        if (!controller.signal.aborted) {
+    Promise.allSettled([
+      fetchHubCard(selectedCity, Number(selectedId), controller.signal),
+      fetchRoutes({ city: selectedCity, canonical_only: true }, controller.signal),
+    ]).then(([hubRes, routesRes]) => {
+      if (!controller.signal.aborted) {
+        if (routesRes.status === "fulfilled" && Array.isArray(routesRes.value)) {
+          setCityRoutes(routesRes.value);
+        }
+
+        if (hubRes.status === "fulfilled") {
+          const hub = hubRes.value;
           setHubCard(hub);
           const stopIds = hub.hub_stops_ids || [];
           if (stopIds.length > 0) {
@@ -40,14 +57,28 @@ export default function HubDetailPanel() {
               .catch(() => {});
           }
           setLoading(false);
+        } else {
+          setError("Błąd pobierania profilu węzła przesiadkowego");
+          setLoading(false);
         }
-      })
-      .catch((err) => {
-        if (err?.name !== "AbortError") setLoading(false);
-      });
+      }
+    });
 
     return () => controller.abort();
   }, [selectedId, selectedCity]);
+
+  useEffect(() => {
+    return loadData();
+  }, [loadData]);
+
+  // Lookup map of short_name -> RouteItem
+  const routeMap = useMemo(() => {
+    const map = new Map<string, RouteItem>();
+    cityRoutes.forEach((r) => {
+      if (r.short_name) map.set(r.short_name.trim(), r);
+    });
+    return map;
+  }, [cityRoutes]);
 
   if (!selectedId) return null;
 
@@ -56,7 +87,9 @@ export default function HubDetailPanel() {
   const stopsCount = hubCard?.hub_stops_count ?? memberStops.length;
   const departures = hubCard?.hub_departures_h ?? 0;
   const routesCount = hubCard?.hub_routes_count ?? 0;
-  const routeList = hubCard?.hub_routes ? hubCard.hub_routes.split(",").map(r => r.trim()).filter(Boolean) : [];
+  const routeList = hubCard?.hub_routes
+    ? hubCard.hub_routes.split(",").map((r) => r.trim()).filter(Boolean)
+    : [];
 
   return (
     <div className="flex flex-col h-full bg-white overflow-hidden">
@@ -70,8 +103,8 @@ export default function HubDetailPanel() {
           <ArrowLeft className="w-4 h-4" />
           <span>Wróć do listy</span>
         </button>
-        <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600">
-          {selectedCity}
+        <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-700">
+          {getCityDisplayName(selectedCity)}
         </span>
       </div>
 
@@ -82,6 +115,13 @@ export default function HubDetailPanel() {
             <div className="w-6 h-6 border-2 border-[#47317f] border-t-transparent rounded-full animate-spin" />
             <span className="text-xs">Ładowanie profilu węzła...</span>
           </div>
+        ) : error && !hubCard ? (
+          <PanelErrorState
+            title="Błąd ładowania węzła"
+            message={error}
+            onRetry={loadData}
+            isRetrying={loading}
+          />
         ) : (
           <>
             {/* Hub Header Card */}
@@ -101,7 +141,7 @@ export default function HubDetailPanel() {
             </div>
 
             {/* Key Metrics Grid */}
-            <div className="grid grid-cols-3 gap-2.5">
+            <div className="grid grid-cols-3 gap-2">
               <CleanKpiBadge
                 label="Słupki w węźle"
                 value={stopsCount}
@@ -157,22 +197,38 @@ export default function HubDetailPanel() {
               )}
             </AccordionSection>
 
-            {/* Accordion 2: Linie obsługujące */}
+            {/* Accordion 2: Linie obsługujące (Interaktywne podświetlanie i profil) */}
             {routeList.length > 0 && (
               <AccordionSection
                 title="Wszystkie linie w węźle"
                 count={routeList.length}
-                defaultOpen={false}
+                defaultOpen={true}
               >
                 <div className="flex flex-wrap gap-1.5 pt-1">
-                  {routeList.map((line, idx) => (
-                    <span
-                      key={idx}
-                      className="px-2 py-1 rounded bg-slate-100 text-slate-800 font-bold text-xs border border-slate-200"
-                    >
-                      {line}
-                    </span>
-                  ))}
+                  {routeList.map((line) => {
+                    const matchedRoute = routeMap.get(line);
+                    const routeUid = matchedRoute?.route_uid || `${selectedCity}_${line}`;
+                    const isHighlighted = activeRouteUid === routeUid;
+
+                    return (
+                      <InteractiveRouteBadge
+                        key={line}
+                        line={line}
+                        route={matchedRoute}
+                        isActive={isHighlighted}
+                        onToggleHighlight={() => {
+                          if (isHighlighted) {
+                            setActiveRoute(null);
+                          } else {
+                            setActiveRoute(routeUid, matchedRoute?.direction_id ?? 0, false);
+                          }
+                        }}
+                        onInspect={() => {
+                          setActiveRoute(routeUid, matchedRoute?.direction_id ?? 0, true);
+                        }}
+                      />
+                    );
+                  })}
                 </div>
               </AccordionSection>
             )}

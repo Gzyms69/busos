@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import React, { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import DeckGL from "@deck.gl/react";
-import { ScatterplotLayer, GeoJsonLayer, PathLayer } from "@deck.gl/layers";
+import { ScatterplotLayer, GeoJsonLayer, PathLayer, TextLayer } from "@deck.gl/layers";
 import { H3HexagonLayer, TripsLayer } from "@deck.gl/geo-layers";
 import { Map } from "react-map-gl/maplibre";
 import { useFoundryStore } from "@/lib/store";
@@ -13,6 +13,11 @@ import {
   fetchHubsGeoJson,
   fetchRouteGeometry,
 } from "@/lib/api";
+import {
+  getCurrentSecondsFromMidnight,
+  computeActiveVehicles,
+} from "@/components/simulation/simulation-engine";
+import type { ActiveVehicle } from "@/lib/api/simulation";
 import type { HexagonCell } from "@/lib/api/types";
 import type { PickingInfo } from "@deck.gl/core";
 import MapHud from "./MapHud";
@@ -22,8 +27,9 @@ const CARTO_POSITRON =
   "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
 const CARTO_DARK_MATTER =
   "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
-const SATELLITE_STYLE =
-  "https://api.maptiler.com/maps/hybrid/style.json?key=get_your_own_OpIi9ZULNHzrESv6T2vL";
+const SATELLITE_STYLE = process.env.NEXT_PUBLIC_MAPTILER_KEY
+  ? `https://api.maptiler.com/maps/hybrid/style.json?key=${process.env.NEXT_PUBLIC_MAPTILER_KEY}`
+  : CARTO_DARK_MATTER;
 
 function getGradeRgb(grade?: string): [number, number, number] {
   if (!grade) return [143, 153, 168];
@@ -80,8 +86,24 @@ export default function MapCanvas() {
     show3DBuildings,
     h3Metric,
     selectObject,
+    selectedId,
+    selectionType,
     activeRouteUid,
     selectedAxePair,
+    // Fleet simulation state
+    isSimulationActive,
+    isLiveMode,
+    isPlaying,
+    simSpeed,
+    simTimeSeconds,
+    advanceSimTime,
+    simulationDataset,
+    activeVehicles,
+    updateActiveVehicles,
+    selectedVehicle,
+    selectVehicle,
+    isFollowingVehicle,
+    lineFilter,
   } = useFoundryStore();
 
   const [boundary, setBoundary] = useState<any>(null);
@@ -112,6 +134,53 @@ export default function MapCanvas() {
     frameId = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(frameId);
   }, [activeRouteUid, routeGeo]);
+
+  // 60 FPS Fleet Simulation Engine Loop
+  const lastSimTimeRef = useRef<number>(performance.now());
+  useEffect(() => {
+    if (!isSimulationActive || !simulationDataset || !isPlaying) return;
+
+    let frameId: number;
+    lastSimTimeRef.current = performance.now();
+
+    const simLoop = (now: number) => {
+      const dtSec = Math.min(0.1, (now - lastSimTimeRef.current) / 1000.0);
+      lastSimTimeRef.current = now;
+
+      if (isLiveMode) {
+        const realSec = getCurrentSecondsFromMidnight();
+        const vehicles = computeActiveVehicles(simulationDataset.trips, realSec, lineFilter);
+        updateActiveVehicles(vehicles);
+      } else {
+        const delta = dtSec * simSpeed;
+        advanceSimTime(delta);
+      }
+
+      frameId = requestAnimationFrame(simLoop);
+    };
+
+    frameId = requestAnimationFrame(simLoop);
+    return () => cancelAnimationFrame(frameId);
+  }, [
+    isSimulationActive,
+    simulationDataset,
+    isPlaying,
+    isLiveMode,
+    simSpeed,
+    lineFilter,
+    advanceSimTime,
+    updateActiveVehicles,
+  ]);
+
+  // Camera tracking for followed vehicle
+  useEffect(() => {
+    if (isSimulationActive && isFollowingVehicle && selectedVehicle) {
+      setViewState({
+        longitude: selectedVehicle.lon,
+        latitude: selectedVehicle.lat,
+      });
+    }
+  }, [isSimulationActive, isFollowingVehicle, selectedVehicle, setViewState]);
 
   // Load datasets when selected city changes
   useEffect(() => {
@@ -372,7 +441,7 @@ export default function MapCanvas() {
                 ? [255, 255, 255, 240]
                 : [0, 0, 0, 0];
             }
-            return [17, 20, 24, 255];
+            return [255, 255, 255, 180];
           },
           lineWidthUnits: "pixels",
           getLineWidth: (f: any) => {
@@ -380,7 +449,7 @@ export default function MapCanvas() {
               const stopId = String(f.properties?.stop_id);
               return activeRouteStopIds.has(stopId) ? 2 : 0;
             }
-            return 1.5;
+            return 1;
           },
           stroked: true,
           filled: true,
@@ -429,6 +498,50 @@ export default function MapCanvas() {
           },
         })
       );
+    }
+
+    // Layer 4b: Selected Object Selection Halo (for Hub or Stop)
+    if (selectedId && (selectionType === "hub" || selectionType === "stop")) {
+      let haloCoord: [number, number] | null = null;
+      let haloRadius = 24;
+
+      if (selectionType === "hub" && hubs?.features) {
+        const h = hubs.features.find(
+          (f: any) => String(f.properties?.hub_id) === String(selectedId)
+        );
+        if (h?.geometry?.coordinates) {
+          haloCoord = h.geometry.coordinates;
+          const stopsCount = h.properties?.hub_stops_count || 1;
+          haloRadius = Math.min(32, 16 + stopsCount * 2);
+        }
+      } else if (selectionType === "stop" && stops?.features) {
+        const s = stops.features.find(
+          (f: any) => String(f.properties?.stop_id) === String(selectedId)
+        );
+        if (s?.geometry?.coordinates) {
+          haloCoord = s.geometry.coordinates;
+          haloRadius = 14;
+        }
+      }
+
+      if (haloCoord) {
+        list.push(
+          new ScatterplotLayer({
+            id: "selected-object-halo",
+            data: [{ position: haloCoord }],
+            getPosition: (d: any) => d.position,
+            getRadius: haloRadius,
+            radiusUnits: "pixels",
+            stroked: true,
+            filled: true,
+            getFillColor: [71, 49, 127, 50], // Translucent brand purple glow
+            getLineColor: [71, 49, 127, 255], // Solid brand purple ring
+            lineWidthUnits: "pixels",
+            getLineWidth: 3,
+            pickable: false,
+          })
+        );
+      }
     }
 
     // Layer 5: Active Route (Buffer Glow + Path with Velocity Gradient)
@@ -539,6 +652,72 @@ export default function MapCanvas() {
       }
     }
 
+    // Layer 7: Real-Time / Simulated Active Buses
+    if (isSimulationActive && activeVehicles.length > 0) {
+      // 7a. Selected vehicle pulsing aura ring
+      if (selectedVehicle) {
+        list.push(
+          new ScatterplotLayer({
+            id: "simulation-selected-halo",
+            data: [selectedVehicle],
+            getPosition: (d: ActiveVehicle) => [d.lon, d.lat],
+            getRadius: 24,
+            radiusUnits: "pixels",
+            stroked: true,
+            filled: false,
+            getLineColor: [71, 49, 127, 200],
+            getLineWidth: 3,
+            lineWidthUnits: "pixels",
+            pickable: false,
+          })
+        );
+      }
+
+      // 7b. Primary Bus Circles (Color coded by route with high contrast white stroke)
+      list.push(
+        new ScatterplotLayer({
+          id: "simulation-bus-points",
+          data: activeVehicles,
+          getPosition: (d: ActiveVehicle) => [d.lon, d.lat],
+          getRadius: (d: ActiveVehicle) => (selectedVehicle?.id === d.id ? 14 : 11),
+          radiusUnits: "pixels",
+          radiusMinPixels: 8,
+          radiusMaxPixels: 22,
+          getFillColor: (d: ActiveVehicle) => hexColorToRgb(d.routeColor, [71, 49, 127]),
+          getLineColor: [255, 255, 255, 255],
+          getLineWidth: 2,
+          lineWidthUnits: "pixels",
+          stroked: true,
+          filled: true,
+          pickable: true,
+          onHover: (info: PickingInfo) => setHoverInfo(info),
+          onClick: (info: PickingInfo) => {
+            if (info?.object) {
+              selectVehicle(info.object as ActiveVehicle);
+            }
+          },
+        })
+      );
+
+      // 7c. TextLayer displaying route short name on top of each bus
+      list.push(
+        new TextLayer({
+          id: "simulation-bus-labels",
+          data: activeVehicles,
+          getPosition: (d: ActiveVehicle) => [d.lon, d.lat],
+          getText: (d: ActiveVehicle) => d.routeShortName,
+          getSize: 9,
+          sizeUnits: "pixels",
+          getColor: [255, 255, 255, 255],
+          getTextAnchor: "middle",
+          getAlignmentBaseline: "center",
+          fontWeight: "bold",
+          fontFamily: "Inter, system-ui, sans-serif",
+          pickable: false,
+        })
+      );
+    }
+
     return list;
   }, [
     boundary,
@@ -559,6 +738,12 @@ export default function MapCanvas() {
     show3DBuildings,
     h3Metric,
     selectObject,
+    selectedId,
+    selectionType,
+    isSimulationActive,
+    activeVehicles,
+    selectedVehicle,
+    selectVehicle,
   ]);
 
   const handleViewStateChange = useCallback(
@@ -747,6 +932,50 @@ export default function MapCanvas() {
                 </div>
               </div>
             )}
+
+          {/* Active Bus Simulation Tooltip */}
+          {(hoverInfo.object as any)?.tripId && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <span
+                  style={{
+                    backgroundColor: (hoverInfo.object as any).routeColor || "#47317f",
+                    color: "#fff",
+                    fontWeight: 900,
+                    fontSize: 11,
+                    padding: "2px 6px",
+                    borderRadius: 6,
+                  }}
+                >
+                  Linia {(hoverInfo.object as any).routeShortName}
+                </span>
+                <span
+                  style={{
+                    fontWeight: 800,
+                    color: "#0f172a",
+                    fontSize: 11,
+                    maxWidth: 180,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {(hoverInfo.object as any).headsign}
+                </span>
+              </div>
+              <div style={{ fontSize: 10, color: "#64748b", marginTop: 2 }}>
+                Prędkość:{" "}
+                <strong style={{ color: "#0f172a" }}>
+                  {(hoverInfo.object as any).speedKmh} km/h
+                </strong>
+                {" • "}
+                Kurs: <strong>{Math.round((hoverInfo.object as any).bearing)}°</strong>
+              </div>
+              <div style={{ fontSize: 10, color: "#059669", marginTop: 1 }}>
+                Następny: <strong>{(hoverInfo.object as any).nextStopName}</strong>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

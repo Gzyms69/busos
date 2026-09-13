@@ -6,6 +6,7 @@ import { useFoundryStore } from "@/lib/store";
 import { fetchStopsRanking, fetchHubsRanking } from "@/lib/api";
 import type { StopRankingItem, HubRankingItem } from "@/lib/api/types";
 import GradeBadge from "@/components/shared/GradeBadge";
+import PanelErrorState from "@/components/shared/PanelErrorState";
 import { formatNumber } from "@/lib/utils/formatters";
 
 export default function StopCatalogPanel() {
@@ -25,10 +26,12 @@ export default function StopCatalogPanel() {
   const [hubs, setHubs] = useState<HubRankingItem[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   const loadData = useCallback(() => {
     const controller = new AbortController();
     setLoading(true);
+    setError(null);
 
     if (activeTab === "stops") {
       fetchStopsRanking(
@@ -59,7 +62,12 @@ export default function StopCatalogPanel() {
             setLoading(false);
           }
         })
-        .catch(() => setLoading(false));
+        .catch((err) => {
+          if (!controller.signal.aborted) {
+            setError(err?.message || "Błąd pobierania przystanków z API");
+            setLoading(false);
+          }
+        });
     } else {
       fetchHubsRanking(
         {
@@ -88,7 +96,12 @@ export default function StopCatalogPanel() {
             setLoading(false);
           }
         })
-        .catch(() => setLoading(false));
+        .catch((err) => {
+          if (!controller.signal.aborted) {
+            setError(err?.message || "Błąd pobierania węzłów z API");
+            setLoading(false);
+          }
+        });
     }
 
     return () => controller.abort();
@@ -221,6 +234,13 @@ export default function StopCatalogPanel() {
             <div className="w-6 h-6 border-2 border-[#47317f] border-t-transparent rounded-full animate-spin" />
             <span className="text-xs">Ładowanie katalogu...</span>
           </div>
+        ) : error && ((activeTab === "stops" && stops.length === 0) || (activeTab === "hubs" && hubs.length === 0)) ? (
+          <PanelErrorState
+            title="Błąd pobierania katalogu"
+            message={error}
+            onRetry={loadData}
+            isRetrying={loading}
+          />
         ) : activeTab === "stops" ? (
           stops.length === 0 ? (
             <div className="py-12 text-center text-xs text-slate-400">

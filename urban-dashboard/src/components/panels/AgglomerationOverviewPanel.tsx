@@ -8,41 +8,71 @@ import type { CityAuditSummaryResponse, PoiMagnetItem } from "@/lib/api/types";
 import CleanKpiBadge from "@/components/shared/CleanKpiBadge";
 import AccordionSection from "@/components/shared/AccordionSection";
 
+import { getCityDisplayName } from "@/lib/utils/city-names";
+
 function humanCategory(cat?: string): string {
   if (!cat) return "Punkt użyteczności";
+  const normalized = cat.toLowerCase().trim();
   const map: Record<string, string> = {
+    "national stadium": "Stadion sportowy / miejski",
+    national_stadium: "Stadion sportowy / miejski",
+    stadium: "Obiekt sportowy",
+    "university campus": "Szkoła wyższa / Kampus",
+    university_campus: "Szkoła wyższa / Kampus",
+    university: "Uczelnia wyższa",
+    school: "Szkoła / Edukacja",
+    high_school: "Liceum / Technikum",
+    "hospital clinical": "Szpital specjalistyczny",
+    hospital_clinical: "Szpital specjalistyczny",
+    hospital: "Szpital miejski",
     national_rail_hub: "Główny dworzec kolejowy",
     regional_rail_hub: "Stacja kolejowa",
-    hospital_clinical: "Szpital specjalistyczny",
-    exhibition_centre: "Targi i wystawy",
-    university: "Uczelnia wyższa",
     shopping_mall: "Centrum handlowe",
-    stadium: "Stadion / Obiekt sportowy",
+    mall: "Centrum handlowe",
+    exhibition_centre: "Targi i wystawy",
   };
-  return map[cat] || cat.replace(/_/g, " ");
+  return map[normalized] || cat.replace(/_/g, " ");
 }
+
+import PanelErrorState from "@/components/shared/PanelErrorState";
 
 export default function AgglomerationOverviewPanel() {
   const { selectedCity, setViewState } = useFoundryStore();
 
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const [auditData, setAuditData] = useState<CityAuditSummaryResponse | null>(null);
   const [magnets, setMagnets] = useState<PoiMagnetItem[]>([]);
 
-  useEffect(() => {
+  const loadData = React.useCallback(() => {
     const controller = new AbortController();
     setLoading(true);
+    setError(null);
 
     Promise.allSettled([
       fetchAuditSummary(selectedCity, "summary,zscore,grades", controller.signal),
       fetchPoiMagnets({ city: selectedCity, limit: 10 }, controller.signal),
     ]).then(([auditRes, magnetsRes]) => {
       if (!controller.signal.aborted) {
-        if (auditRes.status === "fulfilled") setAuditData(auditRes.value);
+        if (auditRes.status === "fulfilled") {
+          setAuditData(auditRes.value);
+        } else {
+          console.warn("Audit summary rejected:", auditRes.reason);
+        }
+
         if (magnetsRes.status === "fulfilled") {
           const list = magnetsRes.value?.magnets || [];
           setMagnets(Array.isArray(list) ? list : []);
         }
+
+        if (auditRes.status === "rejected" && magnetsRes.status === "rejected") {
+          setError("Nie udało się pobrać danych audytu aglomeracji.");
+        }
+        setLoading(false);
+      }
+    }).catch((err) => {
+      if (!controller.signal.aborted) {
+        setError(err?.message || "Błąd połączenia z serwerem.");
         setLoading(false);
       }
     });
@@ -50,42 +80,46 @@ export default function AgglomerationOverviewPanel() {
     return () => controller.abort();
   }, [selectedCity]);
 
+  useEffect(() => {
+    return loadData();
+  }, [loadData]);
+
   const summary = auditData?.summary;
   const consolidation = summary?.consolidation_ratio != null
     ? `${summary.consolidation_ratio.toFixed(2)}x`
-    : "1.66x";
+    : "—";
   const stopsText = summary?.stops_count != null
-    ? `${summary.stops_count} stanowisk / ${summary.hubs_count} węzłów`
+    ? `${summary.stops_count} stanowisk / ${summary.hubs_count || 0} węzłów`
     : "Słupki i węzły przesiadkowe";
 
   const population = summary?.population_total != null
     ? `${Math.round(summary.population_total).toLocaleString("pl-PL")}`
-    : "287 314";
+    : "—";
   const popSub = summary?.population_delta_pct != null
     ? `Strefa aglomeracji (${summary.population_delta_pct > 0 ? "+" : ""}${summary.population_delta_pct.toFixed(1)}%)`
     : "Siatka demograficzna GUS";
 
   const rcnTx = summary?.rcn_transactions_count != null
     ? `${summary.rcn_transactions_count.toLocaleString("pl-PL")}`
-    : "9 588";
+    : "—";
 
-  const cityName = selectedCity.charAt(0).toUpperCase() + selectedCity.slice(1);
+  const cityName = getCityDisplayName(selectedCity);
 
   return (
-    <div className="flex flex-col h-full bg-white overflow-hidden">
+    <div className="flex flex-col h-full bg-white overflow-hidden font-body">
       {/* Top Header */}
       <div className="px-5 py-4 border-b border-slate-200 bg-white shrink-0">
         <div className="flex items-center justify-between gap-2">
           <div>
-            <div className="text-xs font-semibold text-[#47317f] uppercase tracking-wider mb-0.5">
+            <div className="text-xs font-semibold text-[#47317f] uppercase tracking-wider mb-0.5 font-heading">
               Aglomeracja miejska
             </div>
-            <h1 className="text-xl font-black text-slate-900 tracking-tight">
+            <h1 className="text-xl font-black text-slate-900 tracking-tight font-heading">
               {cityName}
             </h1>
           </div>
-          <span className="px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1.5 font-mono text-[11px]">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
             Aktywna
           </span>
         </div>
@@ -96,26 +130,35 @@ export default function AgglomerationOverviewPanel() {
 
       {/* Main Content Area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {/* KPI Grid 2x2 */}
-        <div className="grid grid-cols-2 gap-2.5">
-          <CleanKpiBadge
-            label="Węzły przesiadkowe"
-            value={consolidation}
-            subtext={stopsText}
-            accentColor="purple"
-            icon={<Network className="w-4 h-4" />}
+        {error && !auditData ? (
+          <PanelErrorState
+            title="Błąd ładowania audytu aglomeracji"
+            message={error}
+            onRetry={loadData}
+            isRetrying={loading}
           />
-          <CleanKpiBadge
-            label="Mieszkańcy w zasięgu"
-            value={population}
-            subtext={popSub}
-            accentColor="blue"
-            icon={<Users className="w-4 h-4" />}
-          />
-          <CleanKpiBadge
-            label="Rynek mieszkań (RCN)"
-            value={rcnTx}
-            subtext="Akty notarialne w bazie"
+        ) : (
+          <>
+            {/* KPI Grid 2x2 */}
+            <div className="grid grid-cols-2 gap-2.5">
+              <CleanKpiBadge
+                label="Węzły przesiadkowe"
+                value={consolidation}
+                subtext={stopsText}
+                accentColor="purple"
+                icon={<Network className="w-4 h-4" />}
+              />
+              <CleanKpiBadge
+                label="Mieszkańcy w zasięgu"
+                value={population}
+                subtext={popSub}
+                accentColor="blue"
+                icon={<Users className="w-4 h-4" />}
+              />
+              <CleanKpiBadge
+                label="Rynek mieszkań (RCN)"
+                value={rcnTx}
+                subtext="Akty notarialne w bazie"
             accentColor="amber"
             icon={<Home className="w-4 h-4" />}
           />
@@ -129,41 +172,72 @@ export default function AgglomerationOverviewPanel() {
         </div>
 
         {/* Accordion 1: Standard obsługi pasażerów */}
-        <AccordionSection
-          title="Rozkład standardu obsługi pasażerskiej"
-          defaultOpen={true}
-        >
-          <div className="space-y-2.5 pt-1 text-xs">
-            <div className="flex items-center justify-between text-slate-600">
-              <span className="font-semibold text-emerald-700">Wysoki standard (A+ / A):</span>
-              <span className="font-bold tabular-nums">15.0% przystanków</span>
-            </div>
-            <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden flex">
-              <div className="bg-emerald-600 h-full" style={{ width: "15%" }} title="Klasa A+/A" />
-              <div className="bg-blue-500 h-full" style={{ width: "35%" }} title="Klasa B/C" />
-              <div className="bg-amber-500 h-full" style={{ width: "25%" }} title="Klasa D" />
-              <div className="bg-rose-500 h-full" style={{ width: "25%" }} title="Klasa F" />
-            </div>
+        {(() => {
+          const stopGrades = auditData?.grades?.stops;
+          const countA = (stopGrades?.["A+"] || 0) + (stopGrades?.["A"] || 0);
+          const countBC = (stopGrades?.["B"] || 0) + (stopGrades?.["C"] || 0);
+          const countDF = (stopGrades?.["D"] || 0) + (stopGrades?.["F"] || 0);
+          const totalGraded = countA + countBC + countDF;
+          const safeTotal = totalGraded > 0 ? totalGraded : 1;
+          const pctA = ((countA / safeTotal) * 100).toFixed(1);
+          const pctBC = ((countBC / safeTotal) * 100).toFixed(1);
+          const pctDF = ((countDF / safeTotal) * 100).toFixed(1);
 
-            <div className="grid grid-cols-3 gap-2 pt-1">
-              <div className="p-2 rounded-lg bg-emerald-50 border border-emerald-100 text-center">
-                <div className="text-[10px] uppercase font-bold text-emerald-800">A+ i A</div>
-                <div className="text-sm font-extrabold text-emerald-700">204 słupki</div>
-                <div className="text-[10px] text-emerald-600">Ścisłe centrum</div>
+          return (
+            <AccordionSection
+              title="Rozkład standardu obsługi pasażerskiej"
+              defaultOpen={true}
+            >
+              <div className="space-y-2.5 pt-1 text-xs">
+                <div className="flex items-center justify-between text-slate-600">
+                  <span className="font-semibold text-emerald-700">Wysoki standard (A+ / A):</span>
+                  <span className="font-bold tabular-nums">{pctA}% stanowisk</span>
+                </div>
+                <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden flex">
+                  <div
+                    className="bg-emerald-600 h-full transition-all duration-300"
+                    style={{ width: `${pctA}%` }}
+                    title={`Klasa A+/A: ${countA} (${pctA}%)`}
+                  />
+                  <div
+                    className="bg-blue-500 h-full transition-all duration-300"
+                    style={{ width: `${pctBC}%` }}
+                    title={`Klasa B/C: ${countBC} (${pctBC}%)`}
+                  />
+                  <div
+                    className="bg-rose-500 h-full transition-all duration-300"
+                    style={{ width: `${pctDF}%` }}
+                    title={`Klasa D/F: ${countDF} (${pctDF}%)`}
+                  />
+                </div>
+
+                <div className="grid grid-cols-3 gap-2 pt-1">
+                  <div className="p-2 rounded-lg bg-emerald-50 border border-emerald-100 text-center">
+                    <div className="text-[10px] uppercase font-bold text-emerald-800">A+ i A</div>
+                    <div className="text-sm font-extrabold text-emerald-700">
+                      {countA > 0 ? `${countA} słupków` : "—"}
+                    </div>
+                    <div className="text-[10px] text-emerald-600">Ścisłe centrum</div>
+                  </div>
+                  <div className="p-2 rounded-lg bg-blue-50 border border-blue-100 text-center">
+                    <div className="text-[10px] uppercase font-bold text-blue-800">B i C</div>
+                    <div className="text-sm font-extrabold text-blue-700">
+                      {countBC > 0 ? `${countBC} słupków` : "—"}
+                    </div>
+                    <div className="text-[10px] text-blue-600">Główne osiedla</div>
+                  </div>
+                  <div className="p-2 rounded-lg bg-rose-50 border border-rose-100 text-center">
+                    <div className="text-[10px] uppercase font-bold text-rose-800">D i F</div>
+                    <div className="text-sm font-extrabold text-rose-700">
+                      {countDF > 0 ? `${countDF} słupków` : "—"}
+                    </div>
+                    <div className="text-[10px] text-rose-600">Obrzeża i deficyt</div>
+                  </div>
+                </div>
               </div>
-              <div className="p-2 rounded-lg bg-blue-50 border border-blue-100 text-center">
-                <div className="text-[10px] uppercase font-bold text-blue-800">B i C</div>
-                <div className="text-sm font-extrabold text-blue-700">475 słupków</div>
-                <div className="text-[10px] text-blue-600">Główne osiedla</div>
-              </div>
-              <div className="p-2 rounded-lg bg-rose-50 border border-rose-100 text-center">
-                <div className="text-[10px] uppercase font-bold text-rose-800">D i F</div>
-                <div className="text-sm font-extrabold text-rose-700">678 słupków</div>
-                <div className="text-[10px] text-rose-600">Obrzeża i deficyt</div>
-              </div>
-            </div>
-          </div>
-        </AccordionSection>
+            </AccordionSection>
+          );
+        })()}
 
         {/* Accordion 2: Główne cele podróży (Cele podróży w aglomeracji) */}
         <AccordionSection
@@ -216,6 +290,8 @@ export default function AgglomerationOverviewPanel() {
             </div>
           )}
         </AccordionSection>
+          </>
+        )}
       </div>
     </div>
   );

@@ -20,7 +20,11 @@ export interface SelectionSlice {
   selectObject: (type: SelectionType, id: string | number | null, data?: any) => void;
   clearSelection: () => void;
   setInspectorOpen: (open: boolean) => void;
-  setActiveRoute: (routeUid: string | null, directionId?: number | null) => void;
+  setActiveRoute: (
+    routeUid: string | null,
+    directionId?: number | null,
+    setAsPrimarySelection?: boolean
+  ) => void;
   setActiveRouteData: (data: any | null) => void;
   setSelectedAxePair: (pair: AxeStopItem | null) => void;
 }
@@ -51,6 +55,9 @@ export const createSelectionSlice: StateCreator<SelectionSlice, [], [], Selectio
       selectedData: null,
       isInspectorOpen: false,
       selectedAxePair: null,
+      activeRouteUid: null,
+      activeDirectionId: null,
+      activeRouteData: null,
     }),
 
   setInspectorOpen: (open: boolean) =>
@@ -58,13 +65,18 @@ export const createSelectionSlice: StateCreator<SelectionSlice, [], [], Selectio
       isInspectorOpen: open,
     }),
 
-  setActiveRoute: (routeUid, directionId = 0) =>
-    set({
+  setActiveRoute: (routeUid, directionId = 0, setAsPrimarySelection = false) =>
+    set((state) => ({
       activeRouteUid: routeUid,
       activeDirectionId: directionId,
-      selectionType: routeUid ? "route" : null,
-      selectedId: routeUid,
-    }),
+      ...(setAsPrimarySelection
+        ? {
+            selectionType: routeUid ? "route" : null,
+            selectedId: routeUid,
+            isInspectorOpen: Boolean(routeUid),
+          }
+        : {}),
+    })),
 
   setActiveRouteData: (data) =>
     set({

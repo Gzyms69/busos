@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { ChevronLeft, ChevronRight, LayoutDashboard, ListFilter } from "lucide-react";
+import { ChevronLeft, ChevronRight, LayoutDashboard, ListFilter, X } from "lucide-react";
 import { useFoundryStore } from "@/lib/store";
 import AgglomerationOverviewPanel from "@/components/panels/AgglomerationOverviewPanel";
 import StopCatalogPanel from "@/components/panels/StopCatalogPanel";
 import StopDetailPanel from "@/components/panels/StopDetailPanel";
 import HubDetailPanel from "@/components/panels/HubDetailPanel";
+import RouteDetailPanel from "@/components/panels/RouteDetailPanel";
 
 interface LeftSlidePanelProps {
   isOpen: boolean;
@@ -18,12 +19,15 @@ export default function LeftSlidePanel({ isOpen, onToggle }: LeftSlidePanelProps
   const [panelTab, setPanelTab] = useState<"overview" | "catalog">("overview");
 
   // Determine what view to render inside panel
-  const isDetailView = Boolean(selectedId && (selectionType === "stop" || selectionType === "hub"));
+  const isDetailView = Boolean(
+    selectedId &&
+      (selectionType === "stop" || selectionType === "hub" || selectionType === "route")
+  );
 
   return (
     <>
       <div
-        className={`absolute top-3 bottom-3 left-3 z-30 w-[420px] max-w-[calc(100vw-24px)] bg-white rounded-2xl border border-slate-200 shadow-[0_12px_40px_rgba(0,0,0,0.12)] flex flex-col overflow-hidden transition-transform duration-300 ease-out ${
+        className={`hidden md:flex absolute top-[72px] bottom-3 left-3 z-30 w-[420px] bg-white rounded-2xl border border-slate-200 shadow-[0_12px_40px_rgba(0,0,0,0.12)] flex-col overflow-hidden transition-transform duration-300 ease-out ${
           isOpen ? "translate-x-0" : "-translate-x-[440px] pointer-events-none"
         }`}
       >
@@ -63,6 +67,8 @@ export default function LeftSlidePanel({ isOpen, onToggle }: LeftSlidePanelProps
             <StopDetailPanel />
           ) : selectionType === "hub" && selectedId ? (
             <HubDetailPanel />
+          ) : selectionType === "route" && selectedId ? (
+            <RouteDetailPanel />
           ) : panelTab === "overview" ? (
             <AgglomerationOverviewPanel />
           ) : (
@@ -71,13 +77,14 @@ export default function LeftSlidePanel({ isOpen, onToggle }: LeftSlidePanelProps
         </div>
       </div>
 
-      {/* Collapse/Expand Handle Button floating next to the panel */}
+      {/* Desktop Collapse/Expand Handle Button floating next to the panel */}
       <button
         type="button"
         onClick={onToggle}
         style={{ left: isOpen ? 432 : 12 }}
-        className="absolute top-1/2 -translate-y-1/2 z-30 w-7 h-14 bg-white hover:bg-slate-50 border border-slate-200 shadow-lg rounded-r-xl flex items-center justify-center text-slate-500 hover:text-[#47317f] transition-all cursor-pointer"
+        className="hidden md:flex absolute top-1/2 -translate-y-1/2 z-30 w-7 h-14 bg-white hover:bg-slate-50 border border-slate-200 shadow-lg rounded-r-xl items-center justify-center text-slate-500 hover:text-[#47317f] transition-all cursor-pointer"
         title={isOpen ? "Zwiń panel" : "Rozwiń panel"}
+        aria-label={isOpen ? "Zwiń panel boczny" : "Rozwiń panel boczny"}
       >
         {isOpen ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
       </button>

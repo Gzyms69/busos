@@ -16,6 +16,26 @@ export class ApiError extends Error {
   }
 }
 
+export type ConnectivityStatus = "online" | "offline" | "reconnecting";
+export type ConnectivityListener = (status: ConnectivityStatus, error?: string | null) => void;
+
+const connectivityListeners = new Set<ConnectivityListener>();
+
+export function onConnectivityChange(listener: ConnectivityListener): () => void {
+  connectivityListeners.add(listener);
+  return () => {
+    connectivityListeners.delete(listener);
+  };
+}
+
+export function notifyConnectivity(status: ConnectivityStatus, error?: string | null): void {
+  connectivityListeners.forEach((fn) => {
+    try {
+      fn(status, error);
+    } catch {}
+  });
+}
+
 export async function apiFetch<T>(
   path: string,
   options: ApiFetchOptions = {}
@@ -42,6 +62,11 @@ export async function apiFetch<T>(
 
     if (!res.ok) {
       const errorBody = await res.text().catch(() => "");
+      if (res.status === 429) {
+        notifyConnectivity("offline", "Przekroczono limit zapytań (429)");
+      } else if (res.status >= 500) {
+        notifyConnectivity("offline", `Błąd serwera API (${res.status})`);
+      }
       throw new ApiError(
         res.status,
         res.statusText,
@@ -49,12 +74,14 @@ export async function apiFetch<T>(
       );
     }
 
+    notifyConnectivity("online");
     return (await res.json()) as T;
   } catch (err: any) {
     clearTimeout(timer);
     if (err.name === "AbortError") {
       throw err;
     }
+    notifyConnectivity("offline", err.message || "Brak połączenia z serwerem API");
     throw err;
   }
 }

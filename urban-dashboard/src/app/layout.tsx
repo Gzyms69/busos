@@ -1,15 +1,23 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Space_Grotesk, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const fontHeading = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin", "latin-ext"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const fontBody = Plus_Jakarta_Sans({
+  variable: "--font-jakarta",
   subsets: ["latin", "latin-ext"],
+  display: "swap",
+});
+
+const fontMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
+  subsets: ["latin", "latin-ext"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -27,8 +35,6 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
   viewportFit: "cover",
   themeColor: "#090a0f",
 };
@@ -39,8 +45,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pl" className={`bp6-dark h-dvh ${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
-      <body className="bp6-dark h-dvh w-full overflow-hidden bg-[oklch(0.10_0.005_260)] text-[#f8fafc] antialiased" suppressHydrationWarning>
+    <html
+      lang="pl"
+      className={`bp6-dark h-dvh ${fontHeading.variable} ${fontBody.variable} ${fontMono.variable}`}
+      suppressHydrationWarning
+    >
+      <body
+        className="bp6-dark h-dvh w-full overflow-hidden bg-[oklch(0.10_0.005_260)] text-[#f8fafc] font-sans antialiased"
+        suppressHydrationWarning
+      >
         {children}
       </body>
     </html>

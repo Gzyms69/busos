@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Layers, Map as MapIcon, PanelLeftClose, PanelLeft, Check, Sun, Moon } from "lucide-react";
+import { Layers, Map as MapIcon, PanelLeftClose, PanelLeft, Check, Sun, Moon, Bus } from "lucide-react";
 import { useFoundryStore } from "@/lib/store";
 
 interface FloatingMapControlsProps {
@@ -22,6 +22,9 @@ export default function FloatingMapControls({
     showHubs,
     showRoutes,
     toggleLayer,
+    isSimulationActive,
+    toggleSimulation,
+    activeVehicles,
   } = useFoundryStore();
 
   const [layersOpen, setLayersOpen] = useState(false);
@@ -214,6 +217,33 @@ export default function FloatingMapControls({
           </div>
         )}
       </div>
+
+      {/* 4. Bus Simulation Toggle Button */}
+      <button
+        type="button"
+        onClick={toggleSimulation}
+        className={`px-3 py-2 rounded-xl border flex items-center gap-2 text-xs font-semibold shadow-sm transition-all cursor-pointer ${
+          isSimulationActive
+            ? "bg-[#47317f] border-[#47317f] text-white shadow-md shadow-[#47317f]/20 hover:bg-[#3d2970]"
+            : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+        }`}
+        title={
+          isSimulationActive
+            ? "Zatrzymaj / zwiń symulację floty"
+            : "Uruchom rzeczywistą symulację floty autobusowej w czasie rzeczywistym"
+        }
+      >
+        <Bus className={`w-4 h-4 ${isSimulationActive ? "text-white" : "text-[#47317f]"}`} />
+        <span className="hidden sm:inline">Symulacja</span>
+        {isSimulationActive && (
+          <span className="flex items-center gap-1.5 ml-0.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-[10px] font-mono font-bold bg-white/20 px-1.5 py-0.5 rounded-full">
+              {activeVehicles.length}
+            </span>
+          </span>
+        )}
+      </button>
     </div>
   );
 }

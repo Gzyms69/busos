@@ -17,9 +17,12 @@ import type {
 } from "@/lib/api/types";
 import GradeBadge from "@/components/shared/GradeBadge";
 import RoutePill from "@/components/shared/RoutePill";
+import InteractiveRouteBadge from "@/components/shared/InteractiveRouteBadge";
 import AccordionSection from "@/components/shared/AccordionSection";
 import CleanKpiBadge from "@/components/shared/CleanKpiBadge";
+import PanelErrorState from "@/components/shared/PanelErrorState";
 import { formatNumber, formatDuration, formatSpeed } from "@/lib/utils/formatters";
+import { getCityDisplayName } from "@/lib/utils/city-names";
 
 export default function StopDetailPanel() {
   const {
@@ -27,18 +30,21 @@ export default function StopDetailPanel() {
     selectedCity,
     clearSelection,
     setActiveRoute,
+    activeRouteUid,
   } = useFoundryStore();
 
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const [stopProfile, setStopProfile] = useState<StopProfileResponse | null>(null);
   const [stopDestinations, setStopDestinations] = useState<StopDestinationsResponse | null>(null);
   const [stopTransactions, setStopTransactions] = useState<MarketTransactionItem[]>([]);
   const [stopRoutes, setStopRoutes] = useState<RouteItem[]>([]);
 
-  useEffect(() => {
-    if (!selectedId) return;
+  const loadData = React.useCallback(() => {
+    if (!selectedId) return () => {};
     const controller = new AbortController();
     setLoading(true);
+    setError(null);
 
     Promise.allSettled([
       fetchStopProfile(selectedCity, String(selectedId), controller.signal),
@@ -56,12 +62,24 @@ export default function StopDetailPanel() {
         if (routesRes.status === "fulfilled") {
           setStopRoutes(Array.isArray(routesRes.value) ? routesRes.value : []);
         }
+        if (profRes.status === "rejected") {
+          setError("Nie udało się pobrać profilu przystanku z API.");
+        }
+        setLoading(false);
+      }
+    }).catch((err) => {
+      if (!controller.signal.aborted) {
+        setError(err?.message || "Błąd pobierania danych przystanku");
         setLoading(false);
       }
     });
 
     return () => controller.abort();
   }, [selectedId, selectedCity]);
+
+  useEffect(() => {
+    return loadData();
+  }, [loadData]);
 
   if (!selectedId) return null;
 
@@ -94,8 +112,8 @@ export default function StopDetailPanel() {
           <ArrowLeft className="w-4 h-4" />
           <span>Wróć do listy</span>
         </button>
-        <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600">
-          {selectedCity}
+        <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-700">
+          {getCityDisplayName(selectedCity)}
         </span>
       </div>
 
@@ -106,6 +124,13 @@ export default function StopDetailPanel() {
             <div className="w-6 h-6 border-2 border-[#47317f] border-t-transparent rounded-full animate-spin" />
             <span className="text-xs">Ładowanie profilu przystanku...</span>
           </div>
+        ) : error && !stopProfile ? (
+          <PanelErrorState
+            title="Błąd ładowania przystanku"
+            message={error}
+            onRetry={loadData}
+            isRetrying={loading}
+          />
         ) : (
           <>
             {/* Stop Identity Card */}
@@ -165,14 +190,28 @@ export default function StopDetailPanel() {
               {stopRoutes.length === 0 ? (
                 <p className="text-xs text-slate-500 py-1">Brak przypisanych linii GTFS</p>
               ) : (
-                <div className="flex flex-wrap gap-2 pt-1">
-                  {stopRoutes.map((r, i) => (
-                    <RoutePill
-                      key={`${r.route_uid || r.short_name || "route"}-${r.direction_id ?? i}-${i}`}
-                      route={r}
-                      onClick={() => setActiveRoute(r.route_uid, 0)}
-                    />
-                  ))}
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {stopRoutes.map((r, i) => {
+                    const isHighlighted = activeRouteUid === r.route_uid;
+                    return (
+                      <InteractiveRouteBadge
+                        key={`${r.route_uid || r.short_name || "route"}-${r.direction_id ?? i}-${i}`}
+                        line={r.short_name || r.route_uid?.replace(/^[a-z]+_/i, "") || "Linia"}
+                        route={r}
+                        isActive={isHighlighted}
+                        onToggleHighlight={() => {
+                          if (isHighlighted) {
+                            setActiveRoute(null);
+                          } else {
+                            setActiveRoute(r.route_uid, r.direction_id ?? 0, false);
+                          }
+                        }}
+                        onInspect={() => {
+                          setActiveRoute(r.route_uid, r.direction_id ?? 0, true);
+                        }}
+                      />
+                    );
+                  })}
                 </div>
               )}
             </AccordionSection>

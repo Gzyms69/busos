@@ -90,9 +90,9 @@ def test_ai_similar_hubs_top_k_bounds():
 def test_rate_limiter_blocks_excessive_traffic():
     """Verifies that slowapi rate limiter enforces limits on excessive requests."""
     responses = []
-    for _ in range(70):
+    for _ in range(190):
         r = client.get("/api/v1/cities", headers={"X-Forwarded-For": "198.51.100.25"})
         responses.append(r.status_code)
 
-    assert 429 in responses, f"Rate limiter did not trigger 429 in 70 requests: {set(responses)}"
+    assert 429 in responses, f"Rate limiter did not trigger 429 in 190 requests: {set(responses)}"
     app.state.limiter.reset()
