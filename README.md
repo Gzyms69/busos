@@ -1,4 +1,4 @@
-# National Transit Equity & Urban Gravity Platform (Urban Gravity Engine v9.1)
+# National Transit Equity & Urban Gravity Platform (Urban Gravity Engine v9.5)
 
 ## 1. Project Mission & Analytical Scope
 
@@ -9,14 +9,15 @@ This platform is not merely a data aggregator; it is a **specialized spatial eng
 It acts as a Digital Auditor of Urban Policy, revealing whether cities favor affluent districts or prioritize regional accessibility, while delivering completely clean, mathematically rigorous data sets (Parquet/GPKG) ready for Next.js mapping and deep econometric modeling. Over 60,265 stops, 222,000+ notary transactions, 1.1M+ OSM structures, and 1.4M+ demographic grid cells are processed through this architecture.
 
 ### Live Production Deployment & Endpoints
-*   **Interactive Spatial Dashboard**: [busos.czerwinskidawid.pl](https://busos.czerwinskidawid.pl) (Hosted on Vercel Global Edge CDN)
+*   **Interactive Spatial Dashboard**: [busos.czerwinskidawid.pl](https://busos.czerwinskidawid.pl) (Hosted on Vercel Global Edge CDN — BusOS Shell with Dynamic Windowing, OmniDock and Deck.gl TripsLayer)
 *   **Spatial Analytical API & Swagger UI**: [api.busos.czerwinskidawid.pl/docs](https://api.busos.czerwinskidawid.pl/docs) (Hosted on Oracle Cloud Infrastructure Ampere A1 ARM64 behind Caddy 2 TLS 1.3 / HTTP/3)
 *   **Real-time Engine Health Telemetry**: [api.busos.czerwinskidawid.pl/health](https://api.busos.czerwinskidawid.pl/health)
 *   **Automated CI/CD Pipeline**: GitHub Actions (`.github/workflows/deploy-backend.yml`) with automated Docker ARM64 compilation and zero-downtime deployment.
 *   **Unified Analytical H3 Grid API**: [api.busos.czerwinskidawid.pl/api/v1/hexagons?city=kielce](https://api.busos.czerwinskidawid.pl/api/v1/hexagons?city=kielce) (Uber H3 Res 8: Transit Desert Index & Transport Score).
 *   **GTFS Transit Routes & LRS Network**: [api.busos.czerwinskidawid.pl/api/v1/routes?city=warszawa](https://api.busos.czerwinskidawid.pl/api/v1/routes?city=warszawa) (Canonical Trip Patterns, Linear Referencing System in EPSG:2180, commercial speed km/h).
+*   **Real-time Fleet Simulation API**: [api.busos.czerwinskidawid.pl/api/v1/simulation/kielce?mode=math](https://api.busos.czerwinskidawid.pl/api/v1/simulation/kielce?mode=math) (Full vehicle trajectory streaming for Deck.gl TripsLayer).
 *   **Vector Database Engine**: Qdrant v1.13+ (Active on OCI port 6333 for GNN Transit Embeddings)
-*   **Audited Coverage**: 30 major Polish metropolitan agglomerations with full econometric calibration (60,265 physical stops, 28,317 logical hubs, 36,784 H3 cells, 210 validated data files, 95/95 Pytest test suite).
+*   **Audited Coverage**: 30 major Polish metropolitan agglomerations with full econometric calibration (60,265 physical stops, 28,317 logical hubs, 36,784 H3 cells, 210 validated data files, 129/129 Pytest test suite).
 
 ### Autonomous API Security & Edge Defense (Caddy + FastAPI)
 *   **Perimeter Edge Gate (Caddy 2)**:

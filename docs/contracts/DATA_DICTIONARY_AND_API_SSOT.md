@@ -170,12 +170,19 @@ Architektura API zostaje podzielona na wyspecjalizowane routery domenowe z pełn
 *   `GET /api/v1/routes/search?city={city}&query={q}`: Autouzupełnianie i wyszukiwarka linii autobusowych i tramwajowych po numerze lub nazwie.
 *   `GET /api/v1/routes/geometry?city={city}&route_uid={uid}`: Precyzyjny GeoJSON geometrii wybranej trasy (MultiLineString EPSG:4326) z LRS.
 *   `GET /api/v1/routes/{route_uid}/details?city={city}&direction_id={dir}`: Złożony payload zawierający sekwencję przystanków, czasy przejazdu, odległości drogowe w metrach i wyceny Stop DNA.
-*   `GET /api/v1/routes/stop/{stop_id}?city={city}`: Wykaz wszystkich linii i kierunków obsługujących dany słupek przystankowy.
+*   `GET /api/v1/routes/stop/{stop_id}?city={city}`: Wykaz wszystkich linii obsługujących dany słupek przystankowy, wzbogacony o czytelną nazwę linii (`short_name`), kolor przewoźnika (`color`), kierunek docelowy (`headsign`) i typ pojazdu (`type`).
 *   `GET /api/v1/routes/stop/{stop_id}/destinations?city={city}`: Graf bezpośredniej osiągalności 1-hop ze słupka z `transit_network_edges.parquet` (docelowe słupki, minimalny czas przejazdu, odległość w metrach, prędkość handlowa, obsługujące linie).
 *   `GET /api/v1/routes/edges?city={city}&route_uid={uid}`: Odcinki grafu sieci $u \to v$ z czasami netto i prędkościami handlowymi w km/h.
 
 ### 2.7 Router Wektorowy & AI (`/api/v1/ai`)
 *   `POST /api/v1/ai/similar-hubs`: Wyszukiwanie semantyczne w silniku Qdrant na bazie embeddingów węzłów (znajdź najbardziej zbliżone węzły w kraju).
+
+### 2.8 Router Symulacji Floty w Czasie Rzeczywistym (`/api/v1/simulation`)
+*   `GET /api/v1/simulation/{city}?mode=math|gps`: Zwraca pełny rozkład kursów i trajektorii czasowo-przestrzennych floty autobusowo-tramwajowej aglomeracji w dobie.
+    *   **Parametr `mode`:** `math` (interpolacja matematyczna czasu GTFS z prędkościami LRS, lekki format ~1-15 MB) lub `gps` (surowe trajektorie śladów shapes ~10-95 MB). Silnik stosuje automatyczny wzajemny fallback (`math` <-> `gps`), jeśli jeden z plików nie istnieje.
+    *   **Nagłówki odpowiedzi:** `X-Simulation-Mode: math|gps`, `Cache-Control: public, max-age=86400, stale-while-revalidate=604800`.
+    *   **Struktura elementu kursu:** `trip_id`, `route_id`, `route_short_name`, `route_color`, `timestamps: number[]` (sekundy od północy), `path: [lon, lat][]` (współrzędne WGS84).
+    *   **Przeznaczenie:** Renderowanie w czasie rzeczywistym na warstwie `@deck.gl/geo-layers` `TripsLayer` z płynnością 60 FPS.
 
 ---
 

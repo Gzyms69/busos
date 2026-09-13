@@ -460,9 +460,68 @@
 
 ---
 
-## 5. Next Session Active Directive: Production Fleet Simulation Rollout & Multi-City Calibration
+### Task 18 (Sprint 4.9): Dynamic Windowing System, FloatingWindow with Docking & Omnidock
+- **Status:** `[DONE]` (Zrealizowano 2026-09-13, commit `656a074`)
+- **Cel:** Wdrożenie modularnego systemu wielookienkowego (FloatingWindow), dokowania lewo/prawo/pełny ekran, systemu presetów rozmiarów oraz paska szybkiego dostępu Omnidock.
+- **Zrealizowany zakres:**
+  1. `FloatingWindow.tsx`: Przeciągane, skalowalne okna z zapamiętywaniem geometrii, przyciskami dokowania, zwijania i minimalizacji.
+  2. `OmniDock.tsx`: Dolny pasek nawigacyjny do przywoływania modułów (Command Center, Network, Optimization, Simulation).
+  3. `window-slice.ts`: Zarządzanie z-indexem, aktywnym oknem i stanami dokowania.
+
+---
+
+### Task 19 (Sprint 4.10): City-Switch Camera Stability & Stale Simulation Leakage Defense
+- **Status:** `[DONE]` (Zrealizowano 2026-09-13, commit `b38feb2`)
+- **Cel:** Stabilizacja kamery Deck.gl przy zmianie aglomeracji, eliminacja wycieków danych symulacji między miastami i migotania paneli.
+- **Zrealizowany zakres:**
+  1. Płynne centrowanie kamery na centroidzie nowego miasta bez resetowania pitch/bearing.
+  2. Bezwzględne czyszczenie bufora TripsLayer i zatrzymanie pętli animacji przed wczytaniem nowego miasta.
+  3. Izolacja selekcji obiektów w Zustand przy przełączaniu aglomeracji.
+
+---
+
+### Task 20 (Sprint 4.11): Mobile-First Responsive Layout & Touch Ergonomics
+- **Status:** `[DONE]` (Zrealizowano 2026-09-13, commit `71e79b1`)
+- **Cel:** Pełne dostosowanie BusOS do urządzeń mobilnych (smartfony, tablety), eliminacja kolizji dotykowych i wdrożenie MobileBottomSheet.
+- **Zrealizowany zakres:**
+  1. `MobileBottomSheet.tsx`: 3-stanowy arkusz (Peek, Half, Full) z obsługą gestów swipe.
+  2. Responsywny `BrandHeader`: adaptacja do ekranów < 768px z miniaturowym przełącznikiem miast i telemetrią.
+  3. Przyciski dotykowe >= 44x44px zgodne z wytycznymi WCAG 2.1/2.2 AA.
+
+---
+
+### Task 21 (Sprint 4.12): Search Pagination, Backend Simulation Streaming & Showcase Removal
+- **Status:** `[DONE]` (Zrealizowano 2026-09-13, commit `b1e53a6`)
+- **Cel:** Likwidacja sztucznych bypassów danych (showcase), wdrożenie strumieniowania symulacji z backendu oraz pełnej paginacji wyszukiwarki.
+- **Zrealizowany zakres:**
+  1. `backend/app/routers/simulation.py`: Endpoint `GET /api/v1/simulation/{city}` z automatycznym przełączaniem trybów `math` i `gps`.
+  2. Paginacja wyników wyszukiwania przystanków i linii w `TopSearchPill.tsx`.
+  3. Usunięcie sztywnych ograniczeń prezentacyjnych i odblokowanie pełnej bazy 30 miast.
+
+---
+
+### Task 22 (Sprint 5.0): UI Modernization (Slate Palette), Cross-Highlighting & Contract Polish
+- **Status:** `[DONE]` (Zrealizowano 2026-09-14)
+- **Cel:** Migracja tabel do jasnego motywu Tailwind Slate, obustronna synchronizacja najechania myszą (Table <-> MapCanvas hover), naprawa przełącznika rozmiarów okien i wzbogacenie metadanych linii.
+- **Zrealizowany zakres:**
+  1. **Nowoczesna paleta Slate:** Przeprojektowanie `HubsDataGrid`, `StopsDataGrid`, `NetworkModule`, `OptimizationModule` i `CityScorecardCards` z ciemnego Blueprint na czyste klasy Tailwind Slate i fiolet BusOS `#47317f`.
+  2. **Cross-Highlighting Hover Sync:** Dodanie `hoveredId` i `hoveredType` w `selection-slice.ts`. Najechanie na wiersz w tabeli podświetla punkt na mapie Deck.gl; najechanie na mapę podświetla wiersz w DataGrid.
+  3. **Naprawa błędu `S S S` w `FloatingWindow.tsx`:** Zastąpienie sztywnych progów pikselowych mapowaniem relatywnym `["S", "M", "L"][idx]`.
+  4. **Naprawa wyboru trasy w `TopSearchPill.tsx`:** Przekazanie flagi `setAsPrimarySelection=true`, natychmiast otwierającej Route Inspector.
+  5. **Wzbogacenie metadanych tras (`routes.py`):** `GET /api/v1/routes/stop/{stop_id}` dołącza `short_name`, `color`, `headsign`, eliminując surowe identyfikatory.
+  6. **Narzędzie wdrażania danych OCI:** Utworzenie `scripts/deployment/sync_simulation_to_oci.sh` do synchronizacji `simulation_trips_math.json` na produkcyjną instancję ARM64.
+- **Dowody Weryfikacji (100% Green):**
+  - Backend pytest: **129/129 testów PASSED** (`uv run pytest backend/tests/ -q`).
+  - Frontend TypeScript: `npx tsc --noEmit` $\rightarrow$ **0 błędów**.
+  - Frontend Build: `npm run build` w `urban-dashboard` $\rightarrow$ **sukces**.
+
+---
+
+## 5. Next Session Active Directive: OCI Data Deployment & Production Edge Calibration
 
 > [!NOTE]
-> **Cel następnego sprintu:** Wdrożenie interaktywnej symulacji floty autobusowej w czasie rzeczywistym dla wszystkich 30 miast w oparciu o silnik GTFS-Interpolation oraz inspekcję pojazdów (`SimulationControlsDock` + `VehicleInspectorCard`), z walidacją wydajności 60 FPS na Deck.gl TripsLayer.
+> **Cel następnego sprintu:** 
+> 1. Wykonanie synchronizacji danych `simulation_trips_math.json` (196 MB) na instancję produkcyjną OCI za pomocą `scripts/deployment/sync_simulation_to_oci.sh`.
+> 2. Weryfikacja działania TripsLayer na żywym środowisku produkcyjnym dla Krakowa, Warszawy, Wrocławia i Poznania.
 
 
