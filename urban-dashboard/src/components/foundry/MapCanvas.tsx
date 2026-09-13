@@ -72,6 +72,32 @@ function getSpeedColor(
   return [rgb[0], rgb[1], rgb[2], 240];
 }
 
+function extractLonLatCoords(geometry: any): [number, number][] {
+  if (!geometry || !geometry.coordinates) return [];
+  const coords: [number, number][] = [];
+
+  function recurse(val: any) {
+    if (Array.isArray(val)) {
+      if (
+        val.length >= 2 &&
+        typeof val[0] === "number" &&
+        typeof val[1] === "number" &&
+        Number.isFinite(val[0]) &&
+        Number.isFinite(val[1])
+      ) {
+        coords.push([val[0], val[1]]);
+      } else {
+        for (const item of val) {
+          recurse(item);
+        }
+      }
+    }
+  }
+
+  recurse(geometry.coordinates);
+  return coords;
+}
+
 export default function MapCanvas() {
   const {
     selectedCity,
@@ -138,7 +164,8 @@ export default function MapCanvas() {
   // 60 FPS Fleet Simulation Engine Loop
   const lastSimTimeRef = useRef<number>(performance.now());
   useEffect(() => {
-    if (!isSimulationActive || !simulationDataset || !isPlaying) return;
+    const isMatchingCity = simulationDataset?.city?.toLowerCase() === selectedCity?.toLowerCase();
+    if (!isSimulationActive || !simulationDataset || !isPlaying || !isMatchingCity) return;
 
     let frameId: number;
     lastSimTimeRef.current = performance.now();
@@ -188,31 +215,42 @@ export default function MapCanvas() {
     const controller = new AbortController();
     const signal = controller.signal;
 
-    // 1. Boundary & auto-center
+    // Reset previous city layers immediately to prevent optical clash
+    setBoundary(null);
+    setHexagons([]);
+    setStops(null);
+    setHubs(null);
+    setRouteGeo(null);
+
+    // 1. Boundary & auto-center using robust polygon vertex extraction
     fetchCityBoundary(selectedCity, signal)
       .then((b) => {
         if (!signal.aborted && b?.features?.[0]) {
           setBoundary(b);
-          const coords = b.features[0].geometry?.coordinates;
-          if (coords) {
-            try {
-              const flat = coords.flat(2) as [number, number][];
-              if (flat.length > 0) {
-                const lons = flat.map((p) => p[0]).filter(Number.isFinite);
-                const lats = flat.map((p) => p[1]).filter(Number.isFinite);
-                if (lons.length > 0 && lats.length > 0) {
-                  const minLon = Math.min(...lons);
-                  const maxLon = Math.max(...lons);
-                  const minLat = Math.min(...lats);
-                  const maxLat = Math.max(...lats);
-                  setViewState({
-                    longitude: (minLon + maxLon) / 2,
-                    latitude: (minLat + maxLat) / 2,
-                    zoom: 12,
-                  });
-                }
-              }
-            } catch {}
+          const points = extractLonLatCoords(b.features[0].geometry);
+          if (points.length > 0) {
+            const lons = points.map((p) => p[0]);
+            const lats = points.map((p) => p[1]);
+            const minLon = Math.min(...lons);
+            const maxLon = Math.max(...lons);
+            const minLat = Math.min(...lats);
+            const maxLat = Math.max(...lats);
+            const spanLon = maxLon - minLon;
+            const spanLat = maxLat - minLat;
+            const maxSpan = Math.max(spanLon, spanLat);
+
+            let zoom = 12;
+            if (maxSpan > 0.8) zoom = 9.5;
+            else if (maxSpan > 0.4) zoom = 10.5;
+            else if (maxSpan > 0.2) zoom = 11.5;
+            else if (maxSpan > 0.1) zoom = 12;
+            else zoom = 12.5;
+
+            setViewState({
+              longitude: (minLon + maxLon) / 2,
+              latitude: (minLat + maxLat) / 2,
+              zoom,
+            });
           }
         }
       })
@@ -252,23 +290,39 @@ export default function MapCanvas() {
     };
   }, [selectedCity, setViewState]);
 
-  // Load active route geometry
+  // Load active route geometry OR full transit corridors network when showRoutes is enabled
   useEffect(() => {
-    if (!selectedCity || !activeRouteUid) {
+    if (!selectedCity) {
       setRouteGeo(null);
       return;
     }
     const controller = new AbortController();
-    fetchRouteGeometry(selectedCity, activeRouteUid, true, controller.signal)
-      .then((res) => {
-        if (!controller.signal.aborted) setRouteGeo(res);
-      })
-      .catch((e) => {
-        if (e?.name !== "AbortError") setRouteGeo(null);
-      });
+    const signal = controller.signal;
+
+    if (activeRouteUid) {
+      // Specific route inspected
+      fetchRouteGeometry(selectedCity, activeRouteUid, true, signal)
+        .then((res) => {
+          if (!signal.aborted) setRouteGeo(res);
+        })
+        .catch((e) => {
+          if (e?.name !== "AbortError") setRouteGeo(null);
+        });
+    } else if (showRoutes) {
+      // Full network corridors displayed when layer is checked
+      fetchRouteGeometry(selectedCity, undefined, true, signal)
+        .then((res) => {
+          if (!signal.aborted) setRouteGeo(res);
+        })
+        .catch((e) => {
+          if (e?.name !== "AbortError") setRouteGeo(null);
+        });
+    } else {
+      setRouteGeo(null);
+    }
 
     return () => controller.abort();
-  }, [selectedCity, activeRouteUid]);
+  }, [selectedCity, activeRouteUid, showRoutes]);
 
   // Extract set of stop IDs belonging to the active route for Context Isolation
   const activeRouteStopIds = useMemo(() => {
@@ -653,7 +707,8 @@ export default function MapCanvas() {
     }
 
     // Layer 7: Real-Time / Simulated Active Buses
-    if (isSimulationActive && activeVehicles.length > 0) {
+    const isMatchingCity = simulationDataset?.city?.toLowerCase() === selectedCity?.toLowerCase();
+    if (isSimulationActive && isMatchingCity && activeVehicles.length > 0) {
       // 7a. Selected vehicle pulsing aura ring
       if (selectedVehicle) {
         list.push(

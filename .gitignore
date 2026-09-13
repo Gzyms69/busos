@@ -17,6 +17,10 @@ logs/
 # Żadne dane przetwarzane nie mają prawa trafić do repozytorium kodu.
 data/
 !urban-dashboard/public/data/
+urban-dashboard/public/data/simulation/
+urban-dashboard/public/data/*_simulation.json
+!urban-dashboard/public/data/kielce_simulation.json
+!urban-dashboard/public/data/elblag_simulation.json
 
 # RAPORTY
 # Ignorujemy archiwum, ale śledzimy ostateczne pliki audytowe

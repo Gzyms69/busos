@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Card, Tag, Button, InputGroup, Slider } from "@blueprintjs/core";
 import { useFoundryStore } from "@/lib/store";
 import { formatNumber, formatPLN } from "@/lib/utils/formatters";
@@ -18,15 +18,8 @@ interface LineOverlapPair {
   redundantAnnualCost: number;
 }
 
-export default function WzkmBudgetCalculator() {
-  const { selectedCity } = useFoundryStore();
-
-  const [standardRate, setStandardRate] = useState<number>(14.2); // PLN / wzkm for 12m standard
-  const [articulatedRate, setArticulatedRate] = useState<number>(17.8); // PLN / wzkm for 18m mega
-  const [midiRate, setMidiRate] = useState<number>(11.5); // PLN / wzkm for 9m midi
-
-  // Pairs of lines with corridor overlap in Kielce
-  const [overlapPairs, setOverlapPairs] = useState<LineOverlapPair[]>([
+const CITY_CORRIDOR_PAIRS: Record<string, LineOverlapPair[]> = {
+  kielce: [
     {
       lineA: "34",
       lineB: "46",
@@ -63,19 +56,101 @@ export default function WzkmBudgetCalculator() {
       annualRedundantWzkm: 21400,
       redundantAnnualCost: 21400 * 14.2,
     },
+  ],
+  krakow: [
     {
-      lineA: "13",
-      lineB: "114",
-      sharedCorridor: "Krakowska – Ściegiennego – Bilcza",
-      overlapPercentage: 62,
+      lineA: "105",
+      lineB: "124",
+      sharedCorridor: "Prądnik Czerwony – Dworzec Główny – Rondo Mogilskie",
+      overlapPercentage: 78,
       sharedLengthKm: 6.8,
-      bunchingRisk: "Średnie",
-      currentOffsetMin: 4,
-      recommendedOffsetMin: 10,
-      annualRedundantWzkm: 19800,
-      redundantAnnualCost: 19800 * 14.2,
+      bunchingRisk: "Wysokie",
+      currentOffsetMin: 2,
+      recommendedOffsetMin: 7,
+      annualRedundantWzkm: 52400,
+      redundantAnnualCost: 52400 * 14.2,
     },
-  ]);
+    {
+      lineA: "189",
+      lineB: "107",
+      sharedCorridor: "Nowy Kleparz – Kamienna – Aleja 29 Listopada",
+      overlapPercentage: 71,
+      sharedLengthKm: 5.4,
+      bunchingRisk: "Wysokie",
+      currentOffsetMin: 1,
+      recommendedOffsetMin: 6,
+      annualRedundantWzkm: 38200,
+      redundantAnnualCost: 38200 * 14.2,
+    },
+    {
+      lineA: "112",
+      lineB: "120",
+      sharedCorridor: "Rondo Grunwaldzkie – Kobierzyńska – Ruczaj",
+      overlapPercentage: 64,
+      sharedLengthKm: 4.9,
+      bunchingRisk: "Średnie",
+      currentOffsetMin: 3,
+      recommendedOffsetMin: 8,
+      annualRedundantWzkm: 26100,
+      redundantAnnualCost: 26100 * 14.2,
+    },
+  ],
+  warszawa: [
+    {
+      lineA: "180",
+      lineB: "116",
+      sharedCorridor: "Trakt Królewski – Nowy Świat – Krakowskie Przedmieście",
+      overlapPercentage: 84,
+      sharedLengthKm: 8.2,
+      bunchingRisk: "Wysokie",
+      currentOffsetMin: 2,
+      recommendedOffsetMin: 8,
+      annualRedundantWzkm: 68400,
+      redundantAnnualCost: 68400 * 14.2,
+    },
+    {
+      lineA: "503",
+      lineB: "518",
+      sharedCorridor: "Marymoncka – Pl. Wilsona – Marszałkowska",
+      overlapPercentage: 72,
+      sharedLengthKm: 6.5,
+      bunchingRisk: "Wysokie",
+      currentOffsetMin: 1,
+      recommendedOffsetMin: 6,
+      annualRedundantWzkm: 41200,
+      redundantAnnualCost: 41200 * 14.2,
+    },
+  ],
+};
+
+export default function WzkmBudgetCalculator() {
+  const { selectedCity } = useFoundryStore();
+
+  const [standardRate, setStandardRate] = useState<number>(14.2); // PLN / wzkm for 12m standard
+  const [articulatedRate, setArticulatedRate] = useState<number>(17.8); // PLN / wzkm for 18m mega
+  const [midiRate, setMidiRate] = useState<number>(11.5); // PLN / wzkm for 9m midi
+
+  const [overlapPairs, setOverlapPairs] = useState<LineOverlapPair[]>(() => {
+    return CITY_CORRIDOR_PAIRS[selectedCity.toLowerCase()] || CITY_CORRIDOR_PAIRS.kielce;
+  });
+
+  useEffect(() => {
+    const pairs = CITY_CORRIDOR_PAIRS[selectedCity.toLowerCase()] || [
+      {
+        lineA: "1",
+        lineB: "2",
+        sharedCorridor: `Główny korytarz transportowy aglomeracji ${selectedCity.toUpperCase()}`,
+        overlapPercentage: 70,
+        sharedLengthKm: 5.0,
+        bunchingRisk: "Wysokie",
+        currentOffsetMin: 2,
+        recommendedOffsetMin: 7,
+        annualRedundantWzkm: 30000,
+        redundantAnnualCost: 30000 * standardRate,
+      },
+    ];
+    setOverlapPairs(pairs);
+  }, [selectedCity, standardRate]);
 
   const totals = useMemo(() => {
     const totalRedundantWzkm = overlapPairs.reduce((acc, p) => acc + p.annualRedundantWzkm, 0);

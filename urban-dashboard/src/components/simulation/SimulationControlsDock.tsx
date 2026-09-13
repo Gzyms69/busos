@@ -30,6 +30,8 @@ const SPEED_PRESETS = [
 export default function SimulationControlsDock() {
   const {
     isSimulationActive,
+    simulationMode,
+    setSimulationMode,
     toggleSimulation,
     isLiveMode,
     setLiveMode,
@@ -82,7 +84,13 @@ export default function SimulationControlsDock() {
       <FloatingWindow
         id="simulation-dock"
         title={`Symulacja Floty • ${selectedCity.toUpperCase()}`}
-        subtitle={`${activeVehicles.length} pojazdów w trasie`}
+        subtitle={
+          isLoadingSimulation
+            ? "Wczytywanie danych rozkładu..."
+            : simulationError
+            ? "Brak pliku symulacji dla miasta"
+            : `${activeVehicles.length} pojazdów w trasie`
+        }
         icon={<Bus className="w-4 h-4" />}
         presetWidths={[460, 680, 840]}
         allowDock={false}
@@ -144,6 +152,61 @@ export default function SimulationControlsDock() {
               <span>NA ŻYWO</span>
             </button>
           </div>
+
+          {/* Dual-Mode Selector: GPS Shapes vs Mathematical Schedule */}
+          {!isCompact && (
+            <div className="flex items-center gap-1.5 p-1 bg-slate-100/90 rounded-xl border border-slate-200/80">
+              <button
+                type="button"
+                onClick={() => setSimulationMode("gps")}
+                disabled={isLoadingSimulation}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  simulationMode === "gps"
+                    ? "bg-[#47317f] text-white shadow-xs"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
+                }`}
+                title="Ruch pojazdów wzdłuż fizycznej geometrii ulic (ślady GPS shapes.txt lub siatka drogowa OSM)"
+              >
+                <Radio className="w-3.5 h-3.5 shrink-0" />
+                <span>Ślady GPS</span>
+                {simulationDataset?.geometry_source && (
+                  <span
+                    className={`text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider ${
+                      simulationMode === "gps"
+                        ? "bg-white/20 text-white"
+                        : "bg-slate-200 text-slate-600"
+                    }`}
+                  >
+                    {simulationDataset.geometry_source === "gtfs_shapes" ? "Shapes" : "OSM"}
+                  </span>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSimulationMode("math")}
+                disabled={isLoadingSimulation}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  simulationMode === "math"
+                    ? "bg-[#47317f] text-white shadow-xs"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
+                }`}
+                title="Interpolacja matematyczna czasu i dystansu bezpośrednio pomiędzy kolejnymi przystankami rozkładu"
+              >
+                <Layers className="w-3.5 h-3.5 shrink-0" />
+                <span>Model matematyczny</span>
+                <span
+                  className={`text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider ${
+                    simulationMode === "math"
+                      ? "bg-white/20 text-white"
+                      : "bg-slate-200 text-slate-600"
+                  }`}
+                >
+                  Rozkład
+                </span>
+              </button>
+            </div>
+          )}
 
           {/* Middle Row: Play/Pause, Digital Clock, Timeline Scrubber */}
           <div className="flex flex-col sm:flex-row items-center gap-2.5">

@@ -1,3 +1,5 @@
+export type SimulationMode = "gps" | "math";
+
 export interface SimulationWaypoint {
   timeSec: number;
   lon: number;
@@ -19,6 +21,8 @@ export interface SimulationTrip {
 
 export interface SimulationDataset {
   city: string;
+  mode?: SimulationMode;
+  geometry_source?: "gtfs_shapes" | "osm_hybrid" | "direct_stop" | string;
   service_id: string;
   total_trips: number;
   min_sec: number;
@@ -44,28 +48,38 @@ export interface ActiveVehicle {
   nextStopEtaSec: number;
 }
 
-// In-memory cache for loaded simulation datasets by city
+// In-memory cache for loaded simulation datasets by city and mode
 const simulationCache = new Map<string, SimulationDataset>();
 
 export async function fetchSimulationDataset(
   city: string,
+  mode: SimulationMode = "gps",
   signal?: AbortSignal
 ): Promise<SimulationDataset> {
   const normalizedCity = city.toLowerCase().trim();
-  if (simulationCache.has(normalizedCity)) {
-    return simulationCache.get(normalizedCity)!;
+  const cacheKey = `${normalizedCity}_${mode}`;
+  if (simulationCache.has(cacheKey)) {
+    return simulationCache.get(cacheKey)!;
   }
 
-  // Load from static Next.js public assets (fastest & lowest bandwidth)
-  const url = `/data/${normalizedCity}_simulation.json`;
-  const res = await fetch(url, { signal });
-  if (!res.ok) {
+  // 1. Try mode-specific dataset first: /data/simulation/{city}_{mode}.json
+  let url = `/data/simulation/${normalizedCity}_${mode}.json`;
+  let res = await fetch(url, { signal }).catch(() => null);
+
+  // 2. Fallback to legacy single file: /data/{city}_simulation.json
+  if (!res || !res.ok) {
+    url = `/data/${normalizedCity}_simulation.json`;
+    res = await fetch(url, { signal }).catch(() => null);
+  }
+
+  if (!res || !res.ok) {
     throw new Error(
-      `Nie udało się pobrać danych symulacji dla miasta ${city} (${res.status} ${res.statusText})`
+      `Nie udało się pobrać danych symulacji dla miasta ${city} w trybie ${mode === "gps" ? "śladów GPS" : "modelu matematycznego"}`
     );
   }
 
   const data = (await res.json()) as SimulationDataset;
-  simulationCache.set(normalizedCity, data);
+  data.mode = data.mode || mode;
+  simulationCache.set(cacheKey, data);
   return data;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Card, Tag, Button, Callout } from "@blueprintjs/core";
 import { useFoundryStore } from "@/lib/store";
 import { formatNumber } from "@/lib/utils/formatters";
@@ -30,8 +30,12 @@ export default function ApcDataImporter() {
   const { selectedCity } = useFoundryStore();
 
   const [records, setRecords] = useState<ApcRecord[]>(SAMPLE_APC_DATA);
-  const [activeFileName, setActiveFileName] = useState<string>("kielce_apc_linia_34_szczyt_poranny.csv");
+  const [activeFileName, setActiveFileName] = useState<string>(`${selectedCity}_apc_pomiar_potokow.csv`);
   const [isDragOver, setIsDragOver] = useState(false);
+
+  useEffect(() => {
+    setActiveFileName(`${selectedCity}_apc_pomiar_potokow.csv`);
+  }, [selectedCity]);
 
   // Statistics
   const stats = useMemo(() => {
@@ -56,7 +60,7 @@ export default function ApcDataImporter() {
   // Load sample dataset
   const handleLoadSample = () => {
     setRecords(SAMPLE_APC_DATA);
-    setActiveFileName("kielce_apc_linia_34_szczyt_poranny.csv");
+    setActiveFileName(`${selectedCity}_apc_pomiar_potokow.csv`);
   };
 
   // CSV file parse

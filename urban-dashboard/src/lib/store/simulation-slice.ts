@@ -3,6 +3,7 @@ import {
   fetchSimulationDataset,
   type SimulationDataset,
   type ActiveVehicle,
+  type SimulationMode,
 } from "@/lib/api/simulation";
 import {
   getCurrentSecondsFromMidnight,
@@ -11,6 +12,7 @@ import {
 
 export interface SimulationSlice {
   isSimulationActive: boolean;
+  simulationMode: SimulationMode; // "gps" | "math"
   isLiveMode: boolean;
   isPlaying: boolean;
   simSpeed: number; // 1, 10, 60, 360, 3600
@@ -25,6 +27,7 @@ export interface SimulationSlice {
 
   toggleSimulation: () => void;
   setSimulationActive: (active: boolean) => void;
+  setSimulationMode: (mode: SimulationMode) => Promise<void>;
   setLiveMode: (live: boolean) => void;
   setPlaying: (playing: boolean) => void;
   setSimSpeed: (speed: number) => void;
@@ -33,7 +36,8 @@ export interface SimulationSlice {
   selectVehicle: (vehicle: ActiveVehicle | null) => void;
   setFollowingVehicle: (following: boolean) => void;
   setLineFilter: (filter: string | null) => void;
-  loadSimulationData: (city: string) => Promise<void>;
+  loadSimulationData: (city?: string, mode?: SimulationMode) => Promise<void>;
+  resetSimulation: () => void;
   updateActiveVehicles: (vehicles: ActiveVehicle[]) => void;
 }
 
@@ -44,6 +48,7 @@ export const createSimulationSlice: StateCreator<
   SimulationSlice
 > = (set, get) => ({
   isSimulationActive: false,
+  simulationMode: "gps",
   isLiveMode: true,
   isPlaying: true,
   simSpeed: 1,
@@ -58,15 +63,15 @@ export const createSimulationSlice: StateCreator<
 
   toggleSimulation: () => {
     const nextActive = !get().isSimulationActive;
-    if (nextActive && !get().simulationDataset) {
-      // Auto-load for current city if not already loaded
-      const state = get() as any;
-      const city = state.selectedCity || "kielce";
-      get().loadSimulationData(city);
+    const state = get() as any;
+    const currentCity = state.selectedCity || "kielce";
+
+    if (nextActive && (!get().simulationDataset || get().simulationDataset?.city !== currentCity)) {
+      get().loadSimulationData(currentCity, get().simulationMode);
     }
+
     set({
       isSimulationActive: nextActive,
-      // If turning on and live mode is on, sync to current clock
       simTimeSeconds: get().isLiveMode
         ? getCurrentSecondsFromMidnight()
         : get().simTimeSeconds,
@@ -74,12 +79,22 @@ export const createSimulationSlice: StateCreator<
   },
 
   setSimulationActive: (active) => {
-    if (active && !get().simulationDataset) {
-      const state = get() as any;
-      const city = state.selectedCity || "kielce";
-      get().loadSimulationData(city);
+    const state = get() as any;
+    const currentCity = state.selectedCity || "kielce";
+
+    if (active && (!get().simulationDataset || get().simulationDataset?.city !== currentCity)) {
+      get().loadSimulationData(currentCity, get().simulationMode);
     }
     set({ isSimulationActive: active });
+  },
+
+  setSimulationMode: async (mode) => {
+    set({ simulationMode: mode });
+    const state = get() as any;
+    const city = state.selectedCity || "kielce";
+    if (get().isSimulationActive || get().simulationDataset) {
+      await get().loadSimulationData(city, mode);
+    }
   },
 
   setLiveMode: (live) => {
@@ -98,7 +113,6 @@ export const createSimulationSlice: StateCreator<
   setSimSpeed: (speed) => {
     set({
       simSpeed: speed,
-      // If speed changed away from 1x, deactivate strict live clock lock
       isLiveMode: speed === 1 ? get().isLiveMode : false,
     });
   },
@@ -112,7 +126,6 @@ export const createSimulationSlice: StateCreator<
     set({
       simTimeSeconds: safeSec,
       activeVehicles: vehicles,
-      // Manual scrubbing disables live clock lock
       isLiveMode: false,
     });
   },
@@ -150,10 +163,23 @@ export const createSimulationSlice: StateCreator<
     });
   },
 
-  loadSimulationData: async (city) => {
-    set({ isLoadingSimulation: true, simulationError: null });
+  loadSimulationData: async (cityArg, modeArg) => {
+    const state = get() as any;
+    const targetCity = (cityArg || state.selectedCity || "kielce").toLowerCase().trim();
+    const targetMode = modeArg || get().simulationMode;
+
+    // Reset current dataset and active vehicles immediately to prevent cross-city leakage
+    set({
+      isLoadingSimulation: true,
+      simulationError: null,
+      simulationDataset: null,
+      activeVehicles: [],
+      selectedVehicle: null,
+      isFollowingVehicle: false,
+    });
+
     try {
-      const data = await fetchSimulationDataset(city);
+      const data = await fetchSimulationDataset(targetCity, targetMode);
       const currentSec = get().simTimeSeconds;
       const vehicles = computeActiveVehicles(data.trips, currentSec, get().lineFilter);
       set({
@@ -165,8 +191,20 @@ export const createSimulationSlice: StateCreator<
       set({
         isLoadingSimulation: false,
         simulationError: err?.message || "Błąd pobierania danych symulacji",
+        simulationDataset: null,
+        activeVehicles: [],
       });
     }
+  },
+
+  resetSimulation: () => {
+    set({
+      simulationDataset: null,
+      activeVehicles: [],
+      selectedVehicle: null,
+      isFollowingVehicle: false,
+      simulationError: null,
+    });
   },
 
   updateActiveVehicles: (vehicles) => set({ activeVehicles: vehicles }),

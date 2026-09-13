@@ -38,15 +38,17 @@ export async function searchRoutes(
 
 export async function fetchRouteGeometry(
   city: string,
-  routeUid: string,
+  routeUid?: string,
   canonicalOnly: boolean = true,
   signal?: AbortSignal
 ): Promise<GeoJsonFeatureCollection> {
   const q = new URLSearchParams({
     city,
-    route_uid: routeUid,
     canonical_only: String(canonicalOnly),
   });
+  if (routeUid) {
+    q.set("route_uid", routeUid);
+  }
   return apiFetch<GeoJsonFeatureCollection>(`/api/v1/routes/geometry?${q.toString()}`, { signal });
 }
 

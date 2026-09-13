@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Card, Tag, Button, Callout } from "@blueprintjs/core";
 import { useFoundryStore } from "@/lib/store";
 import { formatNumber, formatPLN } from "@/lib/utils/formatters";
+import { getCityTransitAuthority } from "@/lib/utils/city-coordinates";
 
 export default function StatutoryReportGenerator() {
   const { selectedCity } = useFoundryStore();
@@ -21,7 +22,7 @@ export default function StatutoryReportGenerator() {
   const reportMarkdown = `# PLAN ZRÓWNOWAŻONEGO ROZWOJU PUBLICZNEGO TRANSPORTU ZBIOROWEGO
 ## AGLOMERACJA ${cityNameUpper} — AUDYT STATUTOWY I BIAŁA KSIĘGA OPTYMALIZACJI (${reportYear})
 **Data generowania:** ${currentDate}  
-**Organ zlecający:** Zarząd Transportu Miejskiego w ${selectedCity === "kielce" ? "Kielcach" : cityNameUpper} / Wydział Gospodarki Komunalnej  
+**Organ zlecający:** ${getCityTransitAuthority(selectedCity)} / Wydział Gospodarki Komunalnej  
 **Podstawa prawna:** Art. 9 ust. 1 Ustawy z dnia 16 grudnia 2010 r. o publicznym transporcie zbiorowym (Dz.U. z 2023 r. poz. 2778)
 
 ---

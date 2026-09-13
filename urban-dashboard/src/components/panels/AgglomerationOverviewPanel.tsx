@@ -48,6 +48,8 @@ export default function AgglomerationOverviewPanel() {
     const controller = new AbortController();
     setLoading(true);
     setError(null);
+    setAuditData(null);
+    setMagnets([]);
 
     Promise.allSettled([
       fetchAuditSummary(selectedCity, "summary,zscore,grades", controller.signal),
@@ -173,7 +175,7 @@ export default function AgglomerationOverviewPanel() {
 
         {/* Accordion 1: Standard obsługi pasażerów */}
         {(() => {
-          const stopGrades = auditData?.grades?.stops;
+          const stopGrades = (auditData?.grades as any)?.micro ?? (auditData?.grades as any)?.stops;
           const countA = (stopGrades?.["A+"] || 0) + (stopGrades?.["A"] || 0);
           const countBC = (stopGrades?.["B"] || 0) + (stopGrades?.["C"] || 0);
           const countDF = (stopGrades?.["D"] || 0) + (stopGrades?.["F"] || 0);
