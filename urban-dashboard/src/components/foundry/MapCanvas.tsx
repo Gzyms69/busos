@@ -463,74 +463,97 @@ export default function MapCanvas() {
 
     // Layer 3: Physical Stops (With Context Isolation: alien stops fade to 8% opacity)
     if (showStops && stops?.features) {
-      list.push(
-        new ScatterplotLayer({
-          id: "stops-micro",
-          data: stops.features,
-          getPosition: (f: any) => f.geometry.coordinates,
-          getRadius: (f: any) => {
-            if (!isRouteActive || !activeRouteStopIds) return 6;
-            const stopId = String(f.properties?.stop_id);
-            return activeRouteStopIds.has(stopId) ? 8 : 2.5;
-          },
-          radiusUnits: "pixels",
-          radiusMinPixels: 2,
-          radiusMaxPixels: 16,
-          getFillColor: (f: any) => {
-            if (isRouteActive && activeRouteStopIds) {
+      const currentZoom = viewState.zoom ?? 12;
+      const minZoomThreshold = isMobile ? 12.2 : 11.5;
+      // At far regional zoom, hide micro stops unless a specific route is selected to keep map clean and legible
+      if (currentZoom >= minZoomThreshold || isRouteActive) {
+        list.push(
+          new ScatterplotLayer({
+            id: "stops-micro",
+            data: stops.features,
+            getPosition: (f: any) => f.geometry.coordinates,
+            getRadius: (f: any) => {
+              let baseRadius = 5;
+              if (currentZoom < 13) baseRadius = 2.5;
+              else if (currentZoom < 14.5) baseRadius = 4;
+              else baseRadius = 6;
+
+              if (!isRouteActive || !activeRouteStopIds) return baseRadius;
               const stopId = String(f.properties?.stop_id);
-              if (!activeRouteStopIds.has(stopId)) {
-                // Alien stop: deeply muted
-                return [100, 100, 100, 20];
+              return activeRouteStopIds.has(stopId) ? baseRadius * 1.4 : baseRadius * 0.5;
+            },
+            radiusUnits: "pixels",
+            radiusMinPixels: isRouteActive ? 2 : 1.5,
+            radiusMaxPixels: isMobile ? 10 : 14,
+            getFillColor: (f: any) => {
+              if (isRouteActive && activeRouteStopIds) {
+                const stopId = String(f.properties?.stop_id);
+                if (!activeRouteStopIds.has(stopId)) {
+                  // Alien stop: deeply muted
+                  return [100, 100, 100, 15];
+                }
+                // Active route stop: emerald or grade color
+                return getGradeRgb(f.properties?.stop_grade || f.properties?.grade);
               }
-              // Active route stop: emerald or grade color
-              return getGradeRgb(f.properties?.stop_grade || f.properties?.grade);
-            }
-            return getGradeRgb(f.properties?.stop_grade || f.properties?.grade);
-          },
-          getLineColor: (f: any) => {
-            if (isRouteActive && activeRouteStopIds) {
-              const stopId = String(f.properties?.stop_id);
-              return activeRouteStopIds.has(stopId)
-                ? [255, 255, 255, 240]
-                : [0, 0, 0, 0];
-            }
-            return [255, 255, 255, 180];
-          },
-          lineWidthUnits: "pixels",
-          getLineWidth: (f: any) => {
-            if (isRouteActive && activeRouteStopIds) {
-              const stopId = String(f.properties?.stop_id);
-              return activeRouteStopIds.has(stopId) ? 2 : 0;
-            }
-            return 1;
-          },
-          stroked: true,
-          filled: true,
-          pickable: true,
-          onHover: (info: PickingInfo) => setHoverInfo(info),
-          onClick: (info: PickingInfo) => {
-            if (info?.object) {
-              const p = (info.object as any).properties;
-              selectObject("stop", p.stop_id, p);
-            }
-          },
-        })
-      );
+              const rgb = getGradeRgb(f.properties?.stop_grade || f.properties?.grade);
+              if (currentZoom < 13) {
+                return [rgb[0], rgb[1], rgb[2], 160];
+              }
+              return rgb;
+            },
+            getLineColor: (f: any) => {
+              if (isRouteActive && activeRouteStopIds) {
+                const stopId = String(f.properties?.stop_id);
+                return activeRouteStopIds.has(stopId)
+                  ? [255, 255, 255, 240]
+                  : [0, 0, 0, 0];
+              }
+              return [255, 255, 255, 140];
+            },
+            lineWidthUnits: "pixels",
+            getLineWidth: (f: any) => {
+              if (isRouteActive && activeRouteStopIds) {
+                const stopId = String(f.properties?.stop_id);
+                return activeRouteStopIds.has(stopId) ? 2 : 0;
+              }
+              return 1;
+            },
+            stroked: true,
+            filled: true,
+            pickable: true,
+            onHover: (info: PickingInfo) => setHoverInfo(info),
+            onClick: (info: PickingInfo) => {
+              if (info?.object) {
+                const p = (info.object as any).properties;
+                selectObject("stop", p.stop_id, p);
+              }
+            },
+          })
+        );
+      }
     }
 
     // Layer 4: Macro Hubs
     if (showHubs && hubs?.features) {
+      const currentZoom = viewState.zoom ?? 12;
       list.push(
         new ScatterplotLayer({
           id: "hubs-macro",
           data: hubs.features,
           getPosition: (f: any) => f.geometry.coordinates,
-          getRadius: (f: any) =>
-            Math.min(22, 10 + (f.properties?.hub_stops_count || 1) * 2),
+          getRadius: (f: any) => {
+            const count = f.properties?.hub_stops_count || 1;
+            if (currentZoom < 12.0) {
+              return 4.5;
+            }
+            if (currentZoom < 13.5) {
+              return Math.min(10, 5 + count * 0.8);
+            }
+            return Math.min(18, 7 + count * 1.5);
+          },
           radiusUnits: "pixels",
-          radiusMinPixels: 6,
-          radiusMaxPixels: 24,
+          radiusMinPixels: currentZoom < 12.0 ? 3 : 4,
+          radiusMaxPixels: isMobile ? 14 : 20,
           getFillColor: (f: any) => {
             const rgb = getGradeRgb(
               f.properties?.hub_grade || f.properties?.grade
@@ -539,7 +562,7 @@ export default function MapCanvas() {
           },
           getLineColor: [255, 255, 255, isRouteActive ? 120 : 200],
           lineWidthUnits: "pixels",
-          getLineWidth: 2,
+          getLineWidth: 1.5,
           stroked: true,
           filled: true,
           pickable: true,
@@ -600,28 +623,31 @@ export default function MapCanvas() {
 
     // Layer 5: Active Route (Buffer Glow + Path with Velocity Gradient)
     if (showRoutes && routeGeo?.features) {
-      // 5a. Catchment buffer glow
-      list.push(
-        new PathLayer({
-          id: "route-buffer-glow",
-          data: routeGeo.features,
-          getPath: (f: any) => f.geometry.coordinates,
-          getColor: (f: any) => {
-            const base = getSpeedColor(
-              f.properties?.commercial_speed_kmh,
-              f.properties?.route_color
-            );
-            return [base[0], base[1], base[2], 35];
-          },
-          getWidth: 14,
-          widthUnits: "pixels",
-          capRounded: true,
-          jointRounded: true,
-          pickable: false,
-        })
-      );
+      // 5a. Catchment buffer glow (only when a specific route is active to prevent optical blur)
+      if (isRouteActive) {
+        list.push(
+          new PathLayer({
+            id: "route-buffer-glow",
+            data: routeGeo.features,
+            getPath: (f: any) => f.geometry.coordinates,
+            getColor: (f: any) => {
+              const base = getSpeedColor(
+                f.properties?.commercial_speed_kmh,
+                f.properties?.route_color
+              );
+              return [base[0], base[1], base[2], 35];
+            },
+            getWidth: 14,
+            widthUnits: "pixels",
+            capRounded: true,
+            jointRounded: true,
+            pickable: false,
+          })
+        );
+      }
 
       // 5b. Primary route line with velocity-aware gradient
+      const currentZoom = viewState.zoom ?? 12;
       list.push(
         new PathLayer({
           id: "route-path",
@@ -632,7 +658,7 @@ export default function MapCanvas() {
               f.properties?.commercial_speed_kmh,
               f.properties?.route_color
             ),
-          getWidth: 4.5,
+          getWidth: isRouteActive ? 4.5 : currentZoom < 12.0 ? 1.75 : 2.5,
           widthUnits: "pixels",
           capRounded: true,
           jointRounded: true,
@@ -815,12 +841,21 @@ export default function MapCanvas() {
         width: "100%",
         height: "100%",
         overflow: "hidden",
+        touchAction: "none",
       }}
     >
       <DeckGL
         viewState={viewState}
         onViewStateChange={handleViewStateChange}
-        controller={true}
+        controller={{
+          dragPan: true,
+          dragRotate: true,
+          touchRotate: true,
+          touchZoom: true,
+          doubleClickZoom: true,
+          keyboard: true,
+          inertia: 250,
+        }}
         layers={layers}
         useDevicePixels={isMobile ? 1.5 : true}
       >

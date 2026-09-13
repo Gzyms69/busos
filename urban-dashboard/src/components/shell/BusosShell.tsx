@@ -14,6 +14,8 @@ import FloatingMapControls from "./FloatingMapControls";
 import ResizableMainPanel from "./ResizableMainPanel";
 import OmniDock from "./OmniDock";
 import MobileBottomSheet from "@/components/mobile/MobileBottomSheet";
+import MobileHeaderBar from "@/components/mobile/MobileHeaderBar";
+import MobileCameraControls from "@/components/mobile/MobileCameraControls";
 import SimulationControlsDock from "@/components/simulation/SimulationControlsDock";
 import VehicleInspectorCard from "@/components/simulation/VehicleInspectorCard";
 
@@ -147,8 +149,11 @@ export default function BusosShell() {
         <MapCanvas />
       </div>
 
-      {/* 2. Top Unified Controls Dock (Always on top z-40) */}
-      <header className="absolute top-3 left-3 right-3 sm:top-4 sm:left-4 sm:right-4 z-40 flex items-center justify-between pointer-events-none gap-2 sm:gap-3">
+      {/* 2a. Mobile-Specific Header Bar (< md) */}
+      <MobileHeaderBar />
+
+      {/* 2b. Desktop Unified Controls Dock (hidden on mobile, flex on md+) */}
+      <header className="hidden md:flex absolute top-3 left-3 right-3 sm:top-4 sm:left-4 sm:right-4 z-40 items-center justify-between pointer-events-none gap-2 sm:gap-3">
         {/* Left: Brand Badge & City Selector & Telemetry */}
         <div className="pointer-events-auto shrink-0">
           <BrandHeader />
@@ -168,13 +173,16 @@ export default function BusosShell() {
         </div>
       </header>
 
-      {/* 3. Desktop Resizable & Draggable Primary Workspace Panel */}
+      {/* 3. Mobile Camera & 3D Tilt Controls */}
+      <MobileCameraControls />
+
+      {/* 4. Desktop Resizable & Draggable Primary Workspace Panel */}
       <ResizableMainPanel />
 
-      {/* 4. Desktop Bottom OmniDock Toolbar */}
+      {/* 5. Desktop Bottom OmniDock Toolbar */}
       <OmniDock />
 
-      {/* 5. Mobile Gesture Bottom Sheet (Hidden on Desktop) */}
+      {/* 6. Mobile Gesture Bottom Sheet (Hidden on Desktop) */}
       <MobileBottomSheet />
 
       {/* 6. Fleet Simulation Controls Dock & Inspector */}
