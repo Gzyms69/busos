@@ -69,8 +69,18 @@ export default function StopDetailPanel() {
   const grade = stopProfile?.stop_grade || "C";
   const departuresPerHour = stopProfile?.stop_departures_h ?? 0;
   const routesCount = stopProfile?.stop_routes_count ?? stopRoutes.length;
-  const residentsNear = stopProfile?.residents_250m ?? stopProfile?.pop_total_500m ?? 0;
-  const medianPrice = stopProfile?.median_price_m2_500m;
+  const residentsNear = Number(
+    stopProfile?.stop_pop_val ||
+      (stopProfile as any)?.residents_250m ||
+      (stopProfile as any)?.pop_total_500m ||
+      0
+  );
+  const medianPrice =
+    typeof stopProfile?.stop_market_val === "number" && stopProfile.stop_market_val > 0
+      ? stopProfile.stop_market_val
+      : typeof (stopProfile as any)?.median_price_m2_500m === "number"
+      ? (stopProfile as any).median_price_m2_500m
+      : null;
 
   return (
     <div className="flex flex-col h-full bg-white overflow-hidden">
@@ -158,7 +168,7 @@ export default function StopDetailPanel() {
                 <div className="flex flex-wrap gap-2 pt-1">
                   {stopRoutes.map((r, i) => (
                     <RoutePill
-                      key={r.route_uid || i}
+                      key={`${r.route_uid || r.short_name || "route"}-${r.direction_id ?? i}-${i}`}
                       route={r}
                       onClick={() => setActiveRoute(r.route_uid, 0)}
                     />
@@ -189,7 +199,7 @@ export default function StopDetailPanel() {
                           {tx.price_m2 ? `${Math.round(tx.price_m2).toLocaleString("pl-PL")} zł/m²` : "Cena poufna"}
                         </span>
                         <span className="text-[11px] text-slate-500">
-                          {tx.transaction_date || "Niedawno"} • {tx.distance_m ? `${Math.round(tx.distance_m)}m od słupka` : "Blisko"}
+                          {tx.date || tx.dok_data || "Niedawno"} • {tx.distance_m ? `${Math.round(tx.distance_m)}m od słupka` : "Blisko"}
                         </span>
                       </div>
                       <span className="px-2 py-0.5 text-[10px] font-semibold bg-white border border-slate-200 rounded text-slate-600">
@@ -240,18 +250,18 @@ export default function StopDetailPanel() {
                   <span className="text-slate-500">Identyfikator słupka (GTFS):</span>
                   <span className="font-mono font-bold text-slate-800">{stopProfile?.stop_id || selectedId}</span>
                 </div>
-                {stopProfile?.stop_lat && (
+                {stopProfile?.lat != null && (
                   <div className="flex justify-between py-1 border-b border-slate-100">
                     <span className="text-slate-500">Współrzędne geograficzne:</span>
                     <span className="font-mono text-slate-800">
-                      {stopProfile.stop_lat.toFixed(4)}, {stopProfile.stop_lon?.toFixed(4)}
+                      {stopProfile.lat.toFixed(4)}, {stopProfile.lon?.toFixed(4)}
                     </span>
                   </div>
                 )}
                 <div className="flex justify-between py-1 border-b border-slate-100">
                   <span className="text-slate-500">Wskaźnik obsługi:</span>
                   <span className="font-bold text-slate-800">
-                    {formatNumber(stopProfile?.stop_score ?? 0, 1)} / 100
+                    {formatNumber(stopProfile?.stop_local_score_raw ?? 0, 1)} / 100
                   </span>
                 </div>
                 <div className="flex justify-between py-1">

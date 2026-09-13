@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Network, Users, Home, CheckCircle2, Navigation, Building, MapPin } from "lucide-react";
 import { useFoundryStore } from "@/lib/store";
-import { fetchCityAuditSummary, fetchPoiMagnets } from "@/lib/api";
+import { fetchAuditSummary, fetchPoiMagnets } from "@/lib/api";
 import type { CityAuditSummaryResponse, PoiMagnetItem } from "@/lib/api/types";
 import CleanKpiBadge from "@/components/shared/CleanKpiBadge";
 import AccordionSection from "@/components/shared/AccordionSection";
@@ -34,13 +34,13 @@ export default function AgglomerationOverviewPanel() {
     setLoading(true);
 
     Promise.allSettled([
-      fetchCityAuditSummary(selectedCity, controller.signal),
-      fetchPoiMagnets(selectedCity, controller.signal),
+      fetchAuditSummary(selectedCity, "summary,zscore,grades", controller.signal),
+      fetchPoiMagnets({ city: selectedCity, limit: 10 }, controller.signal),
     ]).then(([auditRes, magnetsRes]) => {
       if (!controller.signal.aborted) {
         if (auditRes.status === "fulfilled") setAuditData(auditRes.value);
         if (magnetsRes.status === "fulfilled") {
-          const list = magnetsRes.value?.items || [];
+          const list = magnetsRes.value?.magnets || [];
           setMagnets(Array.isArray(list) ? list : []);
         }
         setLoading(false);

@@ -18,6 +18,8 @@ import type { PickingInfo } from "@deck.gl/core";
 import MapHud from "./MapHud";
 import "maplibre-gl/dist/maplibre-gl.css";
 
+const CARTO_POSITRON =
+  "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
 const CARTO_DARK_MATTER =
   "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
 const SATELLITE_STYLE =
@@ -583,31 +585,34 @@ export default function MapCanvas() {
         useDevicePixels={isMobile ? 1.5 : true}
       >
         <Map
-          mapStyle={mapStyle === "satellite" ? SATELLITE_STYLE : CARTO_DARK_MATTER}
+          mapStyle={
+            mapStyle === "satellite"
+              ? SATELLITE_STYLE
+              : mapStyle === "dark"
+              ? CARTO_DARK_MATTER
+              : CARTO_POSITRON
+          }
           reuseMaps
         />
       </DeckGL>
-
-      {/* Floating HUD */}
-      <MapHud />
 
       {/* Dynamic Hover Tooltip */}
       {hoverInfo?.object && (
         <div
           style={{
             position: "absolute",
-            zIndex: 30,
+            zIndex: 40,
             pointerEvents: "none",
             left: hoverInfo.x + 12,
             top: hoverInfo.y + 12,
-            background: "rgba(18, 20, 26, 0.94)",
+            background: "rgba(255, 255, 255, 0.96)",
             backdropFilter: "blur(12px)",
-            border: "1px solid #383e47",
-            borderRadius: 6,
+            border: "1px solid #e2e8f0",
+            borderRadius: 12,
             padding: "8px 12px",
             fontSize: 11,
-            color: "#f6f7f9",
-            boxShadow: "0 12px 32px rgba(0, 0, 0, 0.7)",
+            color: "#0f172a",
+            boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
             maxWidth: 280,
           }}
         >
@@ -617,15 +622,15 @@ export default function MapCanvas() {
               <div
                 style={{
                   fontWeight: 800,
-                  color: "#38bdf8",
+                  color: "#47317f",
                   fontSize: 11,
-                  letterSpacing: "0.03em",
+                  letterSpacing: "0.02em",
                 }}
               >
-                SEKTOR H3 (RES 8) • #{((hoverInfo.object as HexagonCell).hex || "").slice(-6).toUpperCase()}
+                Strefa Dostępności Transportowej
               </div>
-              <div style={{ fontSize: 10, color: "#8f99a8", marginBottom: 3 }}>
-                Aglomeracja Kielce | Strefa analityczna
+              <div style={{ fontSize: 10, color: "#64748b", marginBottom: 3 }}>
+                Aglomeracja kielecka • Siatka analityczna
               </div>
               <div
                 style={{
@@ -635,32 +640,32 @@ export default function MapCanvas() {
                   fontSize: 11,
                 }}
               >
-                <span style={{ color: "#8f99a8" }}>Podaż transportu:</span>
-                <span className="tabular-nums" style={{ fontWeight: 700 }}>
+                <span style={{ color: "#64748b" }}>Wskaźnik obsługi:</span>
+                <span className="tabular-nums" style={{ fontWeight: 700, color: "#0f172a" }}>
                   {(hoverInfo.object as HexagonCell).transport_score.toFixed(1)}{" "}
-                  <span style={{ color: "#6b7280" }}>/ 100</span>
+                  <span style={{ color: "#94a3b8" }}>/ 100</span>
                 </span>
-                <span style={{ color: "#8f99a8" }}>Mieszkańcy (GUS):</span>
-                <span className="tabular-nums" style={{ fontWeight: 700 }}>
+                <span style={{ color: "#64748b" }}>Mieszkańcy (GUS):</span>
+                <span className="tabular-nums" style={{ fontWeight: 700, color: "#0f172a" }}>
                   {Math.round(
                     (hoverInfo.object as HexagonCell).pop_total
                   ).toLocaleString("pl-PL")}
                 </span>
-                <span style={{ color: "#8f99a8" }}>Odjazdy łączne:</span>
-                <span className="tabular-nums" style={{ fontWeight: 700 }}>
+                <span style={{ color: "#64748b" }}>Odjazdy łączne:</span>
+                <span className="tabular-nums" style={{ fontWeight: 700, color: "#0f172a" }}>
                   {(hoverInfo.object as HexagonCell).total_departures_h.toFixed(1)}/h
                 </span>
                 {(hoverInfo.object as HexagonCell).rcn_median_price_m2 && (
                   <>
-                    <span style={{ color: "#8f99a8" }}>Cena m² (RCN):</span>
+                    <span style={{ color: "#64748b" }}>Śr. cena m²:</span>
                     <span
                       className="tabular-nums"
-                      style={{ fontWeight: 700, color: "#38bdf8" }}
+                      style={{ fontWeight: 700, color: "#47317f" }}
                     >
                       {Math.round(
                         (hoverInfo.object as HexagonCell).rcn_median_price_m2!
                       ).toLocaleString("pl-PL")}{" "}
-                      PLN
+                      zł
                     </span>
                   </>
                 )}
@@ -668,14 +673,14 @@ export default function MapCanvas() {
               {(hoverInfo.object as HexagonCell).is_transit_desert && (
                 <div
                   style={{
-                    color: "#f87171",
+                    color: "#dc2626",
                     fontWeight: 800,
                     marginTop: 5,
                     fontSize: 10,
                     letterSpacing: "0.04em",
                   }}
                 >
-                  DEFICYT TRANSPORTOWY (DESERT)
+                  STREFA DEFICYTU KOMUNIKACYJNEGO
                 </div>
               )}
             </div>
@@ -685,48 +690,33 @@ export default function MapCanvas() {
           {(hoverInfo.object as any)?.properties &&
             "stop_id" in (hoverInfo.object as any).properties && (
               <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                <div style={{ fontWeight: 800, color: "#34d399", fontSize: 12 }}>
+                <div style={{ fontWeight: 800, color: "#0f172a", fontSize: 12 }}>
                   {(hoverInfo.object as any).properties.stop_name}
                 </div>
                 <div
                   style={{
-                    fontSize: 10,
-                    color: "#8f99a8",
+                    fontSize: 11,
+                    color: "#64748b",
                     display: "flex",
                     alignItems: "center",
                     gap: 6,
                   }}
                 >
                   <span>
-                    ID:{" "}
-                    <span className="tabular-nums">
-                      {(hoverInfo.object as any).properties.stop_id}
-                    </span>
-                  </span>
-                  <span>•</span>
-                  <span>
                     Klasa:{" "}
-                    <strong style={{ color: "#f6f7f9" }}>
+                    <strong style={{ color: "#47317f" }}>
                       {(hoverInfo.object as any).properties.stop_grade ||
                         (hoverInfo.object as any).properties.grade}
                     </strong>
                   </span>
-                </div>
-                <div
-                  style={{
-                    fontSize: 11,
-                    color: "#8f99a8",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    marginTop: 3,
-                  }}
-                >
-                  <span>Odjazdy na godzinę:</span>
-                  <span className="tabular-nums" style={{ fontWeight: 700, color: "#f6f7f9" }}>
-                    {Number(
-                      (hoverInfo.object as any).properties.stop_departures_h || 0
-                    ).toFixed(1)}
-                    /h
+                  <span>•</span>
+                  <span>
+                    <strong style={{ color: "#0f172a" }}>
+                      {Number(
+                        (hoverInfo.object as any).properties.stop_departures_h || 0
+                      ).toFixed(1)}
+                    </strong>{" "}
+                    odjazdów/h
                   </span>
                 </div>
               </div>
@@ -736,24 +726,23 @@ export default function MapCanvas() {
           {(hoverInfo.object as any)?.properties &&
             "hub_id" in (hoverInfo.object as any).properties && (
               <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                <div style={{ fontWeight: 800, color: "#38bdf8", fontSize: 12 }}>
+                <div style={{ fontWeight: 800, color: "#47317f", fontSize: 12 }}>
                   {(hoverInfo.object as any).properties.hub_name ||
                     (hoverInfo.object as any).properties.stop_name}
                 </div>
                 <div
                   style={{
-                    fontSize: 10,
-                    color: "#8f99a8",
+                    fontSize: 11,
+                    color: "#64748b",
                     display: "flex",
                     alignItems: "center",
                     gap: 6,
                   }}
                 >
-                  <span>Węzeł: {(hoverInfo.object as any).properties.hub_id}</span>
+                  <span>Węzeł przesiadkowy</span>
                   <span>•</span>
                   <span>
-                    Słupków:{" "}
-                    {(hoverInfo.object as any).properties.hub_stops_count || 1}
+                    {(hoverInfo.object as any).properties.hub_stops_count || 1} stanowisk
                   </span>
                 </div>
               </div>

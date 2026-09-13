@@ -10,7 +10,8 @@ interface RoutePillProps {
 }
 
 export default function RoutePill({ route, onClick, isActive }: RoutePillProps) {
-  const lineName = route.short_name || route.route_uid?.replace(/^route_/, "") || "Linia";
+  const rawName = route.short_name || route.route_uid?.replace(/^route_/, "") || "Linia";
+  const lineName = rawName.replace(/^[a-z]+_/i, "");
   const destination = route.headsign || route.long_name || "";
   const routeColor = route.color ? (route.color.startsWith("#") ? route.color : `#${route.color}`) : "#47317f";
 

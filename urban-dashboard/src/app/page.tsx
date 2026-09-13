@@ -1,5 +1,5 @@
-import FoundryShell from "@/components/foundry/FoundryShell";
+import BusosShell from "@/components/shell/BusosShell";
 
 export default function Home() {
-  return <FoundryShell />;
+  return <BusosShell />;
 }
