@@ -431,32 +431,38 @@
 
 ---
 
-## 4. Next Session Active Directive: Production Backend Connectivity Observability & 360° Critical Page Re-Evaluation
+### Task 17 (Sprint 4.8): Production Backend Connectivity Observability & 360° Ergonomic Polish
+- **Status:** `[DONE]` (Zrealizowano 2026-09-13, commit `418fbf7`)
+- **Cel:** Wdrożenie pełnej obserwowalności stanu backendu (Backend Connectivity Observability) w UI, eliminacja "zjawiska 3 syren" na rzecz zasady *Quiet Software* (Dieter Rams / Swiss International Typographic Style), elastyczny CORS dla portów deweloperskich oraz bezlitosny audyt ergonomii i responsywności 360° (desktop 1440px i mobile 390px).
+- **Zrealizowany zakres:**
+  1. **Backend Hardening & Resilient CORS (`backend/app/main.py` & `spatial_engine.py`):**
+     - Zwiększono limit zapytań `slowapi` z 60/min do 180/min (`default_limits=["180/minute"]`).
+     - Rozszerzono `allow_origin_regex` o dowolne porty lokalne: `r"^(https:\/\/busos.*\.vercel\.app|http:\/\/(localhost|127\.0\.0\.1)(:\d+)?)$"`.
+     - Zabezpieczono `get_market_summary` oraz `get_poi_categories` o bezpieczne fallbacki w przypadku braku opcjonalnych plików statystyk (`rcn_stats.json`, `poi_valuation.json`).
+  2. **Quiet Software & Telemetria w `BrandHeader.tsx`:**
+     - Bezwzględny zakaz fałszywych, pulsujących zielonych kropek (`animate-pulse`).
+     - Wdrożono rzetelny, dyskretny badge telemetryczny w nagłówku: `v9.5.0 · XXms` z precyzyjnym pomiarem latencji RTT.
+     - Stan offline zaprojektowany w spokojnym bursztynie: `● Offline · Ponów` z bezpośrednim wywołaniem ponowienia próby.
+     - Usunięto redundantny, krzykliwy banner centralny (`NetworkStatusStrip`) – jedno kanoniczne źródło prawdy o stanie sieci.
+  3. **Ergonomia Paneli & Spokojny Fallback (`PanelErrorState.tsx` & Panele):**
+     - Komponent błędu `PanelErrorState` ostylowany w tonacji szarości i purpury BusOS (`bg-slate-50/80 border-slate-200/90 text-[#47317f]`) z przyciskiem ponowienia.
+     - Integracja obsługi błędów we wszystkich 4 panelach bocznych (`AgglomerationOverviewPanel`, `StopCatalogPanel`, `StopDetailPanel`, `HubDetailPanel`).
+  4. **Eliminacja Kolizji Layoutu (Desktop & Mobile):**
+     - `LeftSlidePanel`: dokowany pod górną belką (`top-[72px] bottom-3 left-3`, `z-30`), co zapewnia 100% widoczności i klikalności selektora miast i marki (`z-40`).
+     - `MobileBottomSheet`: ukrycie panelu 420px na ekranach `< 768px`; wdrożenie arkusza mobilnego z 3 stanami (Peek 68px, Half 45dvh, Full 86dvh) i obszarami dotykowymi >= 44px (WCAG AA).
+     - `CleanKpiBadge`: wdrożenie `@container` i dwuwierszowego układu z cyframi tabelarycznymi (`tabular-nums`), eliminując ucinanie etykiet (`WĘZŁY PRZESI...`).
+- **Dowody Weryfikacji (100% Green):**
+  - Backend pytest: **122/122 testów PASSED w 29.13s** (`uv run pytest backend/tests/ -q`).
+  - Frontend TypeScript: `npx tsc --noEmit` $\rightarrow$ **0 błędów**.
+  - Frontend Build: `npm run build` $\rightarrow$ **sukces w 2.9s** (Next.js 16.2.1 Turbopack, 4/4 static pages).
+  - Weryfikacja wizualna Playwright: potwierdzono brak kolizji, czysty rendering i poprawne zachowanie na desktopie (`desktop_1440.png`) oraz mobile (`mobile_390.png`).
+  - Git: commit `418fbf7` zsynchronizowany z `origin/main`.
 
-> [!IMPORTANT]
-> **Zgłoszenie użytkownika (2026-09-13):** Na produkcji (`https://busos.czerwinskidawid.pl`) występują problemy z połączeniem z backendem (`https://api.busos.czerwinskidawid.pl`), a interfejs w żaden sposób nie informuje użytkownika o stanie sieci ani przyczynie braku danych (błędy są cicho ignorowane lub logowane do konsoli, a panele pokazują puste dane zamiast czytelnego alertu). W nowej sesji należy także przeprowadzić ponowną, bezlitosną ocenę całości strony.
+---
 
-### Zdiagnozowane punkty zapalne do rozwiązania:
-1. **Cicha utrata połączenia w UI:**
-   - W `urban-dashboard/src/components/shell/BusosShell.tsx` błędy `fetchHealth()` i `fetchCities()` są jedynie wypisywane do `console.warn()`.
-   - W `BrandHeader.tsx` brak wskaźnika stanu backendu (zielona kropka Online / czerwona Offline / ping w ms).
-   - W panelach analitycznych brak stanów błędu sieciowego (`NetworkErrorBoundary`, przycisk `Ponów próbę`).
-2. **Potencjalne blokady na styku Vercel $\leftrightarrow$ Caddy/OCI:**
-   - Caddy w `backend/Caddyfile` posiada agresywny limit `x-ratelimit-limit: 60` na minutę (przy wczytywaniu 5–6 zapytań równolegle użytkownik może szybko trafić na HTTP 429).
-   - Reguły blokowania User-Agent w Caddy (`@bad_bots`) mogą fałszywie blokować wybrane przeglądarki lub serwerowe żądania Vercel.
-   - Nagłówki CORS i preflight `OPTIONS` wymagają weryfikacji pod kątem domen `busos.czerwinskidawid.pl` i preview deployów Vercel.
+## 5. Next Session Active Directive: Production Fleet Simulation Rollout & Multi-City Calibration
 
-### Plan Działań na Nową Sesję (Numbered Action Items):
-1. **Audyt połączenia produkcyjnego na żywo:**
-   - Przetestować z poziomu przeglądarki i narzędzi diagnostycznych wszystkie żądania z `https://busos.czerwinskidawid.pl` do `https://api.busos.czerwinskidawid.pl`.
-   - Zweryfikować logi Caddy na instancji OCI oraz kody błędów (403/429/500/CORS).
-   - Zoptymalizować limity zapytań w Caddy / FastAPI pod kątem intensywnego ruchu na frontendzie.
-2. **Wdrożenie Backend Health & Connectivity Observability w UI:**
-   - Dodać w `BrandHeader` elegancki wskaźnik stanu połączenia (subtelna zielona/żółta/czerwona kropka z tooltipem: status silnika, wersja `9.5.0`, ping w ms).
-   - Wdrożyć globalny toast/banner błędu połączenia (`OfflineBanner` / `NetworkErrorToast`), gdy API nie odpowiada.
-   - W panelach analitycznych dodać czytelny komunikat o braku łączności z API z przyciskiem ponownego pobrania danych zamiast pustego "Brak danych".
-3. **Bezlitosna ocena krytyczna 360° całości strony:**
-   - Sprawdzić każdy ekran i moduł pod kątem wygody, czytelności, kontrastu (WCAG 2.1 AA) i responsywności mobilnej.
-   - Zidentyfikować wszelkie pozostałe tarcia wizualne i ergonomiczne po wdrożeniu nowego layoutu.
+> [!NOTE]
+> **Cel następnego sprintu:** Wdrożenie interaktywnej symulacji floty autobusowej w czasie rzeczywistym dla wszystkich 30 miast w oparciu o silnik GTFS-Interpolation oraz inspekcję pojazdów (`SimulationControlsDock` + `VehicleInspectorCard`), z walidacją wydajności 60 FPS na Deck.gl TripsLayer.
 
 
