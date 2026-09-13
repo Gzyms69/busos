@@ -20,8 +20,9 @@
 set -euo pipefail
 
 OCI_USER="${OCI_USER:-ubuntu}"
-OCI_HOST="${OCI_HOST:-}"
-SSH_KEY="${SSH_KEY:-}"
+OCI_HOST="${OCI_HOST:-141.147.13.101}"
+DEFAULT_KEY="$HOME/.ssh/oracle_elektrode"
+SSH_KEY="${SSH_KEY:-$([ -f "$DEFAULT_KEY" ] && echo "$DEFAULT_KEY" || echo "")}"
 TARGET_DIR="${TARGET_DIR:-/home/ubuntu/busos/data/cities}"
 SPECIFIC_CITY=""
 INCLUDE_GPS=false
@@ -96,9 +97,9 @@ echo "[1/3] Ensuring remote directory structure exists..."
 ssh ${SSH_KEY:+-i "$SSH_KEY"} -o StrictHostKeyChecking=no "$OCI_USER@$OCI_HOST" "mkdir -p $TARGET_DIR"
 
 # Rsync filter rule: include simulation_trips_math.json (and simulation_trips.json if requested)
-RSYNC_INCLUDES=("--include=*/" "--include=*/*/04_results/" "--include=*/*/04_results/simulation_trips_math.json")
+RSYNC_INCLUDES=("--include=*/" "--include=*/04_results/" "--include=*/04_results/simulation_trips_math.json")
 if [[ "$INCLUDE_GPS" = true ]]; then
-  RSYNC_INCLUDES+=("--include=*/*/04_results/simulation_trips.json")
+  RSYNC_INCLUDES+=("--include=*/04_results/simulation_trips.json")
 fi
 RSYNC_INCLUDES+=("--exclude=*")
 
