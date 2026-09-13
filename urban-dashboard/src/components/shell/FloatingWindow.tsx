@@ -298,7 +298,7 @@ export default function FloatingWindow({
           {/* Quick Preset Width Buttons (Only in docked or resizable mode) */}
           {allowResize && !win.isMaximized && presetWidths?.length > 0 && (
             <div className="hidden lg:flex items-center bg-slate-200/70 p-0.5 rounded-lg mr-1 text-[10px] font-bold text-slate-600">
-              {presetWidths.map((pw) => (
+              {presetWidths.map((pw, idx) => (
                 <button
                   key={pw}
                   type="button"
@@ -310,7 +310,15 @@ export default function FloatingWindow({
                   }`}
                   title={`Ustaw szerokość na ${pw}px`}
                 >
-                  {pw >= 800 ? "L" : pw >= 500 ? "M" : "S"}
+                  {presetWidths.length === 3
+                    ? ["S", "M", "L"][idx]
+                    : presetWidths.length === 2
+                    ? ["S", "L"][idx]
+                    : pw >= 800
+                    ? "L"
+                    : pw >= 500
+                    ? "M"
+                    : "S"}
                 </button>
               ))}
             </div>

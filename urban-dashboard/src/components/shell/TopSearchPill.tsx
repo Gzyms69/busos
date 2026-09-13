@@ -85,7 +85,7 @@ export default function TopSearchPill() {
   };
 
   const handleSelectRoute = (route: RouteItem) => {
-    setActiveRoute(route.route_uid);
+    setActiveRoute(route.route_uid, 0, true);
     setIsOpen(false);
     setQuery("");
   };
