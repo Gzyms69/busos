@@ -31,7 +31,7 @@ export default function RoutesModule() {
           gap: 10,
           marginBottom: 10,
           paddingBottom: 10,
-          borderBottom: "1px solid #2f343c",
+          borderBottom: "1px solid #e2e8f0",
         }}
       >
         <div style={{ minWidth: 0, flex: "1 1 auto" }}>
@@ -41,7 +41,7 @@ export default function RoutesModule() {
                 margin: 0,
                 fontSize: 15,
                 fontWeight: 800,
-                color: "#f6f7f9",
+                color: "#0f172a",
                 letterSpacing: "0.03em",
               }}
             >
@@ -73,7 +73,7 @@ export default function RoutesModule() {
               </div>
             )}
           </div>
-          <div style={{ fontSize: 11, color: "#8f99a8", marginTop: 2 }}>
+          <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>
             Katalog linii, dynamiczny przebieg tras oraz prędkości handlowe.
           </div>
         </div>

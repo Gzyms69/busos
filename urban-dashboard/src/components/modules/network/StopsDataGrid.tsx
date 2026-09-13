@@ -25,6 +25,8 @@ export default function StopsDataGrid() {
     selectedId,
     selectObject,
     setViewState,
+    setHoveredObject,
+    hoveredId,
   } = useFoundryStore();
 
   const [items, setItems] = useState<StopRankingItem[]>([]);
@@ -76,6 +78,13 @@ export default function StopsDataGrid() {
     loadData();
   }, [loadData]);
 
+  // Hover styling helper
+  const getCellStyle = (row: number) => {
+    return hoveredId && String(items[row]?.stop_id) === String(hoveredId)
+      ? { backgroundColor: "rgba(224, 242, 254, 0.75)" }
+      : undefined;
+  };
+
   // Sorting helper
   const handleSort = (colName: string) => {
     setStopsOrdering(colName);
@@ -90,7 +99,7 @@ export default function StopsDataGrid() {
         nameRenderer={() => (
           <span
             onClick={() => handleSort(colName)}
-            style={{ cursor: "pointer", display: "inline-block", width: "100%" }}
+            className="cursor-pointer inline-block w-full font-bold text-slate-800 text-[11px] select-none"
           >
             {displayName}
           </span>
@@ -108,7 +117,7 @@ export default function StopsDataGrid() {
       setViewState({
         longitude: item.lon,
         latitude: item.lat,
-        zoom: 15,
+        zoom: 15.5,
         pitch: 45,
       });
     }
@@ -181,23 +190,13 @@ export default function StopsDataGrid() {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }}>
+    <div className="flex flex-col h-full overflow-hidden text-slate-900">
       {/* Action and Filter Toolbar */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: 8,
-          padding: "10px 0",
-          borderBottom: "1px solid #2f343c",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+      <div className="flex items-center justify-between flex-wrap gap-2.5 py-2.5 border-b border-slate-200">
+        <div className="flex items-center gap-2.5 flex-wrap">
           {/* Grade Filter */}
-          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-            <span style={{ fontSize: 11, color: "#8f99a8" }}>Klasa:</span>
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs font-semibold text-slate-600">Klasa:</span>
             <ButtonGroup size="small">
               {["", "A+", "A", "B", "C", "D", "F"].map((g) => (
                 <Button
@@ -219,22 +218,22 @@ export default function StopsDataGrid() {
             checked={stopsAnchorOnly}
             label="Tylko główne słupki węzła"
             onChange={(e) => setStopsFilter({ anchorOnly: (e.target as HTMLInputElement).checked })}
-            style={{ margin: 0, fontSize: 11 }}
+            className="text-xs text-slate-700 m-0"
           />
 
           {/* Search Filter */}
           <InputGroup
             small
             leftIcon="filter"
-            placeholder="Szukaj przystanku lub linii..."
+            placeholder="Szukaj przystanku..."
             value={stopsSearch}
             onChange={(e) => setStopsFilter({ search: e.target.value })}
-            style={{ width: 160, fontSize: 11 }}
+            style={{ width: 170, fontSize: 11 }}
           />
         </div>
 
         {/* Jump & Export Actions */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div className="flex items-center gap-2">
           <JumpToRankInput
             maxRank={total || 60000}
             onJump={(r) => {
@@ -257,34 +256,27 @@ export default function StopsDataGrid() {
       />
 
       {/* Table Status Bar */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "4px 0 6px 0",
-          fontSize: 11,
-          color: "#8f99a8",
-        }}
-      >
+      <div className="flex justify-between items-center py-1.5 px-0.5 text-xs text-slate-500">
         <div>
-          Pokazywane: <strong>{items.length}</strong> z <strong>{total}</strong> przystanków
+          Pokazywane: <strong className="text-slate-800 font-semibold">{items.length}</strong> z{" "}
+          <strong className="text-slate-800 font-semibold">{total.toLocaleString("pl-PL")}</strong> przystanków
         </div>
         {loading && (
-          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          <div className="flex items-center gap-1.5 text-slate-500">
             <Spinner size={12} />
             <span>Pobieranie danych...</span>
           </div>
         )}
       </div>
 
-      {/* Virtualized Table2 Container */}
-      <div style={{ flex: 1, minHeight: 350, overflow: "hidden", position: "relative" }}>
+      {/* Virtualized Table2 Container with Responsive Column Widths */}
+      <div className="flex-1 min-h-[350px] overflow-hidden relative border border-slate-200 rounded-xl shadow-xs">
         <Table2
           numRows={items.length}
           enableRowReordering={false}
           enableColumnReordering={false}
-          defaultRowHeight={28}
+          defaultRowHeight={30}
+          columnWidths={[65, 230, 75, 125, 100, 110, 160, 90, 110, 120, 90]}
           selectedRegions={
             selectedIndex >= 0
               ? [{ rows: [selectedIndex, selectedIndex] }]
@@ -299,8 +291,14 @@ export default function StopsDataGrid() {
             name="#Rank"
             columnHeaderCellRenderer={() => renderSortHeader("rank", "#Rank")}
             cellRenderer={(row) => (
-              <Cell>
-                <span style={{ fontWeight: 700, color: "#2b95d6" }}>#{items[row]?.rank}</span>
+              <Cell style={getCellStyle(row)}>
+                <div
+                  onMouseEnter={() => setHoveredObject("stop", items[row]?.stop_id)}
+                  onMouseLeave={() => setHoveredObject(null, null)}
+                  className="w-full h-full flex items-center"
+                >
+                  <span className="font-mono font-bold text-sky-700 text-xs">#{items[row]?.rank}</span>
+                </div>
               </Cell>
             )}
           />
@@ -308,10 +306,22 @@ export default function StopsDataGrid() {
             name="Słupek Fizyczny"
             columnHeaderCellRenderer={() => renderSortHeader("stop_name", "Słupek Fizyczny")}
             cellRenderer={(row) => (
-              <Cell>
-                <TruncatedFormat>
-                  {`${items[row]?.stop_name || "—"} (${items[row]?.stop_id})`}
-                </TruncatedFormat>
+              <Cell style={getCellStyle(row)}>
+                <div
+                  onMouseEnter={() => setHoveredObject("stop", items[row]?.stop_id)}
+                  onMouseLeave={() => setHoveredObject(null, null)}
+                  className="flex items-center justify-between gap-1.5 w-full h-full"
+                  title={items[row]?.stop_name}
+                >
+                  <span className="font-bold text-slate-900 text-xs truncate">
+                    {items[row]?.stop_name || "—"}
+                  </span>
+                  {items[row]?.is_hub_anchor ? (
+                    <span className="shrink-0 px-1 py-0.2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded text-[9px] font-black uppercase tracking-wider">
+                      WĘZEŁ
+                    </span>
+                  ) : null}
+                </div>
               </Cell>
             )}
           />
@@ -319,37 +329,87 @@ export default function StopsDataGrid() {
             name="Ocena"
             columnHeaderCellRenderer={() => renderSortHeader("stop_grade", "Ocena")}
             cellRenderer={(row) => (
-              <Cell>
-                <GradeBadge grade={items[row]?.stop_grade} size="small" />
+              <Cell style={getCellStyle(row)}>
+                <div
+                  onMouseEnter={() => setHoveredObject("stop", items[row]?.stop_id)}
+                  onMouseLeave={() => setHoveredObject(null, null)}
+                  className="w-full h-full flex items-center"
+                >
+                  <GradeBadge grade={items[row]?.stop_grade} size="small" />
+                </div>
               </Cell>
             )}
           />
           <Column
             name="Percentyl"
             columnHeaderCellRenderer={() => renderSortHeader("stop_percentile", "Percentyl")}
-            cellRenderer={(row) => (
-              <Cell>
-                {`${formatNumber(items[row]?.stop_percentile, 1)}%`}
-              </Cell>
-            )}
+            cellRenderer={(row) => {
+              const pct = items[row]?.stop_percentile ?? 0;
+              const barColor =
+                pct >= 70 ? "bg-emerald-500" : pct >= 40 ? "bg-sky-500" : pct >= 15 ? "bg-amber-500" : "bg-rose-500";
+              return (
+                <Cell style={getCellStyle(row)}>
+                  <div
+                    onMouseEnter={() => setHoveredObject("stop", items[row]?.stop_id)}
+                    onMouseLeave={() => setHoveredObject(null, null)}
+                    className="flex items-center gap-2 w-full h-full"
+                  >
+                    <div className="flex-1 bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                      <div
+                        className={`h-full rounded-full ${barColor}`}
+                        style={{ width: `${Math.max(4, Math.min(100, pct))}%` }}
+                      />
+                    </div>
+                    <span className="font-mono text-[11px] font-semibold text-slate-700 shrink-0 w-11 text-right">
+                      {formatNumber(pct, 1)}%
+                    </span>
+                  </div>
+                </Cell>
+              );
+            }}
           />
           <Column
             name="Z-Score"
             columnHeaderCellRenderer={() => renderSortHeader("stop_local_score_raw", "Z-Score")}
-            cellRenderer={(row) => (
-              <Cell>
-                <span style={{ color: items[row]?.stop_local_score_raw >= 0 ? "#0f9960" : "#db3737" }}>
-                  {formatNumber(items[row]?.stop_local_score_raw, 2)}
-                </span>
-              </Cell>
-            )}
+            cellRenderer={(row) => {
+              const val = items[row]?.stop_local_score_raw ?? 0;
+              const isGood = val >= 0;
+              return (
+                <Cell style={getCellStyle(row)}>
+                  <div
+                    onMouseEnter={() => setHoveredObject("stop", items[row]?.stop_id)}
+                    onMouseLeave={() => setHoveredObject(null, null)}
+                    className="w-full h-full flex items-center"
+                  >
+                    <span
+                      title={`Odchylenie standardowe od średniej aglomeracji: ${val >= 0 ? "+" : ""}${formatNumber(val, 2)}σ`}
+                      className={`font-mono text-xs font-semibold px-1.5 py-0.5 rounded ${
+                        isGood ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"
+                      }`}
+                    >
+                      {isGood ? "+" : ""}
+                      {formatNumber(val, 2)}σ
+                    </span>
+                  </div>
+                </Cell>
+              );
+            }}
           />
           <Column
             name="Odjazdy/h"
             columnHeaderCellRenderer={() => renderSortHeader("stop_departures_h", "Odjazdy/h")}
             cellRenderer={(row) => (
-              <Cell>
-                <strong>{formatNumber(items[row]?.stop_departures_h, 1)}</strong>
+              <Cell style={getCellStyle(row)}>
+                <div
+                  onMouseEnter={() => setHoveredObject("stop", items[row]?.stop_id)}
+                  onMouseLeave={() => setHoveredObject(null, null)}
+                  className="flex items-center gap-1 w-full h-full"
+                >
+                  <span className="font-mono font-bold text-slate-900 text-xs">
+                    {formatNumber(items[row]?.stop_departures_h, 1)}
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-medium">odj./h</span>
+                </div>
               </Cell>
             )}
           />
@@ -357,10 +417,16 @@ export default function StopsDataGrid() {
             name="Linie GTFS"
             columnHeaderCellRenderer={() => renderSortHeader("stop_routes_count", "Linie GTFS")}
             cellRenderer={(row) => (
-              <Cell>
-                <TruncatedFormat>
-                  {`(${items[row]?.stop_routes_count || 0}) ${items[row]?.stop_routes || "—"}`}
-                </TruncatedFormat>
+              <Cell style={getCellStyle(row)}>
+                <div
+                  onMouseEnter={() => setHoveredObject("stop", items[row]?.stop_id)}
+                  onMouseLeave={() => setHoveredObject(null, null)}
+                  className="w-full h-full flex items-center"
+                >
+                  <TruncatedFormat>
+                    {`(${items[row]?.stop_routes_count || 0}) ${items[row]?.stop_routes || "—"}`}
+                  </TruncatedFormat>
+                </div>
               </Cell>
             )}
           />
@@ -368,8 +434,16 @@ export default function StopsDataGrid() {
             name="Infra Score"
             columnHeaderCellRenderer={() => renderSortHeader("stop_infra_score", "Infra Score")}
             cellRenderer={(row) => (
-              <Cell>
-                {formatNumber(items[row]?.stop_infra_score, 1)}
+              <Cell style={getCellStyle(row)}>
+                <div
+                  onMouseEnter={() => setHoveredObject("stop", items[row]?.stop_id)}
+                  onMouseLeave={() => setHoveredObject(null, null)}
+                  className="w-full h-full flex items-center"
+                >
+                  <span className="font-mono text-xs text-slate-700">
+                    {formatNumber(items[row]?.stop_infra_score, 1)}
+                  </span>
+                </div>
               </Cell>
             )}
           />
@@ -377,8 +451,16 @@ export default function StopsDataGrid() {
             name="Pop GUS (500m)"
             columnHeaderCellRenderer={() => renderSortHeader("stop_pop_val", "Pop GUS (500m)")}
             cellRenderer={(row) => (
-              <Cell>
-                {formatNumber(items[row]?.stop_pop_val, 0)}
+              <Cell style={getCellStyle(row)}>
+                <div
+                  onMouseEnter={() => setHoveredObject("stop", items[row]?.stop_id)}
+                  onMouseLeave={() => setHoveredObject(null, null)}
+                  className="w-full h-full flex items-center"
+                >
+                  <span className="font-mono text-xs text-slate-700">
+                    {formatNumber(items[row]?.stop_pop_val, 0)} os.
+                  </span>
+                </div>
               </Cell>
             )}
           />
@@ -386,8 +468,16 @@ export default function StopsDataGrid() {
             name="Rynek RCN"
             columnHeaderCellRenderer={() => renderSortHeader("stop_market_val", "Rynek RCN")}
             cellRenderer={(row) => (
-              <Cell>
-                {formatPLN(items[row]?.stop_market_val, true)}
+              <Cell style={getCellStyle(row)}>
+                <div
+                  onMouseEnter={() => setHoveredObject("stop", items[row]?.stop_id)}
+                  onMouseLeave={() => setHoveredObject(null, null)}
+                  className="w-full h-full flex items-center"
+                >
+                  <span className="font-mono text-xs text-slate-700">
+                    {formatPLN(items[row]?.stop_market_val, true)}
+                  </span>
+                </div>
               </Cell>
             )}
           />
@@ -395,14 +485,20 @@ export default function StopsDataGrid() {
             name="Anchor Huba"
             columnHeaderCellRenderer={() => renderSortHeader("is_hub_anchor", "Anchor Huba")}
             cellRenderer={(row) => (
-              <Cell>
-                {items[row]?.is_hub_anchor ? (
-                  <Tag minimal intent="success" style={{ fontSize: 9 }}>
-                    ANCHOR
-                  </Tag>
-                ) : (
-                  <span style={{ color: "#8f99a8" }}>—</span>
-                )}
+              <Cell style={getCellStyle(row)}>
+                <div
+                  onMouseEnter={() => setHoveredObject("stop", items[row]?.stop_id)}
+                  onMouseLeave={() => setHoveredObject(null, null)}
+                  className="w-full h-full flex items-center"
+                >
+                  {items[row]?.is_hub_anchor ? (
+                    <Tag minimal intent="success" style={{ fontSize: 9, fontWeight: 700 }}>
+                      ANCHOR
+                    </Tag>
+                  ) : (
+                    <span className="text-slate-300">—</span>
+                  )}
+                </div>
               </Cell>
             )}
           />

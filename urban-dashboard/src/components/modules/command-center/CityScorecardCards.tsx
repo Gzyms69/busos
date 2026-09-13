@@ -16,15 +16,15 @@ export default function CityScorecardCards({ data, loading }: CityScorecardCards
   // Formatters
   const consolidation = summary?.consolidation_ratio != null
     ? `${summary.consolidation_ratio.toFixed(2)}x`
-    : loading ? "..." : "1.66x";
+    : loading ? "..." : "—";
 
   const stopsText = summary?.stops_count != null
-    ? `${summary.stops_count} słupków / ${summary.hubs_count} hubów`
+    ? `${summary.stops_count} słupków / ${summary.hubs_count || 0} hubów`
     : "Słupki / Węzły przesiadkowe";
 
   const population = summary?.population_total != null
     ? `${Math.round(summary.population_total).toLocaleString("pl-PL")}`
-    : loading ? "..." : "198 000";
+    : loading ? "..." : "—";
 
   const popSubtitle = summary?.population_delta_pct != null
     ? `Strefa metropolitalna (${summary.population_delta_pct > 0 ? "+" : ""}${summary.population_delta_pct.toFixed(1)}%)`
@@ -32,7 +32,7 @@ export default function CityScorecardCards({ data, loading }: CityScorecardCards
 
   const rcnTx = summary?.rcn_transactions_count != null
     ? `${summary.rcn_transactions_count.toLocaleString("pl-PL")}`
-    : loading ? "..." : "12 450";
+    : loading ? "..." : "—";
 
   const rcnSubtitle = "Akty notarialne w bazie 2020-2026";
 

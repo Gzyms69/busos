@@ -47,11 +47,11 @@ export default function RootLayout({
   return (
     <html
       lang="pl"
-      className={`bp6-dark h-dvh ${fontHeading.variable} ${fontBody.variable} ${fontMono.variable}`}
+      className={`h-dvh ${fontHeading.variable} ${fontBody.variable} ${fontMono.variable}`}
       suppressHydrationWarning
     >
       <body
-        className="bp6-dark h-dvh w-full overflow-hidden bg-[oklch(0.10_0.005_260)] text-[#f8fafc] font-sans antialiased"
+        className="h-dvh w-full overflow-hidden bg-slate-950 text-slate-900 font-sans antialiased"
         suppressHydrationWarning
       >
         {children}

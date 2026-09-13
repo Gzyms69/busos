@@ -52,54 +52,24 @@ export default function OptimizationModule() {
       }}
     >
       {/* Module Header */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: 12,
-          marginBottom: 10,
-          paddingBottom: 8,
-          borderBottom: "1px solid #2f343c",
-        }}
-      >
+      <div className="flex items-start justify-between flex-wrap gap-3 mb-2.5 pb-2 border-b border-slate-200">
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-            <h2
-              style={{
-                margin: 0,
-                fontSize: 16,
-                fontWeight: 800,
-                color: "#f6f7f9",
-                letterSpacing: "0.03em",
-              }}
-            >
+          <div className="flex items-center gap-2 flex-wrap">
+            <h2 className="text-base font-extrabold text-slate-900 tracking-tight m-0">
               PAKIET DECYZYJNY ZTM: {selectedCity.toUpperCase()}
             </h2>
             <Tag minimal intent="danger" style={{ fontSize: 9, fontWeight: 700 }}>
               OPTYMALIZACJA SIECI
             </Tag>
           </div>
-          <div style={{ fontSize: 11, color: "#8f99a8", marginTop: 2 }}>
+          <div className="text-xs text-slate-500 mt-0.5">
             Siedem dedykowanych narzędzi planistycznych: likwidacja dubli, kalkulacja wzkm, ROI buspasów i potoki APC.
           </div>
         </div>
       </div>
 
       {/* Horizontally Scrollable Tool Sub-Navigation Dock */}
-      <div
-        style={{
-          display: "flex",
-          gap: 6,
-          overflowX: "auto",
-          paddingBottom: 6,
-          marginBottom: 10,
-          borderBottom: "1px solid #27272a",
-          minHeight: 38,
-        }}
-        className="no-scrollbar"
-      >
+      <div className="flex gap-1.5 overflow-x-auto pb-1.5 mb-2.5 border-b border-slate-200 min-h-[38px] no-scrollbar">
         {OPTIMIZATION_TOOLS.map((t, idx) => {
           const isActive = activeTab === t.id;
           return (
@@ -107,36 +77,21 @@ export default function OptimizationModule() {
               key={t.id}
               type="button"
               onClick={() => setActiveTab(t.id)}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 6,
-                padding: "5px 10px",
-                borderRadius: 6,
-                background: isActive ? "rgba(56, 189, 248, 0.15)" : "rgba(24, 28, 35, 0.6)",
-                border: `1px solid ${isActive ? "#38bdf8" : "#2f343c"}`,
-                color: isActive ? "#38bdf8" : "#9ca3af",
-                fontSize: 11,
-                fontWeight: isActive ? 700 : 500,
-                cursor: "pointer",
-                whiteSpace: "nowrap",
-                transition: "all 0.15s ease",
-              }}
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                isActive
+                  ? "bg-sky-50 text-sky-800 border border-sky-300 shadow-xs font-bold"
+                  : "bg-slate-100/80 hover:bg-slate-200/70 text-slate-700 border border-slate-200"
+              }`}
             >
-              <span className="tabular-nums font-mono text-xs" style={{ opacity: 0.7 }}>
+              <span className="tabular-nums font-mono text-[10px] text-slate-400">
                 {idx + 1}.
               </span>
               <span>{t.label}</span>
               {t.badge && (
                 <span
-                  style={{
-                    fontSize: 9,
-                    padding: "1px 4px",
-                    borderRadius: 3,
-                    background: isActive ? "rgba(56, 189, 248, 0.25)" : "rgba(107, 114, 128, 0.2)",
-                    color: isActive ? "#e0f2fe" : "#9ca3af",
-                    fontWeight: 700,
-                  }}
+                  className={`text-[9px] px-1 py-0.2 rounded font-bold uppercase tracking-wider ${
+                    isActive ? "bg-sky-200/70 text-sky-900" : "bg-slate-200 text-slate-600"
+                  }`}
                 >
                   {t.badge}
                 </span>

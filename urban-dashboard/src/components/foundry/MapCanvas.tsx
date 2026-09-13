@@ -130,6 +130,9 @@ export default function MapCanvas() {
     selectVehicle,
     isFollowingVehicle,
     lineFilter,
+    hoveredId,
+    hoveredType,
+    setHoveredObject,
   } = useFoundryStore();
 
   const [boundary, setBoundary] = useState<any>(null);
@@ -398,11 +401,13 @@ export default function MapCanvas() {
           id: "city-boundary",
           data: boundary,
           stroked: true,
-          filled: false,
-          getLineColor: [43, 149, 214, isRouteActive ? 60 : 180],
-          getLineWidth: isRouteActive ? 1.5 : 2.5,
+          filled: true,
+          getFillColor: [99, 102, 241, 8],
+          getLineColor: [99, 102, 241, isRouteActive ? 60 : 160],
+          getLineWidth: isRouteActive ? 1.5 : 2.0,
           lineWidthUnits: "pixels",
           lineJointRounded: true,
+          lineCapRounded: true,
           pickable: false,
         })
       );
@@ -461,33 +466,58 @@ export default function MapCanvas() {
       );
     }
 
-    // Layer 3: Physical Stops (With Context Isolation: alien stops fade to 8% opacity)
+    // Layer 3: Physical Stops with Semantic Level of Detail (LOD)
     if (showStops && stops?.features) {
       const currentZoom = viewState.zoom ?? 12;
-      const minZoomThreshold = isMobile ? 12.2 : 11.5;
-      // At far regional zoom, hide micro stops unless a specific route is selected to keep map clean and legible
-      if (currentZoom >= minZoomThreshold || isRouteActive) {
+      // Semantic LOD:
+      // - Regional zoom (< 12.0): micro stops hidden (only macro hubs show) unless a route is actively focused
+      // - District zoom (12.0 - 13.5): show key corridor stops (>= 3 departures/h), hubs, or hovered/selected stop
+      // - Local street zoom (>= 13.5): full physical stops network
+      const isRegionalZoom = currentZoom < 12.0 && !isRouteActive;
+
+      if (!isRegionalZoom) {
+        const visibleFeatures = isRouteActive
+          ? stops.features
+          : currentZoom < 13.5
+          ? stops.features.filter((f: any) => {
+              const dep = Number(f.properties?.stop_departures_h || 0);
+              const isHub = Boolean(f.properties?.is_hub_anchor || f.properties?.is_hub);
+              const isTarget =
+                (hoveredId && String(f.properties?.stop_id) === String(hoveredId)) ||
+                (selectedId && String(f.properties?.stop_id) === String(selectedId));
+              return dep >= 3.0 || isHub || isTarget;
+            })
+          : stops.features;
+
         list.push(
           new ScatterplotLayer({
             id: "stops-micro",
-            data: stops.features,
+            data: visibleFeatures,
             getPosition: (f: any) => f.geometry.coordinates,
             getRadius: (f: any) => {
               let baseRadius = 5;
-              if (currentZoom < 13) baseRadius = 2.5;
-              else if (currentZoom < 14.5) baseRadius = 4;
+              if (currentZoom < 13) baseRadius = 3;
+              else if (currentZoom < 14.5) baseRadius = 4.5;
               else baseRadius = 6;
 
-              if (!isRouteActive || !activeRouteStopIds) return baseRadius;
               const stopId = String(f.properties?.stop_id);
+              const isHovered = hoveredId && stopId === String(hoveredId);
+              if (isHovered) return baseRadius * 1.6;
+
+              if (!isRouteActive || !activeRouteStopIds) return baseRadius;
               return activeRouteStopIds.has(stopId) ? baseRadius * 1.4 : baseRadius * 0.5;
             },
             radiusUnits: "pixels",
-            radiusMinPixels: isRouteActive ? 2 : 1.5,
-            radiusMaxPixels: isMobile ? 10 : 14,
+            radiusMinPixels: isRouteActive ? 2 : 2,
+            radiusMaxPixels: isMobile ? 12 : 16,
             getFillColor: (f: any) => {
+              const stopId = String(f.properties?.stop_id);
+              const isHovered = hoveredId && stopId === String(hoveredId);
+              if (isHovered) {
+                return [2, 132, 199, 255]; // Vivid sky blue when hovered
+              }
+
               if (isRouteActive && activeRouteStopIds) {
-                const stopId = String(f.properties?.stop_id);
                 if (!activeRouteStopIds.has(stopId)) {
                   // Alien stop: deeply muted
                   return [100, 100, 100, 15];
@@ -497,13 +527,16 @@ export default function MapCanvas() {
               }
               const rgb = getGradeRgb(f.properties?.stop_grade || f.properties?.grade);
               if (currentZoom < 13) {
-                return [rgb[0], rgb[1], rgb[2], 160];
+                return [rgb[0], rgb[1], rgb[2], 180];
               }
               return rgb;
             },
             getLineColor: (f: any) => {
+              const stopId = String(f.properties?.stop_id);
+              const isHovered = hoveredId && stopId === String(hoveredId);
+              if (isHovered) return [255, 255, 255, 255];
+
               if (isRouteActive && activeRouteStopIds) {
-                const stopId = String(f.properties?.stop_id);
                 return activeRouteStopIds.has(stopId)
                   ? [255, 255, 255, 240]
                   : [0, 0, 0, 0];
@@ -512,8 +545,10 @@ export default function MapCanvas() {
             },
             lineWidthUnits: "pixels",
             getLineWidth: (f: any) => {
+              const stopId = String(f.properties?.stop_id);
+              if (hoveredId && stopId === String(hoveredId)) return 2.5;
+
               if (isRouteActive && activeRouteStopIds) {
-                const stopId = String(f.properties?.stop_id);
                 return activeRouteStopIds.has(stopId) ? 2 : 0;
               }
               return 1;
@@ -521,7 +556,15 @@ export default function MapCanvas() {
             stroked: true,
             filled: true,
             pickable: true,
-            onHover: (info: PickingInfo) => setHoverInfo(info),
+            onHover: (info: PickingInfo) => {
+              setHoverInfo(info);
+              if (info?.object) {
+                const p = (info.object as any).properties;
+                setHoveredObject("stop", p?.stop_id);
+              } else {
+                setHoveredObject(null, null);
+              }
+            },
             onClick: (info: PickingInfo) => {
               if (info?.object) {
                 const p = (info.object as any).properties;
@@ -543,30 +586,49 @@ export default function MapCanvas() {
           getPosition: (f: any) => f.geometry.coordinates,
           getRadius: (f: any) => {
             const count = f.properties?.hub_stops_count || 1;
+            const isHovered = hoveredId && String(f.properties?.hub_id) === String(hoveredId);
+            if (isHovered) return currentZoom < 12.0 ? 9 : 18;
             if (currentZoom < 12.0) {
-              return 4.5;
+              return 5.5;
             }
             if (currentZoom < 13.5) {
-              return Math.min(10, 5 + count * 0.8);
+              return Math.min(12, 6 + count * 0.9);
             }
-            return Math.min(18, 7 + count * 1.5);
+            return Math.min(20, 8 + count * 1.5);
           },
           radiusUnits: "pixels",
-          radiusMinPixels: currentZoom < 12.0 ? 3 : 4,
-          radiusMaxPixels: isMobile ? 14 : 20,
+          radiusMinPixels: currentZoom < 12.0 ? 4 : 5,
+          radiusMaxPixels: isMobile ? 16 : 24,
           getFillColor: (f: any) => {
             const rgb = getGradeRgb(
               f.properties?.hub_grade || f.properties?.grade
             );
+            const isHovered = hoveredId && String(f.properties?.hub_id) === String(hoveredId);
+            if (isHovered) return [71, 49, 127, 255];
             return isRouteActive ? [rgb[0], rgb[1], rgb[2], 90] : rgb;
           },
-          getLineColor: [255, 255, 255, isRouteActive ? 120 : 200],
+          getLineColor: (f: any) => {
+            const isHovered = hoveredId && String(f.properties?.hub_id) === String(hoveredId);
+            if (isHovered) return [255, 255, 255, 255];
+            return [255, 255, 255, isRouteActive ? 120 : 200];
+          },
           lineWidthUnits: "pixels",
-          getLineWidth: 1.5,
+          getLineWidth: (f: any) => {
+            const isHovered = hoveredId && String(f.properties?.hub_id) === String(hoveredId);
+            return isHovered ? 3 : 1.5;
+          },
           stroked: true,
           filled: true,
           pickable: true,
-          onHover: (info: PickingInfo) => setHoverInfo(info),
+          onHover: (info: PickingInfo) => {
+            setHoverInfo(info);
+            if (info?.object) {
+              const p = (info.object as any).properties;
+              setHoveredObject("hub", p?.hub_id);
+            } else {
+              setHoveredObject(null, null);
+            }
+          },
           onClick: (info: PickingInfo) => {
             if (info?.object) {
               const p = (info.object as any).properties;
@@ -621,6 +683,50 @@ export default function MapCanvas() {
       }
     }
 
+    // Layer 4c: Hovered Object Aura (cross-highlighting)
+    if (hoveredId && hoveredId !== selectedId && (hoveredType === "hub" || hoveredType === "stop")) {
+      let haloCoord: [number, number] | null = null;
+      let haloRadius = 18;
+
+      if (hoveredType === "hub" && hubs?.features) {
+        const h = hubs.features.find(
+          (f: any) => String(f.properties?.hub_id) === String(hoveredId)
+        );
+        if (h?.geometry?.coordinates) {
+          haloCoord = h.geometry.coordinates;
+          const stopsCount = h.properties?.hub_stops_count || 1;
+          haloRadius = Math.min(30, 16 + stopsCount * 2);
+        }
+      } else if (hoveredType === "stop" && stops?.features) {
+        const s = stops.features.find(
+          (f: any) => String(f.properties?.stop_id) === String(hoveredId)
+        );
+        if (s?.geometry?.coordinates) {
+          haloCoord = s.geometry.coordinates;
+          haloRadius = 16;
+        }
+      }
+
+      if (haloCoord) {
+        list.push(
+          new ScatterplotLayer({
+            id: "hovered-object-halo",
+            data: [{ position: haloCoord }],
+            getPosition: (d: any) => d.position,
+            getRadius: haloRadius,
+            radiusUnits: "pixels",
+            stroked: true,
+            filled: true,
+            getFillColor: [2, 132, 199, 45], // Soft cyan/sky blue aura
+            getLineColor: [2, 132, 199, 220], // Bright sky ring
+            lineWidthUnits: "pixels",
+            getLineWidth: 2.5,
+            pickable: false,
+          })
+        );
+      }
+    }
+
     // Layer 5: Active Route (Buffer Glow + Path with Velocity Gradient)
     if (showRoutes && routeGeo?.features) {
       // 5a. Catchment buffer glow (only when a specific route is active to prevent optical blur)
@@ -653,12 +759,20 @@ export default function MapCanvas() {
           id: "route-path",
           data: routeGeo.features,
           getPath: (f: any) => f.geometry.coordinates,
-          getColor: (f: any) =>
-            getSpeedColor(
+          getColor: (f: any) => {
+            const rgb = getSpeedColor(
               f.properties?.commercial_speed_kmh,
               f.properties?.route_color
-            ),
-          getWidth: isRouteActive ? 4.5 : currentZoom < 12.0 ? 1.75 : 2.5,
+            );
+            if (!isRouteActive && currentZoom < 12.0) {
+              return [rgb[0], rgb[1], rgb[2], 75]; // delicate transit skeleton at regional zoom
+            }
+            if (!isRouteActive && currentZoom < 13.5) {
+              return [rgb[0], rgb[1], rgb[2], 130];
+            }
+            return isRouteActive ? [rgb[0], rgb[1], rgb[2], 255] : [rgb[0], rgb[1], rgb[2], 180];
+          },
+          getWidth: isRouteActive ? 4.5 : currentZoom < 12.0 ? 1.25 : 2.2,
           widthUnits: "pixels",
           capRounded: true,
           jointRounded: true,
@@ -871,24 +985,25 @@ export default function MapCanvas() {
         />
       </DeckGL>
 
-      {/* Dynamic Hover Tooltip */}
+      {/* Dynamic Hover Tooltip - Tactical Glass Card */}
       {hoverInfo?.object && (
         <div
           style={{
             position: "absolute",
             zIndex: 40,
             pointerEvents: "none",
-            left: hoverInfo.x + 12,
-            top: hoverInfo.y + 12,
+            left: hoverInfo.x + 14,
+            top: hoverInfo.y + 14,
             background: "rgba(255, 255, 255, 0.96)",
-            backdropFilter: "blur(12px)",
-            border: "1px solid #e2e8f0",
-            borderRadius: 12,
-            padding: "8px 12px",
+            backdropFilter: "blur(16px)",
+            border: "1px solid rgba(226, 232, 240, 0.9)",
+            borderRadius: 14,
+            padding: "10px 14px",
             fontSize: 11,
             color: "#0f172a",
-            boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
-            maxWidth: 280,
+            boxShadow:
+              "0 20px 25px -5px rgba(15, 23, 42, 0.15), 0 8px 10px -6px rgba(15, 23, 42, 0.08)",
+            maxWidth: 320,
           }}
         >
           {/* Hexagon Tooltip */}
@@ -961,67 +1076,203 @@ export default function MapCanvas() {
             </div>
           )}
 
-          {/* Stop Tooltip */}
+          {/* Stop Tooltip - Tactical Glass Card */}
           {(hoverInfo.object as any)?.properties &&
-            "stop_id" in (hoverInfo.object as any).properties && (
-              <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                <div style={{ fontWeight: 800, color: "#0f172a", fontSize: 12 }}>
-                  {(hoverInfo.object as any).properties.stop_name}
-                </div>
-                <div
-                  style={{
-                    fontSize: 11,
-                    color: "#64748b",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 6,
-                  }}
-                >
-                  <span>
-                    Klasa:{" "}
-                    <strong style={{ color: "#47317f" }}>
-                      {(hoverInfo.object as any).properties.stop_grade ||
-                        (hoverInfo.object as any).properties.grade}
-                    </strong>
-                  </span>
-                  <span>•</span>
-                  <span>
-                    <strong style={{ color: "#0f172a" }}>
-                      {Number(
-                        (hoverInfo.object as any).properties.stop_departures_h || 0
-                      ).toFixed(1)}
-                    </strong>{" "}
-                    odjazdów/h
-                  </span>
-                </div>
-              </div>
-            )}
+            "stop_id" in (hoverInfo.object as any).properties && (() => {
+              const p = (hoverInfo.object as any).properties;
+              const grade = String(p.stop_grade || p.grade || "B").toUpperCase();
+              const gradeColor =
+                grade.startsWith("A")
+                  ? "bg-emerald-600 text-white"
+                  : grade.startsWith("B")
+                  ? "bg-sky-600 text-white"
+                  : grade.startsWith("C")
+                  ? "bg-amber-600 text-white"
+                  : "bg-rose-600 text-white";
 
-          {/* Hub Tooltip */}
+              return (
+                <div style={{ display: "flex", flexDirection: "column", gap: 6, minWidth: 220 }}>
+                  <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
+                    <div>
+                      <div style={{ fontWeight: 800, color: "#0f172a", fontSize: 13, lineHeight: 1.2 }}>
+                        {p.stop_name}
+                      </div>
+                      <div style={{ fontSize: 10, color: "#64748b", marginTop: 2 }}>
+                        {p.is_hub_anchor ? "Stanowisko węzłowe" : "Słupek fizyczny"}
+                        {p.platform_code ? ` • Peron ${p.platform_code}` : ""}
+                      </div>
+                    </div>
+                    <span
+                      style={{
+                        padding: "2px 7px",
+                        borderRadius: 6,
+                        fontSize: 10,
+                        fontWeight: 900,
+                        letterSpacing: "0.05em",
+                      }}
+                      className={gradeColor}
+                    >
+                      {grade}
+                    </span>
+                  </div>
+
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "1fr 1fr",
+                      gap: "4px 8px",
+                      paddingTop: 6,
+                      borderTop: "1px solid #f1f5f9",
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontSize: 9, textTransform: "uppercase", color: "#94a3b8", fontWeight: 700 }}>
+                        Odjazdy
+                      </div>
+                      <div className="font-mono font-bold text-slate-800 text-xs">
+                        {Number(p.stop_departures_h || 0).toFixed(1)}{" "}
+                        <span style={{ fontSize: 9, color: "#64748b", fontWeight: 400 }}>odj./h</span>
+                      </div>
+                    </div>
+                    {p.stop_z_score != null && (
+                      <div>
+                        <div style={{ fontSize: 9, textTransform: "uppercase", color: "#94a3b8", fontWeight: 700 }}>
+                          Z-Score
+                        </div>
+                        <div
+                          className={`font-mono font-bold text-xs ${
+                            Number(p.stop_z_score) >= 0 ? "text-emerald-600" : "text-amber-600"
+                          }`}
+                        >
+                          {Number(p.stop_z_score) > 0
+                            ? `+${Number(p.stop_z_score).toFixed(2)}`
+                            : Number(p.stop_z_score).toFixed(2)}
+                          σ
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div
+                    style={{
+                      paddingTop: 6,
+                      borderTop: "1px solid #f1f5f9",
+                      fontSize: 10,
+                      color: "#47317f",
+                      fontWeight: 700,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 4,
+                    }}
+                  >
+                    <span>⚡ Kliknij, aby wycentrować i otworzyć szczegóły</span>
+                  </div>
+                </div>
+              );
+            })()}
+
+          {/* Hub Tooltip - Tactical Glass Card */}
           {(hoverInfo.object as any)?.properties &&
-            "hub_id" in (hoverInfo.object as any).properties && (
-              <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                <div style={{ fontWeight: 800, color: "#47317f", fontSize: 12 }}>
-                  {(hoverInfo.object as any).properties.hub_name ||
-                    (hoverInfo.object as any).properties.stop_name}
+            "hub_id" in (hoverInfo.object as any).properties && (() => {
+              const p = (hoverInfo.object as any).properties;
+              const grade = String(p.hub_grade || p.grade || "A").toUpperCase();
+              const gradeColor =
+                grade.startsWith("A")
+                  ? "bg-emerald-600 text-white"
+                  : grade.startsWith("B")
+                  ? "bg-sky-600 text-white"
+                  : grade.startsWith("C")
+                  ? "bg-amber-600 text-white"
+                  : "bg-rose-600 text-white";
+
+              return (
+                <div style={{ display: "flex", flexDirection: "column", gap: 6, minWidth: 230 }}>
+                  <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
+                    <div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <span
+                          style={{
+                            padding: "1px 5px",
+                            borderRadius: 4,
+                            backgroundColor: "#ede9fe",
+                            color: "#47317f",
+                            fontSize: 9,
+                            fontWeight: 900,
+                            letterSpacing: "0.05em",
+                          }}
+                        >
+                          WĘZEŁ
+                        </span>
+                        <span style={{ fontSize: 10, color: "#64748b", fontWeight: 600 }}>
+                          {p.hub_stops_count || 1} stan.
+                        </span>
+                      </div>
+                      <div style={{ fontWeight: 800, color: "#47317f", fontSize: 13, lineHeight: 1.2, marginTop: 2 }}>
+                        {p.hub_name || p.stop_name}
+                      </div>
+                    </div>
+                    <span
+                      style={{
+                        padding: "2px 7px",
+                        borderRadius: 6,
+                        fontSize: 10,
+                        fontWeight: 900,
+                        letterSpacing: "0.05em",
+                      }}
+                      className={gradeColor}
+                    >
+                      {grade}
+                    </span>
+                  </div>
+
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "1fr 1fr",
+                      gap: "4px 8px",
+                      paddingTop: 6,
+                      borderTop: "1px solid #f1f5f9",
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontSize: 9, textTransform: "uppercase", color: "#94a3b8", fontWeight: 700 }}>
+                        Pojemność
+                      </div>
+                      <div className="font-mono font-bold text-slate-800 text-xs">
+                        {p.hub_stops_count || 1}{" "}
+                        <span style={{ fontSize: 9, color: "#64748b", fontWeight: 400 }}>stanowisk</span>
+                      </div>
+                    </div>
+                    {p.hub_departures_h != null && (
+                      <div>
+                        <div style={{ fontSize: 9, textTransform: "uppercase", color: "#94a3b8", fontWeight: 700 }}>
+                          Odjazdy sum.
+                        </div>
+                        <div className="font-mono font-bold text-slate-800 text-xs">
+                          {Number(p.hub_departures_h).toFixed(1)}{" "}
+                          <span style={{ fontSize: 9, color: "#64748b", fontWeight: 400 }}>odj./h</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div
+                    style={{
+                      paddingTop: 6,
+                      borderTop: "1px solid #f1f5f9",
+                      fontSize: 10,
+                      color: "#47317f",
+                      fontWeight: 700,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 4,
+                    }}
+                  >
+                    <span>⚡ Kliknij, aby zbadać profil węzła 360°</span>
+                  </div>
                 </div>
-                <div
-                  style={{
-                    fontSize: 11,
-                    color: "#64748b",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 6,
-                  }}
-                >
-                  <span>Węzeł przesiadkowy</span>
-                  <span>•</span>
-                  <span>
-                    {(hoverInfo.object as any).properties.hub_stops_count || 1} stanowisk
-                  </span>
-                </div>
-              </div>
-            )}
+              );
+            })()}
 
           {/* Active Bus Simulation Tooltip */}
           {(hoverInfo.object as any)?.tripId && (

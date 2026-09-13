@@ -30,7 +30,7 @@ export default function BenchmarkModule() {
           gap: 12,
           marginBottom: 10,
           paddingBottom: 10,
-          borderBottom: "1px solid #2f343c",
+          borderBottom: "1px solid #e2e8f0",
         }}
       >
         <div>
@@ -40,7 +40,7 @@ export default function BenchmarkModule() {
                 margin: 0,
                 fontSize: 16,
                 fontWeight: 800,
-                color: "#f6f7f9",
+                color: "#0f172a",
                 letterSpacing: "0.03em",
               }}
             >
@@ -50,7 +50,7 @@ export default function BenchmarkModule() {
               BENCHMARK PL
             </Tag>
           </div>
-          <div style={{ fontSize: 11, color: "#8f99a8", marginTop: 2 }}>
+          <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>
             Metryki dostępności, spójność GTFS oraz korelacje cen transakcyjnych mieszkań RCN w 30 miastach.
           </div>
         </div>
@@ -62,30 +62,30 @@ export default function BenchmarkModule() {
               display: "flex",
               alignItems: "center",
               gap: 6,
-              background: "rgba(24, 28, 35, 0.7)",
-              border: "1px solid #383e47",
+              background: "#f1f5f9",
+              border: "1px solid #e2e8f0",
               borderRadius: 6,
               padding: "4px 8px",
               fontSize: 11,
             }}
           >
-            <span style={{ color: "#8f99a8" }}>Aglomeracje:</span>
-            <span className="tabular-nums font-bold text-sky-400">30</span>
+            <span style={{ color: "#64748b" }}>Aglomeracje:</span>
+            <span className="tabular-nums font-bold text-sky-700">30</span>
           </div>
           <div
             style={{
               display: "flex",
               alignItems: "center",
               gap: 6,
-              background: "rgba(24, 28, 35, 0.7)",
-              border: "1px solid #383e47",
+              background: "#f1f5f9",
+              border: "1px solid #e2e8f0",
               borderRadius: 6,
               padding: "4px 8px",
               fontSize: 11,
             }}
           >
-            <span style={{ color: "#8f99a8" }}>GTFS / DuckDB:</span>
-            <span className="tabular-nums font-bold text-emerald-400">100% spójności</span>
+            <span style={{ color: "#64748b" }}>GTFS / DuckDB:</span>
+            <span className="tabular-nums font-bold text-emerald-700">100% spójności</span>
           </div>
         </div>
       </div>

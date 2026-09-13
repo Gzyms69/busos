@@ -67,34 +67,17 @@ export default function CommandCenterModule() {
       }}
     >
       {/* Module Title Section */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginBottom: 16,
-          paddingBottom: 10,
-          borderBottom: "1px solid #27272a",
-        }}
-      >
+      <div className="flex items-center justify-between mb-4 pb-2.5 border-b border-slate-200">
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <h2
-              style={{
-                margin: 0,
-                fontSize: 16,
-                fontWeight: 800,
-                color: "#f8fafc",
-                letterSpacing: 0.5,
-              }}
-            >
+          <div className="flex items-center gap-2">
+            <h2 className="text-base font-extrabold text-slate-900 tracking-tight m-0">
               PRZEGLĄD AGLOMERACJI: {selectedCity.toUpperCase()}
             </h2>
-            <Tag minimal intent="success" style={{ fontSize: 10, fontWeight: 700, background: "rgba(34, 197, 94, 0.15)", color: "#22c55e", border: "1px solid rgba(34, 197, 94, 0.3)" }}>
+            <Tag minimal intent="success" style={{ fontSize: 10, fontWeight: 700 }}>
               DANE AKTYWNE
             </Tag>
           </div>
-          <div style={{ fontSize: 12, color: "#94a3b8", marginTop: 3 }}>
+          <div className="text-xs text-slate-500 mt-1">
             Analiza dostępności przystanków, węzłów przesiadkowych i kluczowych celów podróży.
           </div>
         </div>

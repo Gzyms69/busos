@@ -17,6 +17,11 @@ export interface SelectionSlice {
   // Selected Axe List pair for map vector
   selectedAxePair: AxeStopItem | null;
 
+  // Cross-highlighting hover state (Table <-> Map)
+  hoveredType: SelectionType;
+  hoveredId: string | number | null;
+  setHoveredObject: (type: SelectionType, id: string | number | null) => void;
+
   selectObject: (type: SelectionType, id: string | number | null, data?: any) => void;
   clearSelection: () => void;
   setInspectorOpen: (open: boolean) => void;
@@ -39,6 +44,14 @@ export const createSelectionSlice: StateCreator<SelectionSlice, [], [], Selectio
   activeDirectionId: null,
   activeRouteData: null,
   selectedAxePair: null,
+  hoveredType: null,
+  hoveredId: null,
+
+  setHoveredObject: (type, id) =>
+    set({
+      hoveredType: type,
+      hoveredId: id,
+    }),
 
   selectObject: (type, id, data = null) =>
     set({

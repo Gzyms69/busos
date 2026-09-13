@@ -33,7 +33,7 @@ export default function MarketModule() {
           gap: 12,
           marginBottom: 12,
           paddingBottom: 10,
-          borderBottom: "1px solid #2f343c",
+          borderBottom: "1px solid #e2e8f0",
         }}
       >
         <div>
@@ -43,7 +43,7 @@ export default function MarketModule() {
                 margin: 0,
                 fontSize: 16,
                 fontWeight: 800,
-                color: "#f6f7f9",
+                color: "#0f172a",
                 letterSpacing: 0.5,
               }}
             >
@@ -53,7 +53,7 @@ export default function MarketModule() {
               DANE RCN
             </Tag>
           </div>
-          <div style={{ fontSize: 11, color: "#8f99a8", marginTop: 3 }}>
+          <div style={{ fontSize: 11, color: "#64748b", marginTop: 3 }}>
             Wyceny mieszkań w sąsiedztwie przystanków, trendy cenowe 2020–2026 oraz rejestr transakcji notarialnych.
           </div>
         </div>
