@@ -409,3 +409,54 @@
   - `uv run pytest backend/tests/ -v`: **122/122 testów PASSED w 26.01s** (109 domenowych + 7 hardening + 6 audyt adversarialny).
   - `npm run build --prefix urban-dashboard`: **sukces w 4.3s** (0 błędów TypeScript).
 
+---
+
+### Task 16 (Sprint 4.7): Frontend UI Overhaul — BusOS Clean Layout (100% Map Viewport, BusosShell, Collapsible Panels)
+- **Status:** `[DONE]` (Zrealizowano 2026-09-13, commit `898980a`)
+- **Cel:** Całkowity overhaul interfejsu użytkownika BusOS, odrzucenie ciemnego motywu `.bp6-dark` i ciasnego kokpitu 5 paneli na rzecz czystego, jasnego layoutu pełnoekranowego z fioletem królewskim `#47317f`.
+- **Zrealizowany zakres:**
+  1. **Nowy kontener główny (`BusosShell.tsx`):** 100% powierzchni okna dedykowane na mapę MapLibre z jasnym podkładem Carto Positron. Usunięcie dolnego `StatusBar` i sztywnych podziałów ekranu.
+  2. **Centralna pigułka wyszukiwarki (`TopSearchPill.tsx`):** Pływający searchbar z live autocomplete dla przystanków, linii i ulic.
+  3. **Zwijany lewy panel boczny (`LeftSlidePanel.tsx`):** Szerokość 420px, płynne chowanie do 0px przyciskiem lub bocznym uchwytem.
+  4. **Przebudowa kart i akordeonów (`StopDetailPanel.tsx`, `AgglomerationOverviewPanel.tsx`, `StopCatalogPanel.tsx`):**
+     - Kafelki KPI bez ucinania wielokropkiem (`CleanKpiBadge.tsx`).
+     - Pastylki linii GTFS (`RoutePill.tsx`) z czyszczeniem prefiksów miast (`35` zamiast `kielce_35`).
+     - Karty transakcji mieszkaniowych RCN bez ucinających bloków.
+  5. **Czyste nazewnictwo i brak obcych referencji:** Komponenty i style zarejestrowane pod marką BusOS (`BusosShell`, `.busos-pill`, `.busos-panel`, `.busos-card`).
+- **Dowody Weryfikacji (100% Green):**
+  - `npx tsc --noEmit` w `urban-dashboard`: **0 błędów** (Exit code 0).
+  - `npm run build` w `urban-dashboard`: **sukces w 2.8s** (Next.js 16.2.1 Turbopack, 4/4 static pages).
+  - Testy w przeglądarce (Puppeteer): zweryfikowano płynne działanie mapy, katalogu, karty przystanku i zwijania panelu.
+  - Wypchnięto do zdalnego repozytorium GitHub: `898980a` na gałęzi `main`.
+
+---
+
+## 4. Next Session Active Directive: Production Backend Connectivity Observability & 360° Critical Page Re-Evaluation
+
+> [!IMPORTANT]
+> **Zgłoszenie użytkownika (2026-09-13):** Na produkcji (`https://busos.czerwinskidawid.pl`) występują problemy z połączeniem z backendem (`https://api.busos.czerwinskidawid.pl`), a interfejs w żaden sposób nie informuje użytkownika o stanie sieci ani przyczynie braku danych (błędy są cicho ignorowane lub logowane do konsoli, a panele pokazują puste dane zamiast czytelnego alertu). W nowej sesji należy także przeprowadzić ponowną, bezlitosną ocenę całości strony.
+
+### Zdiagnozowane punkty zapalne do rozwiązania:
+1. **Cicha utrata połączenia w UI:**
+   - W `urban-dashboard/src/components/shell/BusosShell.tsx` błędy `fetchHealth()` i `fetchCities()` są jedynie wypisywane do `console.warn()`.
+   - W `BrandHeader.tsx` brak wskaźnika stanu backendu (zielona kropka Online / czerwona Offline / ping w ms).
+   - W panelach analitycznych brak stanów błędu sieciowego (`NetworkErrorBoundary`, przycisk `Ponów próbę`).
+2. **Potencjalne blokady na styku Vercel $\leftrightarrow$ Caddy/OCI:**
+   - Caddy w `backend/Caddyfile` posiada agresywny limit `x-ratelimit-limit: 60` na minutę (przy wczytywaniu 5–6 zapytań równolegle użytkownik może szybko trafić na HTTP 429).
+   - Reguły blokowania User-Agent w Caddy (`@bad_bots`) mogą fałszywie blokować wybrane przeglądarki lub serwerowe żądania Vercel.
+   - Nagłówki CORS i preflight `OPTIONS` wymagają weryfikacji pod kątem domen `busos.czerwinskidawid.pl` i preview deployów Vercel.
+
+### Plan Działań na Nową Sesję (Numbered Action Items):
+1. **Audyt połączenia produkcyjnego na żywo:**
+   - Przetestować z poziomu przeglądarki i narzędzi diagnostycznych wszystkie żądania z `https://busos.czerwinskidawid.pl` do `https://api.busos.czerwinskidawid.pl`.
+   - Zweryfikować logi Caddy na instancji OCI oraz kody błędów (403/429/500/CORS).
+   - Zoptymalizować limity zapytań w Caddy / FastAPI pod kątem intensywnego ruchu na frontendzie.
+2. **Wdrożenie Backend Health & Connectivity Observability w UI:**
+   - Dodać w `BrandHeader` elegancki wskaźnik stanu połączenia (subtelna zielona/żółta/czerwona kropka z tooltipem: status silnika, wersja `9.5.0`, ping w ms).
+   - Wdrożyć globalny toast/banner błędu połączenia (`OfflineBanner` / `NetworkErrorToast`), gdy API nie odpowiada.
+   - W panelach analitycznych dodać czytelny komunikat o braku łączności z API z przyciskiem ponownego pobrania danych zamiast pustego "Brak danych".
+3. **Bezlitosna ocena krytyczna 360° całości strony:**
+   - Sprawdzić każdy ekran i moduł pod kątem wygody, czytelności, kontrastu (WCAG 2.1 AA) i responsywności mobilnej.
+   - Zidentyfikować wszelkie pozostałe tarcia wizualne i ergonomiczne po wdrożeniu nowego layoutu.
+
+
