@@ -193,8 +193,41 @@ async def get_stop_serving_routes(city: str = Query(...), stop_id: str = ...):
         raise HTTPException(status_code=404, detail=f"Brak macierzy stop_route_matrix dla {city}")
 
     df = pd.read_parquet(matrix_p)
-    stop_routes = df[df['stop_id'] == stop_id]
-    return stop_routes.to_dict(orient="records")
+    stop_routes = df[df['stop_id'] == str(stop_id)]
+    if stop_routes.empty:
+        return []
+
+    gdf = _get_routes_gdf(city)
+    routes_lookup = {}
+    if gdf is not None and not gdf.empty:
+        for _, r in gdf.iterrows():
+            uid = str(r.get('route_uid', f"{r.get('feed_id', '')}_{r['route_id']}"))
+            dir_id = int(r.get('direction_id', 0))
+            key = (uid, dir_id)
+            if key not in routes_lookup:
+                routes_lookup[key] = {
+                    "short_name": str(r.get('route_short_name', r['route_id'])),
+                    "long_name": str(r.get('route_long_name', '')),
+                    "type": int(r.get('route_type', 3)),
+                    "color": str(r.get('route_color', '#47317f')),
+                    "headsign": str(r.get('headsign', '')),
+                }
+
+    results = []
+    for _, row in stop_routes.iterrows():
+        uid = str(row.get('route_uid', f"{row.get('feed_id', '')}_{row['route_id']}"))
+        dir_id = int(row.get('direction_id', 0))
+        meta = routes_lookup.get((uid, dir_id)) or routes_lookup.get((uid, 0)) or {}
+
+        item = row.to_dict()
+        item["short_name"] = meta.get("short_name", str(row.get("route_id", "")))
+        item["color"] = meta.get("color", "#47317f")
+        item["long_name"] = meta.get("long_name", "")
+        item["headsign"] = meta.get("headsign", "")
+        item["type"] = meta.get("type", 3)
+        results.append(item)
+
+    return results
 
 
 @router.get("/stop/{stop_id}/destinations", response_model=StopDestinationsResponse, summary="1-hop reachable direct destination stops from a transit stop")
