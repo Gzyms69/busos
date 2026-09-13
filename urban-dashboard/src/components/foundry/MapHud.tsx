@@ -10,7 +10,7 @@ import {
   PopoverNext,
   Menu,
   MenuItem,
-  Tag,
+  MenuDivider,
 } from "@blueprintjs/core";
 import { useFoundryStore, type H3ColorMetric } from "@/lib/store";
 
@@ -25,6 +25,7 @@ export default function MapHud() {
     showRoutes,
     show3DBuildings,
     toggleLayer,
+    setLayerVisible,
     h3Metric,
     setH3Metric,
     resetView,
@@ -32,20 +33,41 @@ export default function MapHud() {
 
   const [isLayersOpen, setIsLayersOpen] = useState(false);
   const [isMetricOpen, setIsMetricOpen] = useState(false);
+  const [isLensOpen, setIsLensOpen] = useState(false);
 
   const metricLabels: Record<H3ColorMetric, string> = {
     transport_score: "Dostępność Transportu (0-100)",
     pop_total: "Mieszkańcy (Siatka GUS)",
-    transit_desert: "Obszary z deficytem transportowym",
+    transit_desert: "Obszary z deficytem (Pustynie)",
     rcn_median_price_m2: "Ceny mieszkań (PLN/m²)",
+  };
+
+  const applyLens = (lens: "accessibility" | "physical" | "corridors") => {
+    if (lens === "accessibility") {
+      setLayerVisible("showBoundary", true);
+      setLayerVisible("showHexagons", true);
+      setLayerVisible("showStops", false);
+      setLayerVisible("showRoutes", false);
+      setH3Metric("transport_score");
+    } else if (lens === "physical") {
+      setLayerVisible("showHexagons", false);
+      setLayerVisible("showStops", true);
+      setLayerVisible("showHubs", true);
+      setLayerVisible("showRoutes", false);
+    } else if (lens === "corridors") {
+      setLayerVisible("showHexagons", false);
+      setLayerVisible("showStops", true);
+      setLayerVisible("showHubs", true);
+      setLayerVisible("showRoutes", true);
+    }
   };
 
   return (
     <div
       style={{
         position: "absolute",
-        top: 14,
-        right: 14,
+        top: 12,
+        right: 12,
         zIndex: 10,
         display: "flex",
         flexDirection: "column",
@@ -56,15 +78,15 @@ export default function MapHud() {
       <Card
         elevation={Elevation.TWO}
         style={{
-          background: "rgba(9, 10, 15, 0.92)",
-          backdropFilter: "blur(8px)",
-          border: "1px solid #27272a",
-          borderRadius: 6,
-          padding: "6px 8px",
+          background: "rgba(18, 20, 26, 0.88)",
+          backdropFilter: "blur(16px)",
+          border: "1px solid rgba(255, 255, 255, 0.08)",
+          borderRadius: 8,
+          padding: "5px 8px",
           display: "flex",
           alignItems: "center",
           gap: 6,
-          boxShadow: "0 8px 24px rgba(0, 0, 0, 0.5)",
+          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.55)",
         }}
       >
         {/* Style Toggle */}
@@ -87,7 +109,7 @@ export default function MapHud() {
           />
         </ButtonGroup>
 
-        <div style={{ width: 1, height: 16, background: "#383e47" }} />
+        <div style={{ width: 1, height: 16, background: "rgba(255, 255, 255, 0.1)" }} />
 
         {/* 3D Pitch Toggle */}
         <Button
@@ -109,18 +131,78 @@ export default function MapHud() {
           title="Wyzeruj obrót i kąt kamery"
         />
 
-        <div style={{ width: 1, height: 16, background: "#383e47" }} />
+        <div style={{ width: 1, height: 16, background: "rgba(255, 255, 255, 0.1)" }} />
+
+        {/* Analytical Lenses Popover */}
+        <PopoverNext
+          isOpen={isLensOpen}
+          onInteraction={(next) => setIsLensOpen(next)}
+          content={
+            <Menu style={{ background: "#1c2127", minWidth: 210 }}>
+              <div
+                style={{
+                  padding: "8px 12px 4px 12px",
+                  fontSize: 10,
+                  fontWeight: 800,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em",
+                  color: "#8f99a8",
+                }}
+              >
+                Soczewki Analityczne (Presety)
+              </div>
+              <MenuItem
+                icon="heat-grid"
+                text="1. Dostępność Przestrzenna"
+                label="H3 + GUS"
+                onClick={() => {
+                  applyLens("accessibility");
+                  setIsLensOpen(false);
+                }}
+              />
+              <MenuItem
+                icon="git-branch"
+                text="2. Siatka i Węzły"
+                label="Stops + Hubs"
+                onClick={() => {
+                  applyLens("physical");
+                  setIsLensOpen(false);
+                }}
+              />
+              <MenuItem
+                icon="path"
+                text="3. Korytarze i Prędkości"
+                label="GTFS Trasy"
+                onClick={() => {
+                  applyLens("corridors");
+                  setIsLensOpen(false);
+                }}
+              />
+            </Menu>
+          }
+          placement="bottom-end"
+        >
+          <Button
+            small
+            minimal
+            icon="eye-open"
+            rightIcon="caret-down"
+            style={{ fontWeight: 600, fontSize: 11 }}
+          >
+            Soczewka
+          </Button>
+        </PopoverNext>
 
         {/* Layer Visibility Popover */}
         <PopoverNext
           isOpen={isLayersOpen}
           onInteraction={(next) => setIsLayersOpen(next)}
           content={
-            <div style={{ padding: "12px 14px", width: 220, background: "#1c2127" }}>
+            <div style={{ padding: "12px 14px", width: 230, background: "#1c2127" }}>
               <div
                 style={{
-                  fontSize: 11,
-                  fontWeight: 700,
+                  fontSize: 10,
+                  fontWeight: 800,
                   textTransform: "uppercase",
                   letterSpacing: 0.6,
                   color: "#8f99a8",
@@ -189,13 +271,14 @@ export default function MapHud() {
           isOpen={isMetricOpen}
           onInteraction={(next) => setIsMetricOpen(next)}
           content={
-            <Menu style={{ background: "#1c2127", minWidth: 200 }}>
+            <Menu style={{ background: "#1c2127", minWidth: 220 }}>
               <div
                 style={{
                   padding: "8px 12px 4px 12px",
                   fontSize: 10,
-                  fontWeight: 700,
+                  fontWeight: 800,
                   textTransform: "uppercase",
+                  letterSpacing: "0.05em",
                   color: "#8f99a8",
                 }}
               >
@@ -228,7 +311,7 @@ export default function MapHud() {
             minimal
             icon="heat-grid"
             rightIcon="caret-down"
-            style={{ fontWeight: 600, fontSize: 11, color: "#2b95d6" }}
+            style={{ fontWeight: 600, fontSize: 11, color: "#38bdf8" }}
           >
             Metryka H3
           </Button>

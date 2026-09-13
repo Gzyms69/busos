@@ -15,48 +15,83 @@ export default function BenchmarkModule() {
         display: "flex",
         flexDirection: "column",
         height: "100%",
-        padding: "16px 20px",
+        padding: "14px 18px",
         overflow: "hidden",
+        minHeight: 0,
       }}
     >
       {/* Module Header */}
       <div
         style={{
           display: "flex",
-          alignItems: "center",
+          alignItems: "flex-start",
           justifyContent: "space-between",
           flexWrap: "wrap",
           gap: 12,
-          marginBottom: 12,
+          marginBottom: 10,
           paddingBottom: 10,
           borderBottom: "1px solid #2f343c",
         }}
       >
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
             <h2
               style={{
                 margin: 0,
                 fontSize: 16,
                 fontWeight: 800,
                 color: "#f6f7f9",
-                letterSpacing: 0.5,
+                letterSpacing: "0.03em",
               }}
             >
-              RANKING MIAST: OGÓLNOPOLSKI AUDYT 30 AGLOMERACJI
+              RANKING MIAST: AUDYT 30 POLSKICH AGLOMERACJI
             </h2>
-            <Tag minimal intent="primary" style={{ fontSize: 10, fontWeight: 700 }}>
-              RANKING POLSKA
+            <Tag minimal intent="primary" style={{ fontSize: 9, fontWeight: 700 }}>
+              BENCHMARK PL
             </Tag>
           </div>
-          <div style={{ fontSize: 11, color: "#8f99a8", marginTop: 3 }}>
-            Porównanie 30 polskich miast, wskaźniki dostępności transportowej i bezpośrednie porównywarki.
+          <div style={{ fontSize: 11, color: "#8f99a8", marginTop: 2 }}>
+            Metryki dostępności, spójność GTFS oraz korelacje cen transakcyjnych mieszkań RCN w 30 miastach.
+          </div>
+        </div>
+
+        {/* National Telemetry Chips */}
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              background: "rgba(24, 28, 35, 0.7)",
+              border: "1px solid #383e47",
+              borderRadius: 6,
+              padding: "4px 8px",
+              fontSize: 11,
+            }}
+          >
+            <span style={{ color: "#8f99a8" }}>Aglomeracje:</span>
+            <span className="tabular-nums font-bold text-sky-400">30</span>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              background: "rgba(24, 28, 35, 0.7)",
+              border: "1px solid #383e47",
+              borderRadius: 6,
+              padding: "4px 8px",
+              fontSize: 11,
+            }}
+          >
+            <span style={{ color: "#8f99a8" }}>GTFS / DuckDB:</span>
+            <span className="tabular-nums font-bold text-emerald-400">100% spójności</span>
           </div>
         </div>
       </div>
 
       {/* Tabs Navigation */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", minHeight: 0 }}>
         <Tabs
           id="benchmark-tabs"
           selectedTabId={activeTab}

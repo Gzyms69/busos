@@ -87,6 +87,14 @@ export default function NationalLeaderboardGrid() {
     }
   };
 
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
   const currentPage = Math.floor(offset / limit) + 1;
   const totalPages = Math.ceil(total / limit) || 1;
 
@@ -95,11 +103,13 @@ export default function NationalLeaderboardGrid() {
       style={{
         background: "#1c2127",
         border: "1px solid #2f343c",
-        borderRadius: 6,
-        padding: 16,
+        borderRadius: 8,
+        padding: "12px 16px",
         display: "flex",
         flexDirection: "column",
-        height: 520,
+        flex: 1,
+        height: "100%",
+        minHeight: 450,
       }}
     >
       {/* Controls Bar */}
@@ -123,7 +133,7 @@ export default function NationalLeaderboardGrid() {
                 setOffset(0);
               }}
               icon="globe"
-              text="30 Aglomeracji"
+              text={isMobile ? "30 Miast" : "30 Aglomeracji"}
             />
             <Button
               small
@@ -153,7 +163,7 @@ export default function NationalLeaderboardGrid() {
                 setOffset(0);
               }}
               icon="grid"
-              text="Heksy H3 Res 8"
+              text="Heksy H3"
             />
           </ButtonGroup>
 
@@ -162,13 +172,15 @@ export default function NationalLeaderboardGrid() {
             placeholder="Filtruj tabelę..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            style={{ width: 180, fontSize: 11 }}
+            style={{ width: isMobile ? "100%" : 180, fontSize: 11 }}
             small
           />
 
-          <Tag minimal style={{ fontSize: 11, color: "#8f99a8" }}>
-            {formatNumber(total, 0)} rekordów w skali Polski
-          </Tag>
+          {!isMobile && (
+            <Tag minimal style={{ fontSize: 11, color: "#8f99a8" }}>
+              {formatNumber(total, 0)} rekordów w skali Polski
+            </Tag>
+          )}
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -201,7 +213,7 @@ export default function NationalLeaderboardGrid() {
         </div>
       </div>
 
-      {/* Virtualized Table Container */}
+      {/* Content Area: Mobile Card View vs Virtualized Table */}
       <div style={{ flex: 1, minHeight: 0, position: "relative" }}>
         {loading ? (
           <div
@@ -231,6 +243,91 @@ export default function NationalLeaderboardGrid() {
           >
             Brak wyników rankingu
           </div>
+        ) : isMobile ? (
+          <div style={{ height: "100%", overflowY: "auto", display: "flex", flexDirection: "column", gap: 8 }}>
+            {items.map((it, idx) => {
+              const slug = it.city || it.slug || "";
+              const isCurrent = slug.toLowerCase() === selectedCity.toLowerCase();
+              const stops = it.stops_count != null ? formatNumber(it.stops_count, 0) : null;
+              const hubs = it.hubs_count != null ? formatNumber(it.hubs_count, 0) : null;
+              const stopsHubs = stops && hubs ? `${stops} / ${hubs}` : (stops || hubs || "—");
+
+              return (
+                <div
+                  key={slug || idx}
+                  style={{
+                    background: isCurrent ? "rgba(16, 185, 129, 0.08)" : "rgba(24, 28, 35, 0.8)",
+                    border: `1px solid ${isCurrent ? "#10b981" : "#2f343c"}`,
+                    borderRadius: 8,
+                    padding: "10px 12px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 6,
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <span className="tabular-nums font-mono font-bold text-sky-400 text-xs">
+                        #{it.rank ?? offset + idx + 1}
+                      </span>
+                      <span style={{ fontWeight: 800, fontSize: 13, color: "#f8fafc" }}>
+                        {String(it.name || it.city || it.stop_name || it.hub_name || "—").toUpperCase()}
+                      </span>
+                      {isCurrent && (
+                        <Tag minimal intent="success" style={{ fontSize: 9, fontWeight: 700 }}>
+                          AKTYWNA
+                        </Tag>
+                      )}
+                    </div>
+                    {scope === "cities" && !isCurrent && (
+                      <Button
+                        small
+                        intent="primary"
+                        text="Wybierz"
+                        icon="log-in"
+                        onClick={() => handleCitySelect(slug)}
+                        style={{ fontSize: 11 }}
+                      />
+                    )}
+                  </div>
+
+                  {scope === "cities" ? (
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 12px", fontSize: 11, color: "#9ca3af" }}>
+                      <div>
+                        <span>Słupki / Huby: </span>
+                        <span className="tabular-nums font-semibold text-gray-200">{stopsHubs}</span>
+                      </div>
+                      <div>
+                        <span>Konsolidacja: </span>
+                        <span className="tabular-nums font-semibold text-gray-200">
+                          {it.consolidation_ratio != null ? `${formatNumber(it.consolidation_ratio, 2)} sł/hub` : "—"}
+                        </span>
+                      </div>
+                      <div>
+                        <span>Populacja: </span>
+                        <span className="tabular-nums font-semibold text-gray-200">
+                          {it.population_total || it.pop_total ? formatNumber(it.population_total || it.pop_total, 0) : "—"}
+                        </span>
+                      </div>
+                      <div>
+                        <span>Mediana RCN: </span>
+                        <span className="tabular-nums font-semibold text-sky-400">
+                          {it.rcn_median_price_m2 || it.median_price_m2 ? formatPLN(it.rcn_median_price_m2 || it.median_price_m2, true) : "—"}
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 11 }}>
+                      <span style={{ color: "#9ca3af" }}>
+                        Miasto: <strong style={{ color: "#f3f4f6" }}>{String(it.city || "—").toUpperCase()}</strong>
+                      </span>
+                      <GradeBadge grade={it.grade || it.stop_grade || it.hub_grade} size="small" />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         ) : scope === "cities" ? (
           <Table2
             numRows={items.length}
@@ -243,7 +340,7 @@ export default function NationalLeaderboardGrid() {
               columnHeaderCellRenderer={() => <ColumnHeaderCell name="#Rank" />}
               cellRenderer={(row) => (
                 <Cell style={{ fontSize: 11, textAlign: "center", fontWeight: 700, color: "#2b95d6" }}>
-                  #{items[row]?.rank ?? row + 1}
+                  <span className="tabular-nums">#{items[row]?.rank ?? row + 1}</span>
                 </Cell>
               )}
             />
@@ -277,9 +374,12 @@ export default function NationalLeaderboardGrid() {
               columnHeaderCellRenderer={() => <ColumnHeaderCell name="Słupki / Huby" />}
               cellRenderer={(row) => {
                 const it = items[row];
+                const stops = it?.stops_count != null ? formatNumber(it.stops_count, 0) : null;
+                const hubs = it?.hubs_count != null ? formatNumber(it.hubs_count, 0) : null;
+                const display = stops && hubs ? `${stops} / ${hubs}` : (stops || hubs || "—");
                 return (
                   <Cell style={{ fontSize: 11, color: "#8f99a8" }}>
-                    {`${formatNumber(it.stops_count, 0)} / ${formatNumber(it.hubs_count, 0)}`}
+                    <span className="tabular-nums">{display}</span>
                   </Cell>
                 );
               }}
@@ -292,7 +392,9 @@ export default function NationalLeaderboardGrid() {
                 const it = items[row];
                 return (
                   <Cell style={{ fontSize: 11, color: "#f6f7f9" }}>
-                    {`${formatNumber(it.consolidation_ratio, 2)} sł/hub`}
+                    <span className="tabular-nums">
+                      {it?.consolidation_ratio != null ? `${formatNumber(it.consolidation_ratio, 2)} sł/hub` : "—"}
+                    </span>
                   </Cell>
                 );
               }}
@@ -303,9 +405,10 @@ export default function NationalLeaderboardGrid() {
               columnHeaderCellRenderer={() => <ColumnHeaderCell name="Populacja GUS" />}
               cellRenderer={(row) => {
                 const it = items[row];
+                const pop = it?.population_total || it?.pop_total;
                 return (
                   <Cell style={{ fontSize: 11, color: "#f6f7f9" }}>
-                    {formatNumber(it.population_total || it.pop_total, 0)}
+                    <span className="tabular-nums">{pop != null ? formatNumber(pop, 0) : "—"}</span>
                   </Cell>
                 );
               }}
@@ -316,9 +419,10 @@ export default function NationalLeaderboardGrid() {
               columnHeaderCellRenderer={() => <ColumnHeaderCell name="Mediana RCN" />}
               cellRenderer={(row) => {
                 const it = items[row];
+                const val = it?.rcn_median_price_m2 || it?.median_price_m2;
                 return (
-                  <Cell style={{ fontSize: 11, color: "#2b95d6", fontWeight: 600 }}>
-                    {formatPLN(it.rcn_median_price_m2 || it.median_price_m2, true)}
+                  <Cell style={{ fontSize: 11, color: "#38bdf8", fontWeight: 600 }}>
+                    <span className="tabular-nums">{val != null ? formatPLN(val, true) : "—"}</span>
                   </Cell>
                 );
               }}
@@ -360,7 +464,7 @@ export default function NationalLeaderboardGrid() {
               columnHeaderCellRenderer={() => <ColumnHeaderCell name="#Rank" />}
               cellRenderer={(row) => (
                 <Cell style={{ fontSize: 10, textAlign: "center", color: "#8f99a8" }}>
-                  #{items[row]?.rank ?? offset + row + 1}
+                  <span className="tabular-nums">#{items[row]?.rank ?? offset + row + 1}</span>
                 </Cell>
               )}
             />
@@ -409,10 +513,12 @@ export default function NationalLeaderboardGrid() {
               columnHeaderCellRenderer={() => <ColumnHeaderCell name="Odjazdy / Wynik" />}
               cellRenderer={(row) => {
                 const it = items[row];
-                const val = it.departures_h || it.stop_departures_h || it.hub_departures_h || it.transport_score || it.score || "—";
+                const val = it.departures_h || it.stop_departures_h || it.hub_departures_h || it.transport_score || it.score;
                 return (
                   <Cell style={{ fontSize: 11, color: "#f6f7f9", fontWeight: 600 }}>
-                    {typeof val === "number" ? formatNumber(val, 1) : val}
+                    <span className="tabular-nums">
+                      {typeof val === "number" ? formatNumber(val, 1) : (val || "—")}
+                    </span>
                   </Cell>
                 );
               }}

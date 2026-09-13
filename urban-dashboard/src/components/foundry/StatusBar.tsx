@@ -54,21 +54,21 @@ export default function StatusBar() {
       {/* Left: Active Environment & Scope */}
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e" }} />
+          <span style={{ width: 6, height: 6, borderRadius: "50%", background: "oklch(0.72 0.17 150)" }} />
           <span>Aglomeracja:</span>
-          <b style={{ color: "#f8fafc" }}>{selectedCity.toUpperCase()}</b>
+          <b style={{ color: "#f8fafc", letterSpacing: 0.5 }}>{selectedCity.toUpperCase()}</b>
         </span>
 
-        <span style={{ color: "#27272a" }}>|</span>
+        <span style={{ color: "#27272a" }}>/</span>
 
         <span>
-          Moduł: <b style={{ color: "#22c55e" }}>{activeModule.toUpperCase()}</b>
+          Widok: <b style={{ color: "#f8fafc" }}>{activeModule.replace("-", " ").toUpperCase()}</b>
         </span>
       </div>
 
       {/* Center: Selection Feedback */}
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <span style={{ color: selectionType ? "#f8fafc" : "#71717a" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+        <span style={{ color: selectionType ? "#f8fafc" : "#71717a", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
           {getSelectionText()}
         </span>
         {selectionType && (
@@ -82,11 +82,11 @@ export default function StatusBar() {
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         {lastLatencyMs != null && (
           <span>
-            API: <b style={{ color: "#f8fafc" }}>{lastLatencyMs} ms</b>
+            API: <b style={{ color: "#f8fafc", fontFamily: "var(--font-mono, monospace)", fontVariantNumeric: "tabular-nums" }}>{lastLatencyMs} ms</b>
           </span>
         )}
         <span style={{ color: "#27272a" }}>|</span>
-        <span>Baza GTFS: <b style={{ color: "#22c55e" }}>Zweryfikowana</b></span>
+        <span>GTFS: <b style={{ color: "oklch(0.72 0.17 150)" }}>Zweryfikowana</b></span>
         <span style={{ color: "#27272a" }}>|</span>
         <a
           href="https://czerwinskidawid.pl"

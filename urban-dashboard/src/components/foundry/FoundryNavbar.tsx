@@ -81,6 +81,7 @@ export default function FoundryNavbar() {
               BusOS
             </span>
             <span
+              className="hidden sm:inline-block"
               style={{
                 fontSize: 10,
                 fontWeight: 600,
@@ -95,7 +96,7 @@ export default function FoundryNavbar() {
           </a>
         </NavbarHeading>
 
-        <NavbarDivider style={{ margin: "0 12px", borderColor: "#27272a" }} />
+        <NavbarDivider className="hidden sm:inline-block" style={{ margin: "0 12px", borderColor: "#27272a" }} />
 
         {/* City Selector Popover */}
         <PopoverNext
@@ -134,15 +135,15 @@ export default function FoundryNavbar() {
             minimal
             icon="globe"
             rightIcon="caret-down"
-            style={{ fontWeight: 700, letterSpacing: 0.5, color: "#22c55e" }}
+            style={{ fontWeight: 700, letterSpacing: 0.5, color: "#22c55e", padding: "0 6px" }}
           >
             {selectedCity.toUpperCase()}
           </Button>
         </PopoverNext>
       </NavbarGroup>
 
-      {/* Center: Module Navigation Tabs */}
-      <NavbarGroup>
+      {/* Center: Module Navigation Tabs (Desktop only - mobile uses MobileSegmentedNav) */}
+      <NavbarGroup className="hidden md:flex">
         <ButtonGroup minimal>
           {MODULES.map((m) => {
             const isActive = activeModule === m.id;
@@ -171,20 +172,20 @@ export default function FoundryNavbar() {
         </ButtonGroup>
       </NavbarGroup>
 
-      {/* Right: Quick Search & Health Telemetry */}
+      {/* Right: Quick Search & Real Telemetry */}
       <NavbarGroup>
         <Tooltip content="Otwórz paletę komend (Ctrl+K)" placement="bottom">
           <Button
             minimal
             icon="search"
-            style={{ color: "#94a3b8", marginRight: 8 }}
+            style={{ color: "#94a3b8", marginRight: 8, minWidth: 32, minHeight: 32 }}
             onClick={() => {
               window.dispatchEvent(
                 new KeyboardEvent("keydown", { ctrlKey: true, key: "k" })
               );
             }}
           >
-            <Tag minimal style={{ fontSize: 10, background: "rgba(39, 39, 42, 0.5)", color: "#94a3b8", border: "1px solid #27272a" }}>
+            <Tag minimal className="hidden sm:inline-block" style={{ fontSize: 10, background: "rgba(39, 39, 42, 0.5)", color: "#94a3b8", border: "1px solid #27272a" }}>
               Ctrl+K
             </Tag>
           </Button>
@@ -194,25 +195,26 @@ export default function FoundryNavbar() {
           content={
             <div style={{ fontSize: 11, padding: 4 }}>
               <div><b>Aglomeracje:</b> {health?.active_cities_count || 30} miast w Polsce</div>
-              <div><b>Stan bazy:</b> Zsynchronizowana</div>
+              <div><b>Stan bazy:</b> Zsynchronizowana (GTFS / DuckDB)</div>
               {lastLatencyMs != null && <div><b>Czas odpowiedzi:</b> {lastLatencyMs} ms</div>}
             </div>
           }
           placement="bottom-end"
         >
           <Tag
-            round
             minimal
             style={{
-              fontSize: 11,
+              fontSize: 10,
               cursor: "pointer",
               background: "rgba(34, 197, 94, 0.12)",
               color: "#22c55e",
               border: "1px solid rgba(34, 197, 94, 0.3)",
               fontWeight: 600,
+              fontFamily: "var(--font-mono, monospace)",
+              fontVariantNumeric: "tabular-nums",
             }}
           >
-            ● Status: Online
+            {lastLatencyMs != null ? `${lastLatencyMs}ms` : "API 200"}
           </Tag>
         </Tooltip>
       </NavbarGroup>

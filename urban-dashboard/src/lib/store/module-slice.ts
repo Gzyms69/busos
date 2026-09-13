@@ -8,11 +8,15 @@ export type FoundryModuleId =
   | "market"
   | "benchmark";
 
+export type BottomSheetSnap = "peek" | "half" | "expanded";
+
 export interface ModuleSlice {
   activeModule: FoundryModuleId;
   activeSubtab: string;
+  bottomSheetSnap: BottomSheetSnap;
   setActiveModule: (module: FoundryModuleId) => void;
   setActiveSubtab: (subtab: string) => void;
+  setBottomSheetSnap: (snap: BottomSheetSnap) => void;
 }
 
 const DEFAULT_SUBTABS: Record<FoundryModuleId, string> = {
@@ -27,6 +31,7 @@ const DEFAULT_SUBTABS: Record<FoundryModuleId, string> = {
 export const createModuleSlice: StateCreator<ModuleSlice, [], [], ModuleSlice> = (set) => ({
   activeModule: "command-center",
   activeSubtab: "scorecard",
+  bottomSheetSnap: "half",
 
   setActiveModule: (module: FoundryModuleId) =>
     set({
@@ -37,5 +42,10 @@ export const createModuleSlice: StateCreator<ModuleSlice, [], [], ModuleSlice> =
   setActiveSubtab: (subtab: string) =>
     set({
       activeSubtab: subtab,
+    }),
+
+  setBottomSheetSnap: (snap: BottomSheetSnap) =>
+    set({
+      bottomSheetSnap: snap,
     }),
 });

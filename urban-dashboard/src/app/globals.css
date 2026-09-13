@@ -4,36 +4,61 @@
 @import "@blueprintjs/table/lib/css/table.css";
 @import "@blueprintjs/select/lib/css/blueprint-select.css";
 
-/* Swiss Design & Obsidian Palette matching czerwinskidawid.pl */
+/* Swiss Design & OKLCH Industrial Tactical Palette */
 :root {
-  --obsidian-canvas: #090a0f;
-  --obsidian-surface: #121318;
-  --obsidian-surface-elevated: #181922;
-  --obsidian-border: #27272a;
+  --obsidian-canvas: oklch(0.10 0.005 260);
+  --obsidian-surface: oklch(0.14 0.010 260);
+  --obsidian-surface-elevated: oklch(0.18 0.012 260);
+  --obsidian-border: oklch(0.26 0.010 260);
   --obsidian-text: #f8fafc;
   --obsidian-text-muted: #94a3b8;
 
-  /* Semantics from czerwinskidawid.pl */
-  --accent-emerald: #22c55e;
-  --accent-blue: #3b82f6;
-  --accent-amber: #f59e0b;
-  --accent-crimson: #ef4444;
+  /* OKLCH Perceptual Accents */
+  --accent-emerald: oklch(0.72 0.17 150);
+  --accent-blue: oklch(0.68 0.16 240);
+  --accent-amber: oklch(0.78 0.16 70); /* Signal Amber */
+  --accent-crimson: oklch(0.62 0.22 25);
+  --accent-signal: oklch(0.78 0.16 70);
 
   /* Base overrides */
   --background: var(--obsidian-canvas);
   --foreground: var(--obsidian-text);
+  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
+}
+
+/* Tabular Numerics for Telemetry */
+.tabular-nums, .telemetry-mono {
+  font-family: var(--font-mono, monospace);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* Safe areas and Dynamic Viewport */
+.h-dvh {
+  height: 100dvh;
+}
+.min-h-dvh {
+  min-height: 100dvh;
+}
+.safe-pt {
+  padding-top: max(0.5rem, env(safe-area-inset-top, 0px));
+}
+.safe-pb {
+  padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
 }
 
 html,
 body {
   height: 100%;
+  height: 100dvh;
   width: 100%;
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: #090a0f;
+  background-color: oklch(0.10 0.005 260);
   color: #f8fafc;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
 

@@ -43,20 +43,13 @@ export default function CityScorecardCards({ data, loading }: CityScorecardCards
     : "100%";
 
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(2, 1fr)",
-        gap: 10,
-        marginBottom: 16,
-      }}
-    >
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-4">
       <KpiMetricCard
         title="Węzły Przesiadkowe"
         value={consolidation}
         subtitle={stopsText}
         icon="git-branch"
-        badge="Siatka Węzłowa"
+        badge="Siatka Węzłów"
         intent="primary"
       />
 
@@ -85,7 +78,7 @@ export default function CityScorecardCards({ data, loading }: CityScorecardCards
         value={dataIntegrity}
         subtitle="100% spójności topologicznej"
         icon="shield"
-        badge="Zweryfikowane"
+        badge="GTFS Zweryfikowany"
         intent="success"
       />
     </div>

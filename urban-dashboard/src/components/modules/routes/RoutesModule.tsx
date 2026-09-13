@@ -8,7 +8,7 @@ import RouteStepperView from "./RouteStepperView";
 import RouteSpeedGrid from "./RouteSpeedGrid";
 
 export default function RoutesModule() {
-  const { selectedCity, activeRouteUid } = useFoundryStore();
+  const { selectedCity, activeRouteUid, setActiveRoute } = useFoundryStore();
   const [activeTab, setActiveTab] = useState<string>("catalog");
 
   return (
@@ -17,7 +17,7 @@ export default function RoutesModule() {
         display: "flex",
         flexDirection: "column",
         height: "100%",
-        padding: "16px 20px",
+        padding: "14px 16px",
         overflow: "hidden",
       }}
     >
@@ -25,55 +25,82 @@ export default function RoutesModule() {
       <div
         style={{
           display: "flex",
-          alignItems: "center",
+          alignItems: "flex-start",
           justifyContent: "space-between",
           flexWrap: "wrap",
-          gap: 12,
-          marginBottom: 12,
+          gap: 10,
+          marginBottom: 10,
           paddingBottom: 10,
           borderBottom: "1px solid #2f343c",
         }}
       >
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div style={{ minWidth: 0, flex: "1 1 auto" }}>
+          <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
             <h2
               style={{
                 margin: 0,
-                fontSize: 16,
+                fontSize: 15,
                 fontWeight: 800,
                 color: "#f6f7f9",
-                letterSpacing: 0.5,
+                letterSpacing: "0.03em",
               }}
             >
               LINIE I TRASY: {selectedCity.toUpperCase()}
             </h2>
-            <Tag minimal intent="primary" style={{ fontSize: 10, fontWeight: 700 }}>
-              KATALOG GTFS
+            <Tag minimal intent="primary" style={{ fontSize: 9, fontWeight: 700 }}>
+              GTFS
             </Tag>
             {activeRouteUid && (
-              <Tag intent="success" style={{ fontSize: 10, fontWeight: 800 }}>
-                Aktywna linia: {activeRouteUid}
-              </Tag>
+              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <Tag intent="success" style={{ fontSize: 10, fontWeight: 800 }}>
+                  Linia: {activeRouteUid.replace(new RegExp(`^${selectedCity}_`, "i"), "")}
+                </Tag>
+                <button
+                  type="button"
+                  onClick={() => setActiveRoute(null)}
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    color: "#9ca3af",
+                    cursor: "pointer",
+                    fontSize: 11,
+                    padding: "2px 4px",
+                  }}
+                  title="Odznacz linię"
+                >
+                  ✕
+                </button>
+              </div>
             )}
           </div>
-          <div style={{ fontSize: 11, color: "#8f99a8", marginTop: 3 }}>
-            Katalog linii komunikacji miejskiej, przebiegi tras, czasy przejazdu oraz prędkości handlowe.
+          <div style={{ fontSize: 11, color: "#8f99a8", marginTop: 2 }}>
+            Katalog linii, dynamiczny przebieg tras oraz prędkości handlowe.
           </div>
         </div>
       </div>
 
       {/* Tabs Navigation */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+          minHeight: 0,
+        }}
+        className="routes-tabs-container"
+      >
         <Tabs
           id="routes-tabs"
           selectedTabId={activeTab}
           onChange={(newTab) => setActiveTab(String(newTab))}
+          renderActiveTabPanelOnly
         >
           <Tab
             id="catalog"
             title="Katalog Linii"
             panel={
-              <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+              <div style={{ height: "100%", display: "flex", flexDirection: "column", minHeight: 0 }}>
                 <RouteCatalogGrid onRouteSelect={() => setActiveTab("stepper")} />
               </div>
             }
@@ -82,7 +109,7 @@ export default function RoutesModule() {
             id="stepper"
             title="Przebieg Trasy"
             panel={
-              <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+              <div style={{ height: "100%", display: "flex", flexDirection: "column", minHeight: 0 }}>
                 <RouteStepperView />
               </div>
             }
@@ -91,7 +118,7 @@ export default function RoutesModule() {
             id="edges"
             title="Prędkości Handlowe"
             panel={
-              <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+              <div style={{ height: "100%", display: "flex", flexDirection: "column", minHeight: 0 }}>
                 <RouteSpeedGrid />
               </div>
             }

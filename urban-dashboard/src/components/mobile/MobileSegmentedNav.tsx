@@ -32,8 +32,9 @@ export default function MobileSegmentedNav() {
         justifyContent: "space-around",
         background: "#0e1017",
         borderTop: "1px solid #27272a",
-        height: 54,
+        height: "calc(52px + env(safe-area-inset-bottom, 0px))",
         padding: "0 4px",
+        paddingBottom: "env(safe-area-inset-bottom, 0px)",
         zIndex: 40,
       }}
     >
@@ -57,7 +58,7 @@ export default function MobileSegmentedNav() {
               border: "none",
               borderRadius: 6,
               cursor: "pointer",
-              color: isActive ? "#22c55e" : "#71717a",
+              color: isActive ? "#38bdf8" : "#71717a",
               outline: "none",
               transition: "color 0.15s ease",
             }}

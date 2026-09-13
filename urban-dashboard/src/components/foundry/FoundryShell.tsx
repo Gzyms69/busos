@@ -106,16 +106,19 @@ export default function FoundryShell() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  const isFullWidthModule = store.activeModule === "benchmark";
+
   return (
     <div
-      className="bp6-dark"
+      className="bp6-dark h-dvh w-full"
       style={{
-        width: "100vw",
-        height: "100vh",
+        width: "100%",
+        height: "100dvh",
+        minHeight: "100dvh",
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
-        background: "#111418",
+        background: "oklch(0.10 0.005 260)",
         color: "#f6f7f9",
         userSelect: isDragging ? "none" : "auto",
       }}
@@ -131,47 +134,59 @@ export default function FoundryShell() {
           flexDirection: isMobile ? "column" : "row",
           position: "relative",
           overflow: "hidden",
+          minHeight: 0,
         }}
       >
-        {/* Left / Full: Map Canvas with Docked Object Inspector */}
-        <div style={{ flex: 1, height: "100%", position: "relative", minHeight: 0 }}>
-          <MapCanvas />
-          {!isMobile && <ObjectInspector />}
-        </div>
-
-        {/* Desktop Splitter & Analytical Workspace */}
-        {!isMobile && (
+        {isFullWidthModule ? (
+          /* Full-Width Bento Mode for Benchmark (Macro Poland Map + Leaderboard) */
+          <div style={{ flex: 1, height: "100%", width: "100%", overflow: "hidden" }}>
+            <AnalyticalWorkspace />
+          </div>
+        ) : (
           <>
-            <div
-              onMouseDown={handleMouseDown}
-              style={{
-                width: 5,
-                cursor: "col-resize",
-                background: isDragging ? "#2b95d6" : "#242930",
-                borderLeft: "1px solid #2f343c",
-                borderRight: "1px solid #14171b",
-                zIndex: 15,
-                transition: isDragging ? "none" : "background 0.15s ease",
-              }}
-              title="Przeciągnij, aby zmienić szerokość panelu"
-            />
-            <div
-              style={{
-                width: panelWidth,
-                height: "100%",
-                background: "#1c2127",
-                overflow: "hidden",
-                display: "flex",
-                flexDirection: "column",
-                zIndex: 10,
-              }}
-            >
-              <AnalyticalWorkspace />
+            {/* Left / Full: Map Canvas with Docked Object Inspector */}
+            <div style={{ flex: 1, height: "100%", position: "relative", minHeight: 0 }}>
+              <MapCanvas />
+              {!isMobile && <ObjectInspector />}
             </div>
+
+            {/* Desktop Splitter & Analytical Workspace */}
+            {!isMobile && (
+              <>
+                <div
+                  onMouseDown={handleMouseDown}
+                  style={{
+                    width: 5,
+                    cursor: "col-resize",
+                    background: isDragging ? "#2b95d6" : "oklch(0.20 0.010 260)",
+                    borderLeft: "1px solid #27272a",
+                    borderRight: "1px solid #14171b",
+                    zIndex: 15,
+                    transition: isDragging ? "none" : "background 0.15s ease",
+                  }}
+                  title="Przeciągnij, aby zmienić szerokość panelu"
+                />
+                <div
+                  style={{
+                    width: panelWidth,
+                    height: "100%",
+                    background: "oklch(0.14 0.010 260)",
+                    borderLeft: "1px solid rgba(255, 255, 255, 0.06)",
+                    boxShadow: "inset 1px 0 0 0 rgba(255, 255, 255, 0.04), -8px 0 24px rgba(0, 0, 0, 0.4)",
+                    overflow: "hidden",
+                    display: "flex",
+                    flexDirection: "column",
+                    zIndex: 10,
+                  }}
+                >
+                  <AnalyticalWorkspace />
+                </div>
+              </>
+            )}
           </>
         )}
 
-        {/* Mobile Gestural Bottom Sheet & Nav */}
+        {/* Mobile Gestural Bottom Sheet & Nav (Active in non-benchmark or mobile view) */}
         {isMobile && (
           <>
             <AdaptiveBottomSheet />
