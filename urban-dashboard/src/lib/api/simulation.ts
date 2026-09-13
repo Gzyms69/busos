@@ -1,3 +1,5 @@
+import { apiFetch } from "./client";
+
 export type SimulationMode = "gps" | "math";
 
 export interface SimulationWaypoint {
@@ -53,7 +55,7 @@ const simulationCache = new Map<string, SimulationDataset>();
 
 export async function fetchSimulationDataset(
   city: string,
-  mode: SimulationMode = "gps",
+  mode: SimulationMode = "math",
   signal?: AbortSignal
 ): Promise<SimulationDataset> {
   const normalizedCity = city.toLowerCase().trim();
@@ -62,23 +64,49 @@ export async function fetchSimulationDataset(
     return simulationCache.get(cacheKey)!;
   }
 
-  // 1. Try mode-specific dataset first: /data/simulation/{city}_{mode}.json
-  let url = `/data/simulation/${normalizedCity}_${mode}.json`;
-  let res = await fetch(url, { signal }).catch(() => null);
+  let data: SimulationDataset | null = null;
 
-  // 2. Fallback to legacy single file: /data/{city}_simulation.json
-  if (!res || !res.ok) {
-    url = `/data/${normalizedCity}_simulation.json`;
-    res = await fetch(url, { signal }).catch(() => null);
+  // 1. Backend API via apiFetch (FastAPI OCI ARM64 with GZip compression)
+  try {
+    data = await apiFetch<SimulationDataset>(
+      `/api/v1/simulation/${encodeURIComponent(normalizedCity)}?mode=${mode}`,
+      { signal, timeoutMs: 60000 }
+    );
+  } catch (apiErr: any) {
+    if (apiErr?.name === "AbortError") throw apiErr;
   }
 
-  if (!res || !res.ok) {
+  // 2. Fallback to local static assets (if offline or standalone deployment)
+  if (!data) {
+    try {
+      const res = await fetch(`/data/simulation/${normalizedCity}_${mode}.json`, { signal });
+      if (res.ok) data = (await res.json()) as SimulationDataset;
+    } catch (e: any) {
+      if (e?.name === "AbortError") throw e;
+    }
+  }
+
+  // 3. Fallback to legacy single file
+  if (!data) {
+    try {
+      const res = await fetch(`/data/${normalizedCity}_simulation.json`, { signal });
+      if (res.ok) data = (await res.json()) as SimulationDataset;
+    } catch (e: any) {
+      if (e?.name === "AbortError") throw e;
+    }
+  }
+
+  // 4. Fallback to Math mode if GPS failed
+  if (!data && mode === "gps") {
+    return fetchSimulationDataset(city, "math", signal);
+  }
+
+  if (!data) {
     throw new Error(
       `Nie udało się pobrać danych symulacji dla miasta ${city} w trybie ${mode === "gps" ? "śladów GPS" : "modelu matematycznego"}`
     );
   }
 
-  const data = (await res.json()) as SimulationDataset;
   data.mode = data.mode || mode;
   simulationCache.set(cacheKey, data);
   return data;

@@ -2,6 +2,7 @@ import { apiFetch } from "./client";
 import type {
   GeoJsonFeatureCollection,
   StopRankingResponse,
+  StopRankingItem,
   StopBatchResponse,
   StopProfileResponse,
 } from "./types";
@@ -18,22 +19,13 @@ export interface StopRankingParams {
   min_departures?: number;
   min_pop?: number;
   h3_index?: string;
+  query?: string;
 }
 
 export async function fetchStopsGeoJson(
   city: string,
   signal?: AbortSignal
 ): Promise<GeoJsonFeatureCollection> {
-  // Flagship city local cache fallback
-  if (city === "kielce") {
-    try {
-      const local = await fetch("/data/showcase/kielce/stops.json", { signal });
-      if (local.ok) return await local.json();
-    } catch (e: any) {
-      if (e?.name === "AbortError") throw e;
-    }
-  }
-
   try {
     return await apiFetch<GeoJsonFeatureCollection>(
       `/api/v1/stops?city=${encodeURIComponent(city)}`,
@@ -62,8 +54,30 @@ export async function fetchStopsRanking(
   if (params.min_departures != null) q.set("min_departures", String(params.min_departures));
   if (params.min_pop != null) q.set("min_pop", String(params.min_pop));
   if (params.h3_index) q.set("h3_index", params.h3_index);
+  if (params.query) q.set("query", params.query);
 
   return apiFetch<StopRankingResponse>(`/api/v1/stops/ranking?${q.toString()}`, { signal });
+}
+
+export async function searchStops(
+  city: string,
+  query: string,
+  limit: number = 20,
+  signal?: AbortSignal
+): Promise<StopRankingItem[]> {
+  const q = new URLSearchParams({ city, query, limit: String(limit) });
+  try {
+    const res = await apiFetch<StopRankingResponse>(`/api/v1/stops/search?${q.toString()}`, { signal });
+    return res.items || [];
+  } catch (e: any) {
+    if (e?.name === "AbortError") throw e;
+    try {
+      const res = await apiFetch<StopRankingResponse>(`/api/v1/stops/ranking?${q.toString()}`, { signal });
+      return res.items || [];
+    } catch {
+      return [];
+    }
+  }
 }
 
 export async function fetchStopsBatch(

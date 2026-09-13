@@ -149,15 +149,6 @@ export async function fetchTransactionsGeoJson(
   city: string,
   signal?: AbortSignal
 ): Promise<GeoJsonFeatureCollection> {
-  if (city === "kielce") {
-    try {
-      const local = await fetch("/data/showcase/kielce/transactions.json", { signal });
-      if (local.ok) return await local.json();
-    } catch (e: any) {
-      if (e?.name === "AbortError") throw e;
-    }
-  }
-
   try {
     return await apiFetch<GeoJsonFeatureCollection>(
       `/api/v1/transactions?city=${encodeURIComponent(city)}`,

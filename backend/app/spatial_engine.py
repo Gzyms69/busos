@@ -1108,6 +1108,7 @@ def get_stops_ranking(
     min_departures: Optional[float] = None,
     min_pop: Optional[float] = None,
     h3_index: Optional[str] = None,
+    query: Optional[str] = None,
 ) -> Dict[str, Any]:
     order_by_clean = order_by.strip().lower()
     if order_by_clean not in STOP_METRIC_MAP:
@@ -1155,6 +1156,13 @@ def get_stops_ranking(
             where_clauses.append("city_context = ?")
             params.append(city)
 
+    if query:
+        q_clean = f"%{query.strip().lower()}%"
+        where_clauses.append(
+            "(LOWER(stop_name) LIKE ? OR LOWER(hub_name) LIKE ? OR LOWER(stop_routes) LIKE ? OR LOWER(stop_id) LIKE ?)"
+        )
+        params.extend([q_clean, q_clean, q_clean, q_clean])
+
     if grade:
         grades = _parse_grades(grade)
         if grades:
@@ -1183,7 +1191,12 @@ def get_stops_ranking(
     cur.execute(f'SELECT COUNT(*) FROM "{tbl}" {where_sql}', params)
     total_count = cur.fetchone()[0]
 
-    cur.execute(f'SELECT * FROM "{tbl}" {where_sql} ORDER BY {db_col} {order_dir_clean} LIMIT ? OFFSET ?', params + [actual_limit, actual_offset])
+    order_clause = (
+        f"ORDER BY (CASE WHEN (stop_departures_h > 0 OR (stop_routes IS NOT NULL AND stop_routes != '')) THEN 1 ELSE 0 END) DESC, is_hub_anchor DESC, {db_col} {order_dir_clean}"
+        if query
+        else f"ORDER BY {db_col} {order_dir_clean}"
+    )
+    cur.execute(f'SELECT * FROM "{tbl}" {where_sql} {order_clause} LIMIT ? OFFSET ?', params + [actual_limit, actual_offset])
     cur_cols = [c[0] for c in cur.description]
     rows = cur.fetchall()
     con.close()
@@ -1304,6 +1317,7 @@ def get_hubs_ranking(
     rank: Optional[int] = None,
     grade: Optional[str] = None,
     min_stops: Optional[int] = None,
+    query: Optional[str] = None,
 ) -> Dict[str, Any]:
     order_by_clean = order_by.strip().lower()
     if order_by_clean not in HUB_METRIC_MAP:
@@ -1336,13 +1350,17 @@ def get_hubs_ranking(
     where_clauses = []
     params = []
 
+    if query:
+        q_clean = f"%{query.strip().lower()}%"
+        where_clauses.append("(LOWER(hub_name) LIKE ? OR LOWER(hub_routes) LIKE ?)")
+        params.extend([q_clean, q_clean])
+
     if grade:
         grades = _parse_grades(grade)
         if grades:
             placeholders = ",".join(["?"] * len(grades))
             where_clauses.append(f"(hub_grade IN ({placeholders}) OR grade IN ({placeholders}))")
             params.extend(grades * 2)
-
 
     if min_stops is not None:
         where_clauses.append("hub_stops_count >= ?")

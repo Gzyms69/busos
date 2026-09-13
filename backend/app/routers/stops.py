@@ -36,6 +36,7 @@ async def get_stops_ranking(
     min_departures: Optional[float] = Query(None, description="Filter for minimum departures per hour"),
     min_pop: Optional[float] = Query(None, description="Filter for minimum population"),
     h3_index: Optional[str] = Query(None, description="Filter for H3 cell index"),
+    query: Optional[str] = Query(None, description="Filtr tekstowy po nazwie słupka, węzła lub liniach"),
 ):
     """Universal ranking endpoint for physical stops with arbitrary limits and dynamic sorting."""
     try:
@@ -51,6 +52,7 @@ async def get_stops_ranking(
             min_departures=min_departures,
             min_pop=min_pop,
             h3_index=h3_index,
+            query=query,
         )
     except ValueError as e:
         raise HTTPException(status_code=422, detail=str(e))
@@ -58,6 +60,27 @@ async def get_stops_ranking(
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Ranking error: {str(e)}")
+
+
+@router.get("/stops/search", response_model=StopRankingResponse)
+async def search_stops(
+    city: str = Query(..., description="City slug"),
+    query: str = Query(..., min_length=1, description="Search query string"),
+    limit: int = Query(20, ge=1, le=100, description="Max results to return"),
+):
+    """Searches physical transit stops with Stop DNA ranking metrics."""
+    try:
+        return spatial_engine.get_stops_ranking(
+            city=city,
+            query=query,
+            limit=limit,
+            order_by="stop_local_score_raw",
+            order_dir="desc",
+        )
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Search error: {str(e)}")
 
 
 @router.post("/stops/batch", response_model=StopBatchResponse)

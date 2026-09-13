@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Search, X, Bus, Route, ArrowRight } from "lucide-react";
 import { useFoundryStore } from "@/lib/store";
-import { fetchStopsRanking, searchRoutes } from "@/lib/api";
+import { searchStops, searchRoutes } from "@/lib/api";
 import type { StopRankingItem, RouteItem } from "@/lib/api/types";
 import GradeBadge from "@/components/shared/GradeBadge";
 
@@ -30,13 +30,7 @@ export default function TopSearchPill() {
 
       Promise.allSettled([
         searchRoutes(selectedCity, q, 5, controller.signal),
-        fetchStopsRanking(
-          {
-            city: selectedCity,
-            limit: 60,
-          },
-          controller.signal
-        ),
+        searchStops(selectedCity, q, 8, controller.signal),
       ])
         .then(([routesRes, stopsRes]) => {
           if (controller.signal.aborted) return;
@@ -48,14 +42,7 @@ export default function TopSearchPill() {
           }
 
           if (stopsRes.status === "fulfilled") {
-            const list = stopsRes.value?.items || [];
-            const filtered = list.filter(
-              (s) =>
-                s.stop_name?.toLowerCase().includes(q) ||
-                s.stop_routes?.toLowerCase().includes(q) ||
-                s.stop_id?.toLowerCase().includes(q)
-            );
-            setStopResults(filtered.slice(0, 8));
+            setStopResults(stopsRes.value || []);
           } else {
             setStopResults([]);
           }

@@ -15,21 +15,13 @@ export interface HubRankingParams {
   rank?: number;
   grade?: string;
   min_stops?: number;
+  query?: string;
 }
 
 export async function fetchHubsGeoJson(
   city: string,
   signal?: AbortSignal
 ): Promise<GeoJsonFeatureCollection> {
-  if (city === "kielce") {
-    try {
-      const local = await fetch("/data/showcase/kielce/hubs.json", { signal });
-      if (local.ok) return await local.json();
-    } catch (e: any) {
-      if (e?.name === "AbortError") throw e;
-    }
-  }
-
   try {
     return await apiFetch<GeoJsonFeatureCollection>(
       `/api/v1/hubs?city=${encodeURIComponent(city)}`,
@@ -57,6 +49,7 @@ export async function fetchHubsRanking(
   if (params.rank != null) q.set("rank", String(params.rank));
   if (params.grade) q.set("grade", params.grade);
   if (params.min_stops != null) q.set("min_stops", String(params.min_stops));
+  if (params.query) q.set("query", params.query);
 
   return apiFetch<HubRankingResponse>(`/api/v1/hubs/ranking?${q.toString()}`, { signal });
 }

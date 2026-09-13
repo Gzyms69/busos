@@ -34,7 +34,14 @@ export async function fetchCities(signal?: AbortSignal): Promise<string[]> {
     }
   } catch {}
 
-  return ["kielce", "warszawa", "wroclaw", "krakow", "poznan", "lodz", "gdansk", "szczecin", "bydgoszcz", "lublin"];
+  return [
+    "bialystok", "bydgoszcz", "czestochowa", "elblag", "elk",
+    "gizycko", "gorzow", "gzm", "kielce", "krakow",
+    "kutno", "legnica", "leszno", "lodz", "lomza",
+    "lublin", "olsztyn", "opole", "poznan", "przemysl",
+    "radom", "rzeszow", "suwalki", "swinoujscie", "szczecin",
+    "torun", "trojmiasto", "warszawa", "wroclaw", "zielona-gora"
+  ];
 }
 
 export async function fetchCityBoundary(
@@ -51,16 +58,6 @@ export async function fetchPopulation(
   city: string,
   signal?: AbortSignal
 ): Promise<GeoJsonFeatureCollection<any, PopProperties>> {
-  // Flagship city instant cache
-  if (city === "kielce") {
-    try {
-      const local = await fetch("/data/showcase/kielce/population.json", { signal });
-      if (local.ok) return await local.json();
-    } catch (e: any) {
-      if (e?.name === "AbortError") throw e;
-    }
-  }
-
   try {
     return await apiFetch<GeoJsonFeatureCollection<any, PopProperties>>(
       `/api/v1/population?city=${encodeURIComponent(city)}`,

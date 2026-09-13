@@ -9,3 +9,4 @@ export * from "./poi";
 export * from "./analytics";
 export * from "./routes";
 export * from "./ai";
+export * from "./simulation";

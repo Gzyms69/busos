@@ -8,7 +8,7 @@ from app import spatial_engine
 from app.core.cache import cache
 from app.core.idempotency import IdempotencyMiddleware
 from app.core.telemetry import TracingMiddleware, metrics_endpoint
-from app.routers import ai, analytics, hexagons, hubs, market, poi, routes, stops
+from app.routers import ai, analytics, hexagons, hubs, market, poi, routes, stops, simulation
 from app.schemas import (
     CitiesResponse,
     GeoJsonFeatureCollection,
@@ -16,6 +16,7 @@ from app.schemas import (
 )
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.gzip import GZipMiddleware
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
@@ -79,6 +80,7 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.add_middleware(SlowAPIMiddleware)
 app.add_middleware(IdempotencyMiddleware)
 app.add_middleware(TracingMiddleware)
+app.add_middleware(GZipMiddleware, minimum_size=1024)
 
 
 ALLOWED_ORIGINS = [
@@ -177,5 +179,6 @@ app.include_router(poi.router, prefix="/api/v1")
 app.include_router(analytics.router, prefix="/api/v1")
 app.include_router(ai.router, prefix="/api/v1")
 app.include_router(routes.router, prefix="/api/v1")
+app.include_router(simulation.router, prefix="/api/v1")
 
 

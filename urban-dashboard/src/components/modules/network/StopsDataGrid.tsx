@@ -50,24 +50,14 @@ export default function StopsDataGrid() {
           limit,
           offset: rankParam ? undefined : offset,
           rank: rankParam,
+          query: stopsSearch.trim() || undefined,
         },
         controller.signal
       )
         .then((res) => {
           if (!controller.signal.aborted) {
-            let filtered = res.items || [];
-            if (stopsSearch.trim()) {
-              const q = stopsSearch.toLowerCase();
-              filtered = filtered.filter(
-                (item) =>
-                  item.stop_name?.toLowerCase().includes(q) ||
-                  item.stop_id?.toLowerCase().includes(q) ||
-                  item.hub_name?.toLowerCase().includes(q) ||
-                  item.stop_routes?.toLowerCase().includes(q)
-              );
-            }
-            setItems(filtered);
-            setTotal(res.total || filtered.length);
+            setItems(res.items || []);
+            setTotal(res.total || 0);
             setLoading(false);
           }
         })

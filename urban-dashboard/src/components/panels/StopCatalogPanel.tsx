@@ -42,23 +42,14 @@ export default function StopCatalogPanel() {
           grade: gradeFilter || undefined,
           limit: 100,
           offset: page * pageSize,
+          query: searchQuery.trim() || undefined,
         },
         controller.signal
       )
         .then((res) => {
           if (!controller.signal.aborted) {
-            let list = res.items || [];
-            if (searchQuery.trim()) {
-              const q = searchQuery.toLowerCase();
-              list = list.filter(
-                (s) =>
-                  s.stop_name?.toLowerCase().includes(q) ||
-                  s.stop_routes?.toLowerCase().includes(q) ||
-                  s.stop_id?.toLowerCase().includes(q)
-              );
-            }
-            setStops(list);
-            setTotal(res.total || list.length);
+            setStops(res.items || []);
+            setTotal(res.total || 0);
             setLoading(false);
           }
         })
@@ -77,22 +68,14 @@ export default function StopCatalogPanel() {
           grade: gradeFilter || undefined,
           limit: 100,
           offset: page * pageSize,
+          query: searchQuery.trim() || undefined,
         },
         controller.signal
       )
         .then((res) => {
           if (!controller.signal.aborted) {
-            let list = res.items || [];
-            if (searchQuery.trim()) {
-              const q = searchQuery.toLowerCase();
-              list = list.filter(
-                (h) =>
-                  h.hub_name?.toLowerCase().includes(q) ||
-                  h.hub_routes?.toLowerCase().includes(q)
-              );
-            }
-            setHubs(list);
-            setTotal(res.total || list.length);
+            setHubs(res.items || []);
+            setTotal(res.total || 0);
             setLoading(false);
           }
         })
